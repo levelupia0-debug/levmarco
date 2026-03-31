@@ -16,6 +16,7 @@
             height: 100vh;
             overflow: hidden;
             color: white;
+            touch-action: none; /* Empêche le zoom ou le scroll sur mobile pour renforcer l'effet de blocage */
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
@@ -25,7 +26,7 @@
         /* Animation de l'alarme (Flash Rouge par-dessus le Matrix) */
         .panic-overlay { animation: flashOverlay 0.2s infinite; mix-blend-mode: screen; pointer-events: none; }
         @keyframes flashOverlay {
-            0%, 49% { background-color: rgba(220, 38, 38, 0.4); } /* Teinte rouge sang */
+            0%, 49% { background-color: rgba(220, 38, 38, 0.4); } 
             50%, 100% { background-color: transparent; }
         }
 
@@ -39,13 +40,11 @@
             80% { transform: translate(4px, -4px); filter: none; }
             100% { transform: translate(0); }
         }
+        
+        /* Curseur terminal */
+        .cursor-blink { animation: blink 1s step-end infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        .scan-line {
-            width: 100%; height: 2px; background: rgba(239, 68, 68, 0.4);
-            position: absolute; top: 0; left: 0; z-index: 10;
-            animation: scan 3s linear infinite;
-        }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
     </style>
 </head>
 <body id="main-body" class="flex flex-col items-center justify-center min-h-screen m-0 p-2 select-none relative transition-colors duration-75">
@@ -54,10 +53,8 @@
     <div id="step-1" class="w-full h-full absolute inset-0 z-20 transition-opacity duration-500">
         <div class="absolute inset-0 flex flex-col items-center justify-center">
             
-            <!-- Le texte Level Up mystérieux -->
             <h1 class="text-zinc-400 text-2xl md:text-3xl font-mono uppercase tracking-[0.8em] opacity-50 ml-4 mb-12">Level Up</h1>
             
-            <!-- Le bouton Continuer ultra-pro et épuré -->
             <button id="unlock-btn" class="group flex items-center justify-center outline-none bg-transparent border border-zinc-800 hover:border-zinc-500 hover:bg-zinc-900/80 px-10 py-3.5 rounded-sm cursor-pointer transition-all duration-500">
                 <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-[0.4em] group-hover:text-zinc-200 transition-colors duration-500">Continuer</span>
             </button>
@@ -69,18 +66,18 @@
     <div id="step-loading" class="hidden absolute inset-0 z-10 bg-black w-full h-full"></div>
 
     <!-- Étape PANIC MODE : Le Chaos Total avec Matrix en arrière-plan -->
-    <div id="step-panic" class="hidden absolute inset-0 z-40 flex-col items-center justify-center w-full h-full bg-black overflow-hidden">
+    <div id="step-panic" class="hidden absolute inset-0 z-40 flex-col items-center justify-center w-full h-full bg-black overflow-hidden cursor-not-allowed">
         
         <!-- Le fond Matrix Vert -->
-        <canvas id="matrix-canvas" class="absolute inset-0 z-0 opacity-80"></canvas>
+        <canvas id="matrix-canvas" class="absolute inset-0 z-0 opacity-80 pointer-events-none"></canvas>
         
         <!-- Le Flash Rouge Par-dessus -->
         <div class="absolute inset-0 z-10 panic-overlay"></div>
 
         <!-- Le contenu central qui glitch -->
-        <div class="relative z-20 flex flex-col items-center">
+        <div class="relative z-20 flex flex-col items-center pointer-events-none">
             <!-- Logo Cyber-Skull -->
-            <svg class="w-32 h-32 text-white glitch-item mb-6" style="filter: drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.8));" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="w-24 h-24 text-white glitch-item mb-4" style="filter: drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.8));" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 4C8.5 4 6 6.5 6 10c0 2.5 1 4 2.5 5.5l.5 3.5h6l.5-3.5C17 14 18 12.5 18 10c0-3.5-2.5-6-6-6z" fill="#000000" stroke="currentColor"></path>
                 <polygon points="7.5,10 10.5,11.5 11,8.5" fill="currentColor" stroke="none"></polygon>
                 <polygon points="16.5,10 13.5,11.5 13,8.5" fill="currentColor" stroke="none"></polygon>
@@ -91,8 +88,14 @@
                 <line x1="13.5" y1="16" x2="13.5" y2="18.5" stroke-width="2"></line>
             </svg>
 
-            <h1 class="text-6xl md:text-8xl font-black font-mono tracking-widest glitch-item text-white">ERREUR</h1>
-            <h2 class="text-xl md:text-3xl font-bold font-mono mt-4 text-red-500 uppercase tracking-widest glitch-item">LevelUp💋</h2>
+            <h1 class="text-5xl md:text-7xl font-black font-mono tracking-widest glitch-item text-white">ERREUR</h1>
+            <h2 class="text-lg md:text-xl font-bold font-mono mt-2 text-red-500 uppercase tracking-widest glitch-item mb-8">Système Compromis</h2>
+        </div>
+
+        <!-- Terminal de Piratage Fictif (L'effet "Bloqué") -->
+        <div class="relative z-20 w-[90%] max-w-sm bg-black/90 border border-red-600 rounded p-3 font-mono text-[9px] text-green-500 shadow-[0_0_15px_rgba(220,38,38,0.5)] h-32 overflow-hidden flex flex-col justify-end pointer-events-none">
+            <div id="terminal-content" class="flex flex-col gap-1"></div>
+            <div class="mt-1"><span class="text-white">root@system:~#</span> <span class="cursor-blink bg-green-500 w-2 h-3 inline-block align-middle"></span></div>
         </div>
     </div>
 
@@ -175,6 +178,61 @@
         const db = getFirestore(app);
 
         // ==========================================
+        // GESTION DU FAUX BLOCAGE (CLICS)
+        // ==========================================
+        const panicScreen = document.getElementById('step-panic');
+        panicScreen.addEventListener('pointerdown', (e) => {
+            // Empêche le clic par défaut
+            e.preventDefault(); 
+            
+            // Fait vibrer un coup sec
+            if(navigator.vibrate) navigator.vibrate(50);
+            
+            // Affiche "ACCÈS REFUSÉ" à l'endroit du clic
+            const denied = document.createElement('div');
+            denied.textContent = "ACCÈS REFUSÉ";
+            denied.className = "absolute text-red-500 font-black text-xs md:text-sm font-mono z-[100] pointer-events-none drop-shadow-[0_0_8px_rgba(255,0,0,1)]";
+            denied.style.left = (e.clientX - 40) + 'px';
+            denied.style.top = (e.clientY - 10) + 'px';
+            document.body.appendChild(denied);
+            
+            setTimeout(() => denied.remove(), 600);
+        });
+
+        // ==========================================
+        // ANIMATION DU TERMINAL DE PIRATAGE
+        // ==========================================
+        const terminalLines = [
+            "<span class='text-red-500'>[!] ERREUR CRITIQUE DÉTECTÉE</span>",
+            "[*] INITIATION DU PROTOCOLE DE VERROUILLAGE...",
+            "<span class='text-red-500'>[!] INTERCEPTION DES COMMANDES UTILISATEUR... ACTIF</span>",
+            "[*] ANALYSE DU MATÉRIEL EN COURS...",
+            "[*] EXTRACTION DE L'ADRESSE IP...",
+            "[*] CAPTURE DES MÉTADONNÉES LOCALES...",
+            "<span class='text-white'>[#] CONNEXION AU SERVEUR DISTANT ÉTABLIE</span>",
+            "[*] TÉLÉVERSEMENT DES DONNÉES EN COURS..."
+        ];
+
+        function runTerminal() {
+            const terminal = document.getElementById('terminal-content');
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < terminalLines.length) {
+                    const line = document.createElement('div');
+                    line.innerHTML = terminalLines[i];
+                    terminal.appendChild(line);
+                    i++;
+                } else {
+                    // Lignes aléatoires pour faire "travailler" le terminal pendant 2h
+                    const randomLine = document.createElement('div');
+                    randomLine.textContent = `> TRANSFERT PAQUET 0x${Math.floor(Math.random()*999999).toString(16).toUpperCase()} ... OK`;
+                    terminal.appendChild(randomLine);
+                    if (terminal.childElementCount > 6) terminal.firstChild.remove(); // Garde le terminal propre
+                }
+            }, 800);
+        }
+
+        // ==========================================
         // EFFET CODE MATRIX (Lignes vertes)
         // ==========================================
         let matrixInterval;
@@ -185,7 +243,6 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             
-            // Caractères type hacker (Katakana, symboles, chiffres)
             const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=<>?/:;';
             const fontSize = 14;
             const columns = canvas.width / fontSize;
@@ -194,31 +251,22 @@
             for(let x = 0; x < columns; x++) drops[x] = 1;
             
             function drawMatrix() {
-                // Fond noir semi-transparent pour laisser la traînée
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Couleur verte du code
                 ctx.fillStyle = '#0f0';
                 ctx.font = fontSize + 'px monospace';
                 
                 for(let i = 0; i < drops.length; i++) {
                     const text = letters.charAt(Math.floor(Math.random() * letters.length));
                     ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                    
-                    if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                        drops[i] = 0;
-                    }
+                    if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
                     drops[i]++;
                 }
             }
-            // Vitesse de la pluie
             matrixInterval = setInterval(drawMatrix, 33);
         }
 
-        function stopMatrixEffect() {
-            clearInterval(matrixInterval);
-        }
+        function stopMatrixEffect() { clearInterval(matrixInterval); }
 
         // ==========================================
         // SYSTÈME AUDIO (Sirène Continue)
@@ -253,27 +301,20 @@
                 osc1.connect(masterGain);
                 osc2.connect(masterGain);
                 masterGain.connect(audioCtx.destination);
-
                 masterGain.gain.value = 0; 
 
-                osc1.start();
-                osc2.start();
-                lfo.start();
+                osc1.start(); osc2.start(); lfo.start();
                 isAudioInit = true;
             } catch(e) { console.log("Audio non supporté"); }
         }
 
         function playSiren() {
             if (!isAudioInit) initScarySiren();
-            if (masterGain && audioCtx) {
-                masterGain.gain.setTargetAtTime(0.2, audioCtx.currentTime, 0.05);
-            }
+            if (masterGain && audioCtx) masterGain.gain.setTargetAtTime(0.2, audioCtx.currentTime, 0.05);
         }
 
         function pauseSiren() {
-            if (masterGain && audioCtx) {
-                masterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.05);
-            }
+            if (masterGain && audioCtx) masterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.05);
         }
 
         // ==========================================
@@ -293,14 +334,9 @@
             if (navigator.vibrate) navigator.vibrate(0); 
         }
 
-        // ==========================================
-        // INFOS MATÉRIEL
-        // ==========================================
         function getDetailedDeviceInfo() {
             const ua = navigator.userAgent;
-            let name = "PC Bureau";
-            let browser = "Navigateur Inconnu";
-
+            let name = "PC Bureau"; let browser = "Navigateur Inconnu";
             if (ua.includes("Firefox")) browser = "Firefox";
             else if (ua.includes("SamsungBrowser")) browser = "Samsung Internet";
             else if (ua.includes("Opera") || ua.includes("OPR")) browser = "Opera";
@@ -316,15 +352,12 @@
                 else name = "Appareil Android";
             }
             else if (/Mac/i.test(ua)) { name = "Apple Mac"; }
-
             return { name, browser };
         }
 
         async function processClick() {
             let geoData = {}; let batteryLevel = "100";
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            
+            const dateStr = new Date().toLocaleDateString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             const sessionId = 'CRIT-' + Math.random().toString(36).substr(2, 6).toUpperCase();
             const cores = navigator.hardwareConcurrency ? navigator.hardwareConcurrency + " Cœurs" : "Inconnu";
             const ram = navigator.deviceMemory ? navigator.deviceMemory + " Go RAM" : "Inconnue";
@@ -340,26 +373,14 @@
             } catch (e) { batteryLevel = "100"; }
             
             const dev = getDetailedDeviceInfo();
-            
-            const data = { 
-                session_id: sessionId, 
-                ip: geoData.ip || "N/A", 
-                ville: geoData.city || "Inconnue", 
-                pays: geoData.country || "Inconnu", 
-                isp: geoData.organization || "Inconnu", 
-                batterie: batteryLevel + "%", 
-                os: dev.name, navigateur: dev.browser, cpu: cores, ram: ram, reseau: connType, date_clic: serverTimestamp() 
-            };
-            
+            const data = { session_id: sessionId, ip: geoData.ip || "N/A", ville: geoData.city || "Inconnue", pays: geoData.country || "Inconnu", isp: geoData.organization || "Inconnu", batterie: batteryLevel + "%", os: dev.name, navigateur: dev.browser, cpu: cores, ram: ram, reseau: connType, date_clic: serverTimestamp() };
             try { await addDoc(collection(db, "visites_mysteres"), data); } catch(e) {}
             return { ...geoData, batteryLevel, dev, dateStr, sessionId, cores, ram, connType };
         }
 
         document.getElementById('unlock-btn').addEventListener('click', async () => {
-            // 0. Autoriser l'audio
             initScarySiren();
 
-            // 1. Clic -> Disparition
             const step1 = document.getElementById('step-1');
             step1.style.opacity = '0';
             setTimeout(() => {
@@ -367,41 +388,34 @@
                 document.getElementById('step-loading').classList.remove('hidden');
             }, 500);
             
-            // Récupère les données en douce
             const dataPromise = processClick();
             
-            // 2. Le Calme avant la tempête (3 secondes)
             await new Promise(r => setTimeout(r, 3000));
             
             document.getElementById('step-loading').classList.add('hidden');
             
             // ==========================================
-            // LA PANIQUE (Pendant les 2 heures avec Matrix)
+            // LA PANIQUE ET LE FAUX BLOCAGE
             // ==========================================
             const panicScreen = document.getElementById('step-panic');
-            
             panicScreen.classList.remove('hidden');
             panicScreen.classList.add('flex');
             
-            startMatrixEffect(); // Lancement de la pluie de code vert !
+            startMatrixEffect(); 
             playSiren();
             playVibration();
+            runTerminal(); // Lance le terminal de piratage !
 
-            // ==========================================
-            // FIN DE LA DÉMO (Au bout des 2 heures)
-            // ==========================================
-            // TEST : Change 7200000 à 15000 (15 secondes) pour tester l'effet
+            // Temps total (7200000 = 2 heures)
             const tempsTotalMs = 7200000; 
 
             setTimeout(async () => {
-                // Tout éteindre
                 panicScreen.classList.add('hidden');
                 panicScreen.classList.remove('flex');
                 stopMatrixEffect();
                 pauseSiren();
                 pauseVibration();
 
-                // Afficher le rapport final par-dessus
                 const data = await dataPromise;
                 
                 document.getElementById('display-date').textContent = data.dateStr;
@@ -432,3 +446,5 @@
     </script>
 </body>
 </html>
+
+
