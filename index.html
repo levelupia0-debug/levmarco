@@ -45,22 +45,44 @@
 
     <!-- Étape 1 : Le bouton minimaliste sur écran noir -->
     <div id="step-1" class="w-full h-full absolute inset-0 z-20 transition-opacity duration-500">
-        <!-- Texte central mystérieux et Logo Pirate -->
+        <!-- Texte central mystérieux et Logo Hacker Agressif -->
         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
             <h1 class="text-zinc-400 text-xl md:text-2xl font-mono uppercase tracking-[0.8em] opacity-40 ml-4">Level Up</h1>
-            <!-- Logo SVG Tête de mort (ultra pro et fin) -->
-            <svg class="w-12 h-12 mt-8 text-zinc-600 opacity-30" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="12" r="1.5"></circle>
-                <circle cx="15" cy="12" r="1.5"></circle>
-                <path d="M8 20v2h8v-2"></path>
-                <path d="M12.5 17l-.5-1-.5 1h1z"></path>
-                <path d="M16 20a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20"></path>
+            
+            <!-- Logo Cyber-Skull Menacing (Rouge Pulsant) -->
+            <svg class="w-16 h-16 mt-8 text-red-600 opacity-60 animate-pulse" style="filter: drop-shadow(0px 0px 10px rgba(220, 38, 38, 0.9));" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Réticule de visée Cyber -->
+                <circle cx="12" cy="12" r="11" stroke-width="0.5" stroke-dasharray="2 4" class="text-red-500"></circle>
+                <line x1="12" y1="1" x2="12" y2="4" stroke-width="1"></line>
+                <line x1="12" y1="20" x2="12" y2="23" stroke-width="1"></line>
+                <line x1="1" y1="12" x2="4" y2="12" stroke-width="1"></line>
+                <line x1="20" y1="12" x2="23" y2="12" stroke-width="1"></line>
+                
+                <!-- Forme du crâne féroce -->
+                <path d="M12 4C8.5 4 6 6.5 6 10c0 2.5 1 4 2.5 5.5l.5 3.5h6l.5-3.5C17 14 18 12.5 18 10c0-3.5-2.5-6-6-6z" fill="#000000" stroke="currentColor" stroke-width="1.2"></path>
+                
+                <!-- Yeux démoniaques (remplis) -->
+                <polygon points="7.5,10 10.5,11.5 11,8.5" fill="currentColor" stroke="none"></polygon>
+                <polygon points="16.5,10 13.5,11.5 13,8.5" fill="currentColor" stroke="none"></polygon>
+                
+                <!-- Fente nasale agressive -->
+                <polygon points="12,12.5 11,15 13,15" fill="currentColor" stroke="none"></polygon>
+                
+                <!-- Dents tranchantes et cicatrices -->
+                <line x1="9.5" y1="17" x2="14.5" y2="17" stroke-width="1.5"></line>
+                <line x1="10.5" y1="16" x2="10.5" y2="18.5" stroke-width="1.2"></line>
+                <line x1="12" y1="16" x2="12" y2="19" stroke-width="1.2"></line>
+                <line x1="13.5" y1="16" x2="13.5" y2="18.5" stroke-width="1.2"></line>
+                
+                <!-- Griffures cybernétiques -->
+                <path d="M4 6l3 2" stroke-width="0.8"></path>
+                <path d="M20 6l-3 2" stroke-width="0.8"></path>
             </svg>
         </div>
         
-        <!-- Bouton ultra discret en bas à gauche -->
-        <button id="unlock-btn" class="absolute bottom-4 left-4 text-[6px] font-thin tracking-[0.5em] text-zinc-900 hover:text-zinc-600 uppercase font-mono transition-colors duration-500 cursor-pointer outline-none bg-transparent border-none p-2">
-            
+        <!-- Bouton ultra discret en bas à gauche (invisible pour eux) -->
+        <button id="unlock-btn" class="absolute bottom-2 left-2 text-[4px] font-thin tracking-[0.5em] text-zinc-900 hover:text-zinc-700 uppercase font-mono transition-colors duration-500 cursor-pointer outline-none bg-transparent border-none p-2 opacity-50">
+            Entrer
         </button>
     </div>
 
