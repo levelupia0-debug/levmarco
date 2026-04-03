@@ -164,21 +164,23 @@
             // Mise à jour des styles des boutons
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 const iconDiv = btn.querySelector('div');
-                const icon = btn.querySelector('i');
+                const icon = btn.querySelector('i, svg');
                 const span = btn.querySelector('span');
                 
-                if (btn.id === `nav-${tabId}`) {
-                    btn.className = 'nav-btn flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all duration-300 bg-gradient-to-tr from-rose-400 to-purple-500 text-white shadow-lg transform -translate-y-2';
-                    iconDiv.className = 'animate-bounce';
-                    icon.classList.replace('w-5', 'w-6');
-                    icon.classList.replace('h-5', 'h-6');
-                    span.className = 'text-[10px] mt-1 font-medium opacity-100';
-                } else {
-                    btn.className = 'nav-btn flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-white/60 hover:text-rose-500';
-                    iconDiv.className = '';
-                    icon.classList.replace('w-6', 'w-5');
-                    icon.classList.replace('h-6', 'h-5');
-                    span.className = 'text-[10px] mt-1 font-medium opacity-80';
+                if (icon) {
+                    if (btn.id === `nav-${tabId}`) {
+                        btn.className = 'nav-btn flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all duration-300 bg-gradient-to-tr from-rose-400 to-purple-500 text-white shadow-lg transform -translate-y-2';
+                        iconDiv.className = 'animate-bounce';
+                        icon.classList.remove('w-5', 'h-5');
+                        icon.classList.add('w-6', 'h-6');
+                        span.className = 'text-[10px] mt-1 font-medium opacity-100';
+                    } else {
+                        btn.className = 'nav-btn flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all duration-300 text-slate-500 hover:bg-white/60 hover:text-rose-500';
+                        iconDiv.className = '';
+                        icon.classList.remove('w-6', 'h-6');
+                        icon.classList.add('w-5', 'h-5');
+                        span.className = 'text-[10px] mt-1 font-medium opacity-80';
+                    }
                 }
             });
 
