@@ -64,7 +64,7 @@
 
         .row-container { 
             scroll-behavior: smooth; 
-            cursor: grab; /* Indique qu'on peut glisser sur PC */
+            cursor: grab;
         }
         .row-container:active {
             cursor: grabbing;
@@ -156,6 +156,7 @@
                     <button onclick="window.setCategory('home')" id="nav-home" class="text-[#a855f7] transition-colors hover:text-white" data-i18n="home">Accueil</button>
                     <button onclick="window.setCategory('tv')" id="nav-tv" class="hover:text-white transition-colors" data-i18n="series">Séries</button>
                     <button onclick="window.setCategory('movie')" id="nav-movie" class="hover:text-white transition-colors" data-i18n="movies">Films</button>
+                    <button onclick="window.setCategory('watchlist')" id="nav-watchlist" class="hover:text-white transition-colors" data-i18n="myList">Ma liste</button>
                 </nav>
             </div>
 
@@ -195,7 +196,7 @@
                 <i class="fas fa-film text-lg"></i>
                 <span class="text-[9px] font-bold uppercase tracking-widest" data-i18n="movies">Films</span>
             </button>
-            <button onclick="window.scrollToWatchlist()" id="mob-nav-watchlist" class="flex flex-col items-center gap-1 text-white/50 hover:text-white transition-colors">
+            <button onclick="window.setCategory('watchlist')" id="mob-nav-watchlist" class="flex flex-col items-center gap-1 text-white/50 hover:text-white transition-colors">
                 <i class="fas fa-bookmark text-lg"></i>
                 <span class="text-[9px] font-bold uppercase tracking-widest" data-i18n="myList">Ma liste</span>
             </button>
@@ -223,7 +224,7 @@
 
                 <div class="flex flex-wrap gap-3 mt-5 md:mt-6" id="heroButtons" style="display: none;">
                     <button onclick="window.playHeroMovie(true)" class="flex-1 md:flex-none items-center justify-center flex gap-2 px-6 md:px-8 py-3 bg-white text-black rounded-xl text-[11px] md:text-[13px] font-black uppercase tracking-widest hover:bg-gray-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.3)] active:scale-95">
-                        <i class="fas fa-play text-sm md:text-lg"></i> <span data-i18n="play">Lecture</span>
+                        <i class="fas fa-play text-sm md:text-lg"></i> <span data-i18n="playMovie">Regarder le Film</span>
                     </button>
                     <button onclick="window.playHeroMovie(false)" class="flex-1 md:flex-none items-center justify-center flex gap-2 px-6 md:px-8 py-3 bg-white/10 border border-white/20 rounded-xl text-[11px] md:text-[13px] font-bold text-white uppercase tracking-widest hover:bg-white/20 transition-all active:scale-95 backdrop-blur-md">
                         <i class="fas fa-info-circle text-sm md:text-lg"></i> <span data-i18n="details">Plus d'infos</span>
@@ -284,16 +285,16 @@
                     <i class="fas fa-sign-out-alt"></i> Se Déconnecter
                 </button>
             </div>
-            <p class="text-[9px] text-white/20 uppercase tracking-widest mt-8">Level Movie Premium OS • Ver 3.0</p>
+            <p class="text-[9px] text-white/20 uppercase tracking-widest mt-8">Level Movie Premium OS • Ver 3.1</p>
         </div>
     </div>
 
     <!-- 5. MODAL VIDÉO PREMIUM (EXHAUSTIF) -->
-    <div id="videoModal" class="hidden fixed inset-0 z-[8000] flex justify-center items-center p-0 md:p-6 bg-[#060608]/95 backdrop-blur-3xl overflow-hidden">
+    <div id="videoModal" class="hidden fixed inset-0 z-[8000] flex justify-center items-end md:items-center p-0 md:p-6 bg-[#060608]/95 backdrop-blur-3xl overflow-hidden">
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#a855f7]/10 rounded-full blur-[150px] pointer-events-none"></div>
         <div class="absolute inset-0 z-0" onclick="window.closeVideoModal()"></div>
         
-        <div class="holo-card relative w-full h-full md:h-auto max-w-6xl md:rounded-[2rem] overflow-y-auto shadow-[0_0_80px_rgba(0,0,0,0.9)] border-white/10 animate-in fade-in zoom-in duration-300 no-scrollbar flex flex-col bg-[#0a0a0f] z-10">
+        <div class="holo-card relative w-full h-[95vh] md:h-auto max-h-full md:max-h-[90vh] max-w-6xl md:rounded-[2rem] overflow-y-auto shadow-[0_0_80px_rgba(0,0,0,0.9)] border-white/10 animate-in slide-in-from-bottom md:zoom-in duration-300 no-scrollbar flex flex-col bg-[#0a0a0f] z-10">
             <button onclick="window.closeVideoModal()" class="absolute top-4 right-4 md:top-6 md:right-6 z-50 w-10 h-10 md:w-12 md:h-12 bg-black/50 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-all group shadow-2xl">
                 <i class="fas fa-times text-white/70 group-hover:text-black text-lg md:text-xl"></i>
             </button>
@@ -313,7 +314,7 @@
                         <p id="modalMovieTagline" class="text-[#a855f7] italic text-sm md:text-base font-medium mb-4 drop-shadow-sm"></p>
 
                         <div class="flex items-center space-x-3 mb-5 md:mb-6 flex-wrap gap-y-2">
-                            <span class="text-green-400 font-black text-[11px] md:text-[12px] uppercase tracking-widest border border-green-400/30 px-2 py-0.5 rounded bg-green-400/10 shadow-sm" data-i18n="match">98% Match</span>
+                            <span class="text-green-400 font-black text-[11px] md:text-[12px] uppercase tracking-widest border border-green-400/30 px-2 py-0.5 rounded bg-green-400/10 shadow-sm" data-i18n="match">Recommandé</span>
                             <span id="modalMovieYear" class="text-white/80 font-bold text-[12px] md:text-[13px]"></span>
                             <span id="modalMovieRuntime" class="text-white/80 font-bold text-[12px] md:text-[13px] border-l border-white/20 pl-3"></span>
                             <span class="px-2 py-1 border border-white/20 rounded text-[10px] font-bold text-white uppercase tracking-widest bg-white/5 shadow-sm">HD 1080p</span>
@@ -322,14 +323,15 @@
                         <!-- Boutons d'Action (Lecture VRAI FILM / Trailer) -->
                         <div class="flex flex-wrap gap-3 mb-6" id="modalActionButtons">
                             <button id="btnPlayFullMovie" class="flex-1 sm:flex-none items-center justify-center flex gap-2 px-6 py-3 bg-white text-black rounded-xl text-[11px] md:text-[12px] font-black uppercase tracking-widest hover:bg-gray-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)] active:scale-95">
-                                <i class="fas fa-play text-sm"></i> <span data-i18n="playMovie">▶️ Regarder le Film</span>
+                                <i class="fas fa-play text-sm"></i> <span data-i18n="playMovie">Regarder le Film</span>
                             </button>
                             <button id="btnPlayTrailer" class="flex-1 sm:flex-none items-center justify-center flex gap-2 px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-[11px] md:text-[12px] font-bold text-white uppercase tracking-widest hover:bg-white/20 transition-all active:scale-95 backdrop-blur-md">
-                                <i class="fas fa-video text-sm"></i> <span data-i18n="trailer">🎬 Bande-annonce</span>
+                                <i class="fas fa-video text-sm"></i> <span data-i18n="trailer">Bande-annonce</span>
                             </button>
                         </div>
 
-                        <p id="modalMovieDesc" class="text-white/70 text-[13px] md:text-[15px] leading-relaxed text-justify font-medium max-h-40 overflow-y-auto no-scrollbar pr-2"></p>
+                        <!-- L'overflow a été retiré ici pour que tout le modal scrolle proprement -->
+                        <p id="modalMovieDesc" class="text-white/70 text-[13px] md:text-[15px] leading-relaxed text-justify font-medium pr-2"></p>
                         
                         <div class="mt-6 flex gap-6 md:gap-8 pt-6 border-t border-white/10">
                             <button onclick="window.toggleWatchlist()" id="watchlistBtn" class="flex flex-col items-center gap-2 text-white/50 hover:text-white transition-colors group">
@@ -441,8 +443,8 @@
                 kdrama: "K-Dramas & Séries Asiatiques",
                 fantasy: "Fantastique",
                 play: "Lecture", details: "Plus d'infos",
-                playMovie: "▶️ Regarder le Film",
-                trailer: "🎬 Bande-annonce",
+                playMovie: "Regarder le Film",
+                trailer: "Bande-annonce",
                 notFound: "Vidéo Non Disponible",
                 notFoundDesc: "Impossible de charger ce flux.",
                 match: "Recommandé",
@@ -470,8 +472,8 @@
                 kdrama: "K-Dramas & Asian TV",
                 fantasy: "Fantasy",
                 play: "Play", details: "More Info",
-                playMovie: "▶️ Play Movie",
-                trailer: "🎬 Trailer",
+                playMovie: "Play Movie",
+                trailer: "Trailer",
                 notFound: "Video Unavailable",
                 notFoundDesc: "Cannot load this stream.",
                 match: "Recommended",
@@ -645,6 +647,7 @@
                     
                     setupUserProfile(name, photo, email);
                     loadWatchlist();
+                    window.showToast(`Connexion sécurisée : ${name}`, 'success');
                     document.getElementById('authPage').classList.add('hidden');
                     launchApp();
                 } else {
@@ -686,7 +689,7 @@
 
         window.toggleWatchlist = async () => {
             if(!window.currentUserUid || !window.currentModalMovie) {
-                window.showToast("Erreur", "error");
+                window.showToast("Erreur d'identification", "error");
                 return;
             }
             const movie = window.currentModalMovie;
@@ -771,7 +774,7 @@
                 return `
                 <div class="relative flex-none movie-card-hover cursor-pointer rounded-xl overflow-hidden shadow-lg border border-white/5 bg-[#151520]" onclick="window.openVideoModal(${movie.id}, false)">
                     <img class="object-cover ${imgClass} transition-opacity duration-500" src="${imgSrc}" loading="lazy" alt="Poster" onload="this.style.opacity=1" style="opacity:0" draggable="false"/>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3 md:p-4">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3 md:p-4 pointer-events-none">
                         <p class="text-white font-black text-[10px] md:text-xs uppercase tracking-wider truncate drop-shadow-md">${titleStr}</p>
                         <div class="flex items-center gap-2 mt-1">
                             <span class="text-[#a855f7] font-bold text-[9px]"><i class="fas fa-star"></i> ${movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}</span>
@@ -827,7 +830,7 @@
             const heroBanner = document.getElementById('heroBanner');
             if(heroBanner) heroBanner.style.display = 'flex';
             
-            ['nav-home', 'nav-tv', 'nav-movie', 'mob-nav-home', 'mob-nav-tv', 'mob-nav-movie', 'mob-nav-watchlist'].forEach(id => {
+            ['nav-home', 'nav-tv', 'nav-movie', 'nav-watchlist', 'mob-nav-home', 'mob-nav-tv', 'mob-nav-movie', 'mob-nav-watchlist'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) {
                     el.classList.remove('text-[#a855f7]');
@@ -835,14 +838,12 @@
                     else el.classList.add('text-white');
                 }
             });
-            if(cat !== 'home' && cat !== 'watchlist') {
+            if(cat !== 'home') {
                 if(document.getElementById(`nav-${cat}`)) document.getElementById(`nav-${cat}`).classList.replace('text-white', 'text-[#a855f7]');
                 if(document.getElementById(`mob-nav-${cat}`)) document.getElementById(`mob-nav-${cat}`).classList.replace('text-white/50', 'text-[#a855f7]');
-            } else if (cat === 'home') {
+            } else {
                 if(document.getElementById('nav-home')) document.getElementById('nav-home').classList.replace('text-white', 'text-[#a855f7]');
                 if(document.getElementById('mob-nav-home')) document.getElementById('mob-nav-home').classList.replace('text-white/50', 'text-[#a855f7]');
-            } else if (cat === 'watchlist') {
-                if(document.getElementById('mob-nav-watchlist')) document.getElementById('mob-nav-watchlist').classList.replace('text-white/50', 'text-[#a855f7]');
             }
             
             window.scrollTo({top: 0, behavior: 'smooth'});
@@ -968,7 +969,7 @@
                     const meta = document.getElementById('heroMeta');
                     if(meta) {
                         meta.innerHTML = `
-                            <span class="text-green-400 border border-green-400/30 bg-green-400/10 px-2 py-0.5 rounded shadow-sm" data-i18n="match">98% Match</span>
+                            <span class="text-green-400 border border-green-400/30 bg-green-400/10 px-2 py-0.5 rounded shadow-sm" data-i18n="match">${t.match}</span>
                             <span>${(currentHeroMovie.release_date || currentHeroMovie.first_air_date || '').substring(0,4)}</span>
                             <span><i class="fas fa-star text-[#a855f7]"></i> ${currentHeroMovie.vote_average?.toFixed(1)}</span>
                         `;
@@ -1001,7 +1002,7 @@
                     rowsConfig.push(
                         { title: "Séries Tendances", url: `/trending/tv/week?api_key=${API_KEY}&language=${langCode}`, large: true },
                         { title: t.kdrama, url: `/discover/tv?api_key=${API_KEY}&language=${langCode}&with_original_language=ko`, large: false },
-                        { title: t.animation, url: `/discover/tv?api_key=${API_KEY}&language=${langCode}&with_genres=16&with_original_language=ja`, large: false }, // Anime
+                        { title: t.animation, url: `/discover/tv?api_key=${API_KEY}&language=${langCode}&with_genres=16&with_original_language=ja`, large: false },
                         { title: "Les Mieux Notées", url: `/tv/top_rated?api_key=${API_KEY}&language=${langCode}`, large: false },
                         { title: "Action & Aventure", url: `/discover/tv?api_key=${API_KEY}&language=${langCode}&with_genres=10759`, large: false },
                         { title: "Comédies", url: `/discover/tv?api_key=${API_KEY}&language=${langCode}&with_genres=35`, large: false },
@@ -1042,6 +1043,7 @@
             const isTV = movie.first_air_date !== undefined;
             const typeStr = isTV ? 'tv' : 'movie';
             const langCode = window.currentLang === 'fr' ? 'fr-FR' : 'en-US';
+            const t = window.i18n[window.currentLang];
             
             const modalMovieTitle = document.getElementById('modalMovieTitle');
             if (modalMovieTitle) modalMovieTitle.innerText = movie.title || movie.name || movie.original_name;
@@ -1161,22 +1163,23 @@
                 
                 window.attachDragToScroll();
 
-                // LECTURE DU FILM COMPLET (API EXTERNE SECRÈTE)
+                // LECTURE DU FILM COMPLET AVEC SANDBOX
                 const playFullMovieFn = () => {
                     if (vContainer) {
                         vContainer.innerHTML = `
                             <iframe
                                 class="absolute inset-0 w-full h-full"
-                                src="https://vidsrc.xyz/embed/${typeStr}?tmdb=${movieId}"
+                                src="https://vidsrc.to/embed/${typeStr}/${movieId}"
                                 frameBorder="0"
+                                sandbox="allow-same-origin allow-scripts allow-forms allow-presentation"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen
                             ></iframe>`;
-                        window.showToast("Démarrage du flux complet (Vidsrc API)", "success");
+                        window.showToast("Démarrage du flux complet sans pop-ups", "success");
                     }
                 };
 
-                // LECTURE BANDE-ANNONCE (YOUTUBE)
+                // LECTURE BANDE-ANNONCE (YOUTUBE PRO SANS LOGO)
                 const playTrailerFn = async () => {
                     let url = `${BASE_URL}/${typeStr}/${movie.id}/videos?api_key=${API_KEY}&language=${langCode}`;
                     let res = await fetchJSON(url);
@@ -1195,14 +1198,13 @@
                         if (trailerKey) {
                             vContainer.innerHTML = `
                                 <iframe
-                                    class="absolute inset-0 w-full h-full"
-                                    src="https://www.youtube.com/embed/${trailerKey}?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3"
+                                    class="absolute inset-0 w-full h-full pointer-events-none"
+                                    src="https://www.youtube-nocookie.com/embed/${trailerKey}?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&playsinline=1"
                                     frameBorder="0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowFullScreen
                                 ></iframe>`;
                         } else {
-                            const t = window.i18n[window.currentLang];
                             vContainer.innerHTML = `
                                 <div class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-t from-[#15092a] to-black p-8 text-center border-t border-[#a855f7]/20">
                                     <i class="fas fa-video-slash text-5xl md:text-6xl text-white/10 mb-4 md:mb-6"></i>
@@ -1213,7 +1215,6 @@
                     }
                 };
 
-                // Attacher les events aux boutons
                 const btnPlayFull = document.getElementById('btnPlayFullMovie');
                 const btnPlayTrailer = document.getElementById('btnPlayTrailer');
                 
@@ -1224,7 +1225,6 @@
                     btnPlayTrailer.onclick = playTrailerFn;
                 }
 
-                // Affichage Initial dans le container
                 if (playImmediately) {
                     playFullMovieFn();
                 } else {
