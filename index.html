@@ -1,1612 +1,1097 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#060608">
-    <title>LevelMovie Premium</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LevelUp — L'Écosystème Premium</title>
 
-    <!-- FAVICON LEVEL IA -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'><path fill='%23a855f7' d='M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z'/></svg>" type="image/svg+xml">
+<!-- Icône du navigateur -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'><path fill='%23a855f7' d='M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z'/></svg>" type="image/svg+xml">
 
-    <!-- Polices et Icônes -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<!-- EmailJS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
-    <style>
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #060608; 
-            color: white;
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
-            /* Marges PWA pour iPhone/Android */
-            padding-bottom: env(safe-area-inset-bottom);
-            padding-top: env(safe-area-inset-top);
-        }
-        .bg-main { 
-            background: radial-gradient(circle at 50% 0%, #15092a 0%, #060608 80%); 
-            min-height: 100vh;
-        }
-        .glass { 
-            background: rgba(20, 20, 25, 0.4); 
-            backdrop-filter: blur(25px); 
-            -webkit-backdrop-filter: blur(25px); 
-            border: 1px solid rgba(255, 255, 255, 0.05); 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-        }
-        .holo-card { 
-            background: linear-gradient(135deg, rgba(30,20,45,0.6) 0%, rgba(10,10,15,0.8) 100%); 
-            border: 1px solid rgba(168,85,247,0.2); 
-            box-shadow: inset 0 0 30px rgba(168,85,247,0.05), 0 30px 60px rgba(0,0,0,0.8); 
-            backdrop-filter: blur(30px); 
-            -webkit-backdrop-filter: blur(30px); 
-        }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .splash-text { 
-            font-size: 2.2rem; font-weight: 800; letter-spacing: 0.1em; 
-            opacity: 0; position: absolute; transform: scale(0.85); filter: blur(15px); 
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); text-align: center; 
-        }
-        .splash-text.active { opacity: 1; transform: scale(1); filter: blur(0px); }
-        .splash-text.exit { opacity: 0; transform: scale(1.2); filter: blur(30px); }
+<style>
+:root {
+  --bg-base: #030303;
+  --bg-surface: #0a0a0a;
+  --bg-surface-elevated: #121212;
+  --border-light: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --text-main: #ffffff;
+  --text-muted: #a1a1aa;
+  --text-dim: #71717a;
+  --purple-main: #a855f7;
+  --purple-glow: rgba(168, 85, 247, 0.15);
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'Plus Jakarta Sans', monospace;
+}
 
-        .row-container { 
-            scroll-behavior: smooth; 
-            cursor: grab;
-        }
-        .row-container:active { cursor: grabbing; }
-        
-        .movie-card-hover { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s; }
-        .movie-card-hover:hover { transform: scale(1.06) translateY(-5px); z-index: 40; box-shadow: 0 20px 40px rgba(0,0,0,0.9); }
-        
-        .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        
-        .markdown-pro {
-            font-size: 14px;
-            line-height: 1.8;
-            color: rgba(255,255,255,0.75);
-        }
-        .markdown-pro strong {
-            color: #fff;
-            font-weight: 700;
-        }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; background-color: var(--bg-base); }
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-base);
+  color: var(--text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
 
-        #searchContainer { transition: width 0.4s ease, opacity 0.4s ease; }
-    </style>
+/* Background Elements */
+.glow-bg { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, var(--purple-glow) 0%, transparent 70%); top: -200px; left: 50%; transform: translateX(-50%); z-index: -1; pointer-events: none; filter: blur(60px); }
+
+/* Typography & Utils */
+h1, h2, h3, h4 { letter-spacing: -0.03em; font-weight: 700; line-height: 1.1; font-family: var(--font-display); }
+p { color: var(--text-muted); font-size: 1.05rem; }
+.text-purple { color: var(--purple-main); }
+.badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 100px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-light); font-size: 0.8rem; font-weight: 500; color: var(--text-muted); }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; text-decoration: none; transition: all 0.2s ease; cursor: pointer; border: 1px solid transparent; }
+.btn-primary { background: var(--text-main); color: var(--bg-base); box-shadow: 0 4px 14px rgba(255,255,255,0.1); }
+.btn-primary:hover { background: #e4e4e7; transform: translateY(-1px); }
+.btn-secondary { background: rgba(255,255,255,0.03); color: var(--text-main); border-color: var(--border-light); backdrop-filter: blur(10px); }
+.btn-secondary:hover { background: rgba(255,255,255,0.08); border-color: var(--border-strong); }
+
+.level-star { fill: url(#purple-grad); filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.6)); animation: starPulse 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+@keyframes starPulse { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(168,85,247,0.5)); } 50% { transform: scale(1.05); filter: drop-shadow(0 0 16px rgba(168,85,247,0.8)); } }
+
+/* Nav */
+nav { position: fixed; top: 0; width: 100%; z-index: 1000; display: flex; align-items: center; justify-content: space-between; padding: 16px 5%; background: rgba(3,3,3,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); transition: all 0.3s ease; }
+.nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.4rem; color: var(--text-main); text-decoration: none; letter-spacing: -0.04em; font-family: var(--font-display); }
+.nav-brand svg { width: 24px; height: 24px; }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover { color: var(--text-main); }
+.nav-actions { display: flex; gap: 12px; }
+
+/* Section Base */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+.section { padding: 140px 0; }
+.section-header { text-align: center; max-width: 700px; margin: 0 auto 80px; }
+.section-header h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 16px; }
+
+/* Hero */
+.hero { padding: 180px 0 100px; text-align: center; position: relative; }
+.hero h1 { font-size: clamp(3rem, 7vw, 5.5rem); margin: 24px 0; background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { font-size: 1.25rem; max-width: 650px; margin: 0 auto 40px; }
+.hero-cta { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+/* Marquee */
+.marquee-container { padding: 40px 0; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); overflow: hidden; white-space: nowrap; position: relative; background: rgba(255,255,255,0.01); }
+.marquee-container::before, .marquee-container::after { content: ''; position: absolute; top: 0; width: 150px; height: 100%; z-index: 2; }
+.marquee-container::before { left: 0; background: linear-gradient(to right, var(--bg-base), transparent); }
+.marquee-container::after { right: 0; background: linear-gradient(to left, var(--bg-base), transparent); }
+.marquee-content { display: inline-flex; gap: 60px; animation: scroll 30s linear infinite; }
+.marquee-item { display: flex; align-items: center; gap: 12px; font-weight: 600; color: var(--text-muted); font-size: 1.1rem; }
+.marquee-item i { color: var(--text-dim); }
+@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* Grid Features */
+.bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.bento-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.bento-card { background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 24px; padding: 40px; display: flex; flex-direction: column; transition: all 0.3s ease; position: relative; overflow: hidden; }
+.bento-card:hover { border-color: var(--border-strong); background: var(--bg-surface-elevated); }
+.bento-card.large { grid-column: span 2; }
+.bento-icon { width: 48px; height: 48px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-light); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
+.bento-card h3 { font-size: 1.3rem; margin-bottom: 12px; font-family: var(--font-display); }
+
+/* Modes Hierarchy */
+.modes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.mode-group { background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 24px; padding: 40px; }
+.mode-group-header { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border-light); }
+.mode-group-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+.mode-group-title h3 { font-size: 1.5rem; margin-bottom: 4px; font-family: var(--font-display); }
+.mode-item { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+.mode-item:last-child { margin-bottom: 0; }
+.mode-item i { margin-top: 4px; color: var(--text-muted); width: 20px; text-align: center; }
+.mode-item-content h4 { font-size: 1.05rem; margin-bottom: 4px; color: #fff; font-family: var(--font-sans); }
+.mode-item-content p { font-size: 0.9rem; margin: 0; }
+
+/* AI DNA Generator (Live Demo) */
+.dna-wrapper { display: flex; justify-content: center; margin-top: 40px; }
+.dna-card { background: var(--bg-surface); border: 1px solid var(--purple-main); border-radius: 24px; padding: 40px; width: 100%; max-width: 600px; text-align: center; box-shadow: 0 20px 40px rgba(168,85,247,0.15); position: relative; overflow: hidden; }
+.dna-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, transparent, var(--purple-main), transparent); }
+.dna-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border-strong); padding: 16px; border-radius: 12px; color: #fff; font-size: 1rem; margin-bottom: 20px; outline: none; transition: border-color 0.2s; font-family: var(--font-sans); }
+.dna-input:focus { border-color: var(--purple-main); }
+.dna-btn { width: 100%; padding: 16px; font-size: 1rem; cursor: pointer; }
+.dna-result { margin-top: 24px; padding: 20px; background: rgba(168,85,247,0.1); border-radius: 12px; border: 1px solid rgba(168,85,247,0.2); color: #e4e4e7; font-size: 0.95rem; line-height: 1.6; text-align: left; }
+
+/* Bot Widget */
+.bot-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: var(--purple-main); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4); z-index: 9999; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: none; outline: none; }
+.bot-widget-btn:hover { transform: scale(1.1); }
+.bot-widget-btn .fa-times { display: none; }
+.bot-widget-btn.open .fa-comment-dots { display: none; }
+.bot-widget-btn.open .fa-times { display: block; }
+
+.bot-window { position: fixed; bottom: 110px; right: 30px; width: 380px; height: 600px; max-height: calc(100vh - 140px); background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); z-index: 9998; display: flex; flex-direction: column; overflow: hidden; opacity: 0; pointer-events: none; transform: translateY(20px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.bot-window.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.bot-header { padding: 16px 20px; border-bottom: 1px solid var(--border-light); background: rgba(255,255,255,0.02); display: flex; align-items: center; gap: 12px; }
+.bot-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--purple-glow); display: flex; align-items: center; justify-content: center; color: var(--purple-main); border: 1px solid rgba(168,85,247,0.3); }
+.bot-info h5 { margin: 0; font-size: 0.9rem; color: #fff; font-family: var(--font-sans); }
+.bot-info span { font-size: 0.7rem; color: #4ade80; display: flex; align-items: center; gap: 4px; }
+.bot-info span::before { content: ''; width: 6px; height: 6px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 6px #4ade80; }
+.bot-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; scrollbar-width: none; }
+.bot-messages::-webkit-scrollbar { display: none; }
+.bot-bubble { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 0.85rem; line-height: 1.5; word-wrap: break-word; }
+.bot-bubble.ai { background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.2); color: #e4e4e7; align-self: flex-start; border-top-left-radius: 4px; }
+.bot-bubble.user { background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); color: #fff; align-self: flex-end; border-top-right-radius: 4px; }
+.bot-footer { padding: 16px 20px; border-top: 1px solid var(--border-light); background: var(--bg-surface); }
+.bot-input-area { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-light); padding: 8px 8px 8px 16px; border-radius: 100px; }
+.bot-input { flex: 1; background: transparent; border: none; color: #fff; font-family: var(--font-sans); font-size: 16px; outline: none; }
+.bot-send { width: 32px; height: 32px; border-radius: 50%; background: #fff; color: #000; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
+.bot-typing { display: flex; gap: 4px; align-items: center; height: 20px; }
+.bot-typing span { width: 6px; height: 6px; background: var(--purple-main); border-radius: 50%; animation: typing 1.4s infinite; opacity: 0.3; }
+.bot-typing span:nth-child(2) { animation-delay: 0.2s; }
+.bot-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
+
+/* --- NOVEAUX STYLES POUR LE MODAL DE CLÉ --- */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  z-index: 10000; display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: all 0.3s ease; padding: 20px;
+}
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal-box {
+  background: radial-gradient(circle at 50% 0%, #150926 0%, #050505 100%);
+  border: 1px solid var(--border-light); border-radius: 24px;
+  width: 100%; max-width: 420px; position: relative; overflow: hidden;
+  transform: translateY(20px) scale(0.95); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
+}
+.modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
+.modal-close {
+  position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border-light); width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; color: var(--text-muted);
+  cursor: pointer; transition: all 0.2s; z-index: 10;
+}
+.modal-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+.modal-content { padding: 40px 30px; text-align: center; }
+.modal-header { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 30px; }
+.modal-header i { font-size: 2rem; color: var(--purple-main); }
+.modal-header h3 { font-size: 1.5rem; margin: 0; }
+.modal-header p { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; color: var(--text-dim); margin: 0; }
+
+.btn-auth-google {
+  width: 100%; background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid var(--border-light); padding: 16px; border-radius: 16px;
+  font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 12px;
+  cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(10px);
+}
+.btn-auth-google:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--border-strong); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+.btn-auth-google svg { width: 22px; height: 22px; }
+
+.btn-modal-primary {
+  width: 100%; background: linear-gradient(135deg, var(--purple-main) 0%, #7e22ce 100%);
+  color: #fff; border: none; padding: 16px; border-radius: 16px; font-weight: 800;
+  font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer;
+  transition: transform 0.2s; box-shadow: 0 10px 25px -5px rgba(168, 85, 247, 0.4);
+}
+.btn-modal-primary:hover { transform: translateY(-2px); }
+.btn-modal-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+.key-display-box {
+  background: rgba(0,0,0,0.4); border: 1px solid rgba(168,85,247,0.3); padding: 20px;
+  border-radius: 16px; margin: 20px 0; position: relative; overflow: hidden;
+}
+.key-text { font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: #d8b4fe; letter-spacing: 0.1em; }
+.blur-secure { filter: blur(12px); user-select: none; opacity: 0.3; }
+.blur-overlay-active {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center; color: var(--text-muted);
+  font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+}
+
+.cooldown-box {
+  background: rgba(0,0,0,0.6); border: 1px solid rgba(168,85,247,0.2); padding: 20px;
+  border-radius: 16px; display: inline-block; margin: 16px auto 0; box-shadow: 0 0 20px rgba(168,85,247,0.1);
+}
+.cooldown-timer { font-family: var(--font-mono); font-size: 1.8rem; font-weight: 900; color: #fff; letter-spacing: 0.1em; text-shadow: 0 0 10px rgba(168,85,247,0.5); }
+
+.user-modal-bar {
+  display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03);
+  padding: 12px 16px; border-radius: 12px; margin-bottom: 24px; border: 1px solid var(--border-light);
+}
+.user-modal-info { display: flex; align-items: center; gap: 12px; text-align: left; }
+.user-modal-info img { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(168,85,247,0.5); }
+.user-modal-name { font-size: 0.8rem; font-weight: 700; color: #fff; }
+.user-modal-status { font-size: 0.6rem; color: #4ade80; text-transform: uppercase; font-weight: 800; letter-spacing: 0.1em; }
+.btn-logout { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; transition: color 0.2s; }
+.btn-logout:hover { color: #ef4444; }
+
+.toast-notification {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: #fff; color: #000; padding: 12px 24px; border-radius: 100px;
+  font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
+  opacity: 0; transition: all 0.3s ease; z-index: 10001; pointer-events: none;
+}
+.toast-notification.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.hidden { display: none !important; }
+.reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* Footer */
+footer { border-top: 1px solid var(--border-light); padding: 80px 0 40px; margin-top: 80px; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+.footer-brand p { font-size: 0.9rem; max-width: 300px; margin-top: 16px; }
+.footer-links h5 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-main); margin-bottom: 20px; }
+.footer-links a { display: block; color: var(--text-muted); text-decoration: none; font-size: 0.95rem; margin-bottom: 12px; transition: color 0.2s; }
+.footer-links a:hover { color: var(--text-main); }
+.footer-bottom { border-top: 1px solid var(--border-light); padding-top: 32px; display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-dim); }
+
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .bento-grid, .bento-grid-2 { grid-template-columns: 1fr; }
+  .bento-card.large { grid-column: span 1; }
+  .modes-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+}
+
+@media (max-width: 768px) {
+  .bot-window { width: calc(100vw - 40px); right: 20px; bottom: 90px; height: 480px; }
+  .bot-widget-btn { right: 20px; bottom: 20px; }
+}
+</style>
 </head>
-<body class="bg-main selection:bg-[#a855f7] selection:text-white">
+<body>
 
-    <div id="toastContainer" class="fixed top-4 right-4 md:top-6 md:right-6 z-[9999] flex flex-col gap-3 pointer-events-none items-end"></div>
+<svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
+  <linearGradient id="purple-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#d8b4fe"/>
+    <stop offset="100%" stop-color="#a855f7"/>
+  </linearGradient>
+  <linearGradient id="blue-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#93c5fd"/>
+    <stop offset="100%" stop-color="#3b82f6"/>
+  </linearGradient>
+  <linearGradient id="yellow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#fde047"/>
+    <stop offset="100%" stop-color="#eab308"/>
+  </linearGradient>
+  <linearGradient id="pink-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#fbcfe8"/>
+    <stop offset="100%" stop-color="#ec4899"/>
+  </linearGradient>
+  <linearGradient id="orange-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#fed7aa"/>
+    <stop offset="100%" stop-color="#f97316"/>
+  </linearGradient>
+  <linearGradient id="green-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#86efac"/>
+    <stop offset="100%" stop-color="#22c55e"/>
+  </linearGradient>
+</svg>
 
-    <!-- 1. SPLASH SCREEN -->
-    <div id="splashScreen" class="fixed inset-0 z-[9999] bg-[#060608] flex items-center justify-center flex-col transition-opacity duration-500">
-        <div id="splash1" class="splash-text">
-            <span class="text-white">Level</span><span class="text-[#a855f7]">Movie</span>
-        </div>
-        <div id="splash2" class="splash-text flex flex-col items-center justify-center">
-            <span class="text-white font-black tracking-[0.6em] text-2xl uppercase">LevelUp</span>
-            <span class="text-[10px] font-bold tracking-[0.5em] text-[#a855f7] mt-4 uppercase">Cinéma Premium</span>
-        </div>
+<div class="glow-bg"></div>
+
+<!-- NAVIGATION -->
+<nav id="navbar">
+  <a href="#" class="nav-brand">
+    <svg class="level-star" viewBox="0 0 576 512" style="width:24px; height:24px; animation:none;"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+    LEVELUP
+  </a>
+  <div class="nav-links">
+    <a href="#applications">Applications</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#modes">Personnalités IA</a>
+    <a href="#demo-dna">Démo Live ✨</a>
+    <a href="#securite">Sécurité</a>
+  </div>
+  <div class="nav-actions">
+    <!-- Ouvre la Modale -->
+    <a href="#" class="btn btn-primary btn-get-key" style="padding: 10px 18px; font-size: 0.85rem;"><i class="fas fa-key"></i> Obtenir la Clé</a>
+  </div>
+</nav>
+
+<!-- HERO SECTION -->
+<header class="hero container reveal">
+  <div class="badge mb-6"><i class="fas fa-shield-check text-purple"></i> Écosystème 100% Gratuit & Privé</div>
+  <h1>L'Intelligence Artificielle.<br>Adaptée à votre ADN.</h1>
+  <p>Une infrastructure complète et une suite d'applications propulsées par Gemini 2.5 Flash. Sécurisé par une clé d'accès unique.</p>
+  <div class="hero-cta">
+    <!-- Ouvre la Modale -->
+    <a href="#" class="btn btn-primary btn-get-key" style="font-size: 1.1rem; padding: 16px 32px;"><i class="fas fa-key"></i> Obtenir ma clé d'accès</a>
+    <a href="#applications" class="btn btn-secondary">Découvrir les applications</a>
+  </div>
+</header>
+
+<!-- MARQUEE -->
+<div class="marquee-container">
+  <div class="marquee-content">
+    <div class="marquee-item"><i class="fas fa-bolt"></i> Moteur Gemini 2.5 Flash</div>
+    <div class="marquee-item"><i class="fas fa-gift"></i> Totalement Gratuit</div>
+    <div class="marquee-item"><i class="fas fa-cloud"></i> Stockage Hybride Cloud/Local</div>
+    <div class="marquee-item"><i class="fas fa-lock"></i> Sécurité par Clé Unique</div>
+    <div class="marquee-item"><i class="fas fa-bolt"></i> Moteur Gemini 2.5 Flash</div>
+    <div class="marquee-item"><i class="fas fa-gift"></i> Totalement Gratuit</div>
+    <div class="marquee-item"><i class="fas fa-cloud"></i> Stockage Hybride Cloud/Local</div>
+    <div class="marquee-item"><i class="fas fa-lock"></i> Sécurité par Clé Unique</div>
+  </div>
+</div>
+
+<!-- APPLICATIONS (NOUVELLE SECTION) -->
+<section class="section container" id="applications">
+  <div class="section-header reveal">
+    <h2 class="text-purple">L'Écosystème.</h2>
+    <p>Une seule clé pour les gouverner toutes. Récupérez votre accès unique et déverrouillez l'intégralité de nos applications actuelles et futures.</p>
+  </div>
+  <div class="bento-grid">
+    <!-- App 1: LevelUp IA -->
+    <div class="bento-card reveal" style="border-color: var(--purple-main); background: linear-gradient(180deg, rgba(168,85,247,0.05) 0%, transparent 100%);">
+      <div class="bento-icon" style="background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); color: var(--purple-main);">
+        <i class="fas fa-brain text-2xl"></i>
+      </div>
+      <h3>LevelUp IA</h3>
+      <p style="margin-bottom: 20px;">L'assistant IA premium avec mémoire persistante, personnalités multiples et analyse web en direct.</p>
+      <a href="#" class="btn btn-primary btn-get-key" style="margin-top: auto; align-self: flex-start; font-size: 0.85rem;"><i class="fas fa-key"></i> Obtenir la Clé</a>
+    </div>
+    
+    <!-- App 2: Placeholder -->
+    <div class="bento-card reveal" style="opacity: 0.6; border-style: dashed;">
+      <div class="bento-icon"><i class="fas fa-lock text-xl"></i></div>
+      <h3>Application #2</h3>
+      <p>Bientôt disponible. Le lien sera ajouté ici très prochainement par l'équipe.</p>
     </div>
 
-    <!-- 2. AUTHENTIFICATION -->
-    <div id="authPage" class="hidden flex items-center justify-center p-4 sm:p-8 fixed inset-0 z-[5000] bg-main">
-        <button onclick="window.handleLangToggle()" class="absolute top-6 right-6 flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-full transition-all text-white/70 hover:text-white text-[11px] font-bold uppercase tracking-widest backdrop-blur-md z-50 shadow-lg">
-            <i class="fas fa-globe text-[#a855f7]"></i> <span id="authLangText">EN</span>
+    <!-- App 3: Placeholder -->
+    <div class="bento-card reveal" style="opacity: 0.6; border-style: dashed;">
+      <div class="bento-icon"><i class="fas fa-lock text-xl"></i></div>
+      <h3>Application #3</h3>
+      <p>Bientôt disponible. Le lien sera ajouté ici très prochainement par l'équipe.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE (BENTO GRID) -->
+<section class="section container" id="architecture">
+  <div class="section-header reveal">
+    <h2>Architecture Technique.</h2>
+    <p>Des fondations robustes pensées pour la confidentialité et l'efficacité.</p>
+  </div>
+  <div class="bento-grid">
+    <div class="bento-card large reveal">
+      <div class="bento-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#blue-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+      <h3>Analyse Multimodale & Web Direct</h3>
+      <p>Le moteur Gemini 2.5 Flash intégré permet à l'écosystème LevelUp de lire nativement vos documents PDF denses, d'analyser vos images, et de scraper en temps réel n'importe quel lien Web que vous lui fournissez. Le tout sourcé et vérifié.</p>
+    </div>
+    <div class="bento-card reveal">
+      <div class="bento-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#purple-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg></div>
+      <h3>Mémoire IA Globale</h3>
+      <p>L'IA retient votre contexte (métier, âge, objectifs) et l'applique silencieusement en toile de fond à toutes vos conversations futures.</p>
+    </div>
+    <div class="bento-card reveal">
+      <div class="bento-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#blue-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
+      <h3>Stockage Hybride</h3>
+      <p>Vos données sont synchronisées sur le Cloud Firebase. En cas de dépassement de quota, le système bascule automatiquement en local.</p>
+    </div>
+    <div class="bento-card large reveal">
+      <div class="bento-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#green-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <h3>Sécurité Renforcée & Code PIN</h3>
+      <p>Votre intimité est primordiale. Vous pouvez configurer un Code PIN à 4 chiffres directement dans l'application pour verrouiller l'interface complète ou simplement masquer l'affichage de votre clé de licence.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MODES (HIERARCHY) -->
+<section class="section container" id="modes">
+  <div class="section-header reveal">
+    <h2>L'Écosystème des Personnalités.</h2>
+    <p>Une seule application, plusieurs sous-réseaux spécialisés. Passez de l'un à l'autre depuis le menu de l'application selon votre besoin du moment.</p>
+  </div>
+  <div class="modes-grid">
+    <div class="mode-group reveal">
+      <div class="mode-group-header">
+        <div class="mode-group-icon" style="background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.3);">
+          <svg class="level-star" viewBox="0 0 576 512" style="width:28px; height:28px; filter:none; animation:none;"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+        </div>
+        <div class="mode-group-title">
+          <h3>Mode Auto</h3>
+          <p>Le pilier de la productivité.</p>
+        </div>
+      </div>
+      <div class="mode-item"><i class="fas fa-robot"></i><div class="mode-item-content"><h4>Normal</h4><p>Approche intelligente, chill et professionnelle.</p></div></div>
+      <div class="mode-item"><i class="fas fa-briefcase"></i><div class="mode-item-content"><h4>Travail</h4><p>Vision corporate, stratégie d'entreprise et gestion.</p></div></div>
+      <div class="mode-item"><i class="fas fa-chart-line"></i><div class="mode-item-content"><h4>Expert</h4><p>Réponses pointues, analytiques et mathématiques.</p></div></div>
+    </div>
+    <div class="mode-group reveal" style="transition-delay: 0.1s;">
+      <div class="mode-group-header">
+        <div class="mode-group-icon" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3);">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="url(#yellow-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L9 15"/><path d="M15 3H21V9"/><path d="M11 10C9 10 7 11 5 12C3 13 2 15 2 17C2 19 4 21 6 21C8 21 10 20 11 18C12 16 13 14 13 12L11 10Z"/></svg>
+        </div>
+        <div class="mode-group-title">
+          <h3>Mode Thiab's</h3>
+          <p>Développement personnel extrême.</p>
+        </div>
+      </div>
+      <div class="mode-item"><i class="fas fa-fire"></i><div class="mode-item-content"><h4>Motivation</h4><p>Inspiration pure pour exploser vos objectifs.</p></div></div>
+      <div class="mode-item"><i class="fas fa-dumbbell"></i><div class="mode-item-content"><h4>Coach</h4><p>Suivi psychologique et Master Coaching.</p></div></div>
+      <div class="mode-item"><i class="fas fa-stopwatch"></i><div class="mode-item-content"><h4>Anti-Procrastination</h4><p>Recadrage implacable.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- GÉNÉRATEUR ADN IA (Live Demo) -->
+<section class="section container" id="demo-dna" style="padding-top: 40px;">
+  <div class="section-header reveal">
+    <h2 class="text-purple">Découvrez votre ADN IA ✨</h2>
+    <p>Testez la puissance de recommandation de LevelUp en direct. Décrivez votre état d'esprit, et notre moteur vous dira quelle personnalité est faite pour vous aujourd'hui.</p>
+  </div>
+  <div class="dna-wrapper reveal">
+    <div class="dna-card">
+      <i class="fas fa-magic text-purple" style="font-size: 2rem; margin-bottom: 20px;"></i>
+      <h3 style="font-size: 1.3rem; margin-bottom: 20px;">Qui êtes-vous aujourd'hui ?</h3>
+      <input type="text" id="dnaInput" class="dna-input" placeholder="Ex: Étudiant stressé par les partiels..." autocomplete="off">
+      <button id="dnaBtn" class="btn btn-primary dna-btn">Analyser mon profil ✨</button>
+      <div id="dnaResult" class="dna-result hidden"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SÉCURITÉ & RÈGLES -->
+<section class="section container" id="securite">
+  <div class="section-header reveal">
+    <h2>Transparence & Engagements.</h2>
+    <p>En utilisant l'écosystème LevelUp, vous acceptez nos principes de fonctionnement conçus pour protéger la plateforme.</p>
+  </div>
+  <div class="bento-grid-2">
+    <div class="bento-card reveal">
+      <div class="bento-icon" style="background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.3);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#green-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <h3>Localisation Contextuelle</h3>
+      <p>Pour vous offrir une précision chirurgicale (météo, recommandations locales), l'IA requiert un accès à votre position géographique approximative. Ces données servent uniquement à contextualiser vos requêtes et ne sont jamais revendues.</p>
+    </div>
+    <div class="bento-card reveal" style="transition-delay: 0.1s;">
+      <div class="bento-icon" style="background: rgba(96,165,250,0.1); border-color: rgba(96,165,250,0.3);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#blue-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+      <h3>Protection & Modération</h3>
+      <p>Vos sessions sont chiffrées et sécurisées. Toutefois, notre équipe se réserve le droit de consulter vos conversations en cas de problème technique majeur, de litige, ou de signalement.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="container">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="nav-brand" style="margin-bottom: 12px;">
+        <svg class="level-star" viewBox="0 0 576 512" style="width:20px; height:20px; animation:none; filter:none;"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+        LEVELUP
+      </div>
+      <p>L'Écosystème d'applications Premium. Modèle 100% Gratuit et Sécurisé.</p>
+    </div>
+    <div class="footer-links">
+      <h5>Plateforme</h5>
+      <a href="#applications">Nos Applications</a>
+      <a href="#" class="btn-get-key">Obtenir ma Clé</a>
+    </div>
+    <div class="footer-links">
+      <h5>Plateforme</h5>
+      <a href="https://levelupia.vercel.app">Lancer l'Application</a>
+      <a href="#" class="btn-get-key">Générateur de Clé</a>
+    </div>
+    <div class="footer-links">
+      <h5>Ressources & Légal</h5>
+      <a href="#modes">Les Modes IA</a>
+      <a href="#securite">Conditions d'Utilisation</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 LevelUp Ecosystem.</span>
+  </div>
+</footer>
+
+<!-- LIVE AI ASSISTANT WIDGET -->
+<button class="bot-widget-btn" id="botToggleBtn" aria-label="Ouvrir l'assistant">
+  <i class="fas fa-comment-dots"></i>
+  <i class="fas fa-times"></i>
+</button>
+
+<div class="bot-window" id="botWindow">
+  <div class="bot-header">
+    <div class="bot-avatar">
+      <svg class="level-star" viewBox="0 0 576 512" style="width:18px; height:18px; filter:none; animation:none;"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+    </div>
+    <div class="bot-info">
+      <h5>Assistant LevelUp</h5>
+      <span>En ligne (Mode Auto)</span>
+    </div>
+  </div>
+  <div class="bot-messages" id="botMessages">
+    <div class="bot-bubble ai">
+      Salut ! Je suis l'Assistant de l'écosystème LevelUp. Tu veux savoir comment obtenir une clé d'accès globale pour nos applications ?
+    </div>
+  </div>
+  <div class="bot-footer">
+    <div class="bot-input-area">
+      <input type="text" id="botInput" class="bot-input" placeholder="Posez votre question..." autocomplete="off">
+      <button id="botSendBtn" class="bot-send"><i class="fas fa-arrow-up"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE GÉNÉRATION DE CLÉ -->
+<div class="modal-overlay" id="keyModalOverlay">
+  <div class="modal-box">
+    <div class="modal-close" id="closeModalBtn"><i class="fas fa-times"></i></div>
+    
+    <div class="modal-content">
+      
+      <!-- Vue 1: Login -->
+      <div id="viewLogin" class="modal-view">
+        <div class="modal-header">
+          <svg class="level-star" viewBox="0 0 576 512" style="width:54px; height:54px; margin-bottom: 8px;"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+          <h3>Accès Sécurisé</h3>
+          <p>Contrôle d'identité LevelUp</p>
+        </div>
+        <p style="font-size: 0.95rem; margin-bottom: 32px; color: var(--text-muted);">Connectez-vous pour générer votre clé d'accès unique et déverrouiller toutes nos applications.</p>
+        <button id="googleLoginBtn" class="btn-auth-google">
+          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continuer avec Google
         </button>
+      </div>
 
-        <div class="w-full max-w-sm text-center max-h-[90vh] overflow-y-auto no-scrollbar py-4 relative glass p-8 rounded-[2rem] border border-white/5 shadow-[0_0_50px_rgba(168,85,247,0.15)]">
-            <h1 class="text-3xl font-black tracking-widest mb-10 shrink-0 drop-shadow-md">
-                <span class="text-white">Level</span><span class="text-[#a855f7]">Movie</span>
-            </h1>
-            
-            <div class="space-y-6 shrink-0 animate-in fade-in duration-300 w-full relative pt-2">
-                <p class="text-[11px] font-bold text-[#a855f7] uppercase tracking-[0.1em] mb-2 flex items-center justify-center gap-2">
-                    <i class="fas fa-shield-alt text-[12px]"></i> <span data-i18n="enterKey">Entrez votre Clé d'Accès</span>
-                </p>
-                <input 
-                    type="text" 
-                    id="accessKeyInput"
-                    placeholder="LVL-XXXXX-XXXXX" 
-                    class="w-full bg-[#030305] border border-[#a855f7]/40 rounded-xl py-4 px-5 text-center text-white font-mono text-base tracking-widest outline-none focus:border-[#a855f7] transition-all uppercase shadow-inner"
-                />
-                
-                <button 
-                    id="verifyKeyBtn"
-                    onclick="window.handleLogin()"
-                    class="w-full bg-gradient-to-r from-[#8b5cf6] to-[#a855f7] text-white py-4 rounded-xl font-black text-[12px] uppercase tracking-[0.1em] hover:opacity-90 active:scale-95 transition-all shadow-[0_0_25px_rgba(168,85,247,0.4)]"
-                >
-                    <span data-i18n="verifyKey">Vérifier la clé</span>
-                </button>
-
-                <div class="mt-6 flex justify-center">
-                    <a href="https://levelupia0-debug.github.io/levelupia/" target="_blank" class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 hover:text-white hover:border-[#a855f7]/50 transition-all duration-300 no-underline">
-                        <i class="fas fa-key"></i> <span data-i18n="forgotKey">Obtenir une clé</span>
-                    </a>
-                </div>
-                
-                <p id="authErrorMsg" class="text-[12px] text-red-400 font-bold hidden mt-2 bg-red-500/10 py-2 rounded-lg border border-red-500/20"></p>
+      <!-- Wrapper pour l'utilisateur connecté -->
+      <div id="viewAppContent" class="modal-view hidden">
+        <div class="user-modal-bar">
+          <div class="user-modal-info">
+            <img id="userAvatar" src="" alt="Avatar">
+            <div>
+              <div class="user-modal-name" id="userName">Utilisateur</div>
+              <div class="user-modal-status"><i class="fas fa-shield-alt"></i> Compte Certifié</div>
             </div>
-        </div>
-    </div>
-
-    <!-- 3. APPLICATION PRINCIPALE -->
-    <div id="mainApp" class="hidden flex-col min-h-screen pb-10 relative z-10">
-        
-        <!-- Header Premium -->
-        <header id="mainHeader" class="fixed top-0 w-full z-50 transition-all duration-500 ease-in-out flex items-center justify-between px-4 md:px-10 py-3 md:py-4 bg-gradient-to-b from-[#060608] via-[#060608]/90 to-transparent">
-            <div class="flex items-center space-x-6 md:space-x-10">
-                <div class="flex items-center gap-3 cursor-pointer" onclick="window.setCategory('home')">
-                    <div>
-                        <h1 class="text-xl md:text-2xl font-black tracking-widest leading-none drop-shadow-lg">
-                            <span class="text-white">Level</span><span class="text-[#a855f7]">Movie</span>
-                        </h1>
-                    </div>
-                </div>
-                
-                <!-- Navigation Desktop -->
-                <nav class="hidden lg:flex space-x-6 text-[12px] font-bold uppercase tracking-widest text-white/60">
-                    <button onclick="window.setCategory('home')" id="nav-home" class="text-[#a855f7] transition-colors hover:text-white" data-i18n="home">Accueil</button>
-                    <button onclick="window.setCategory('tv')" id="nav-tv" class="hover:text-white transition-colors" data-i18n="series">Séries</button>
-                    <button onclick="window.setCategory('movie')" id="nav-movie" class="hover:text-white transition-colors" data-i18n="movies">Films</button>
-                    <button onclick="window.setCategory('watchlist')" id="nav-watchlist" class="hover:text-white transition-colors" data-i18n="myList">Ma liste</button>
-                </nav>
-            </div>
-
-            <div class="flex items-center space-x-3 md:space-x-6">
-                <!-- Search Bar Dynamique -->
-                <div class="flex items-center relative">
-                    <input type="text" id="searchInput" placeholder="Rechercher..." class="hidden md:block bg-[#151520] border border-white/10 text-white text-xs px-4 py-2 rounded-full outline-none w-36 md:w-64 focus:border-[#a855f7] transition-colors shadow-inner">
-                    <button onclick="document.getElementById('searchInput').classList.toggle('hidden'); document.getElementById('searchInput').focus();" class="md:hidden p-2 text-white/70 hover:text-white transition-colors">
-                        <i class="fas fa-search text-lg"></i>
-                    </button>
-                </div>
-                
-                <!-- Profil Utilisateur -->
-                <div class="flex items-center gap-3 p-1.5 pr-3 md:pr-4 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all cursor-pointer shadow-md" onclick="window.openSettings()">
-                    <div class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-[#151520] flex items-center justify-center overflow-hidden border border-[#a855f7]/40 shadow-inner shrink-0">
-                        <img id="userAvatarImg" src="" class="w-full h-full object-cover hidden" alt="Profile">
-                        <span id="userInitial" class="text-[12px] md:text-[13px] font-black text-[#a855f7]">U</span>
-                    </div>
-                    <div class="hidden md:block min-w-0">
-                        <p id="userNameDisplay" class="text-[12px] font-bold uppercase truncate tracking-wide text-white/90">Utilisateur</p>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Navigation Mobile (Bottom Bar) -->
-        <nav class="lg:hidden fixed bottom-0 w-full z-50 bg-[#060608]/95 backdrop-blur-xl border-t border-white/5 flex justify-around items-center py-3 shadow-[0_-10px_20px_rgba(0,0,0,0.5)]">
-            <button onclick="window.setCategory('home')" id="mob-nav-home" class="flex flex-col items-center gap-1 text-[#a855f7] transition-colors">
-                <i class="fas fa-home text-lg"></i>
-                <span class="text-[9px] font-bold uppercase tracking-widest" data-i18n="home">Accueil</span>
-            </button>
-            <button onclick="window.setCategory('tv')" id="mob-nav-tv" class="flex flex-col items-center gap-1 text-white/50 hover:text-white transition-colors">
-                <i class="fas fa-tv text-lg"></i>
-                <span class="text-[9px] font-bold uppercase tracking-widest" data-i18n="series">Séries</span>
-            </button>
-            <button onclick="window.setCategory('movie')" id="mob-nav-movie" class="flex flex-col items-center gap-1 text-white/50 hover:text-white transition-colors">
-                <i class="fas fa-film text-lg"></i>
-                <span class="text-[9px] font-bold uppercase tracking-widest" data-i18n="movies">Films</span>
-            </button>
-            <button onclick="window.setCategory('watchlist')" id="mob-nav-watchlist" class="flex flex-col items-center gap-1 text-white/50 hover:text-white transition-colors">
-                <i class="fas fa-bookmark text-lg"></i>
-                <span class="text-[9px] font-bold uppercase tracking-widest" data-i18n="myList">Ma liste</span>
-            </button>
-        </nav>
-
-        <!-- Hero Banner -->
-        <header id="heroBanner" class="relative h-[65vh] md:h-[80vh] min-h-[500px] text-white transition-all duration-700 bg-[#060608]" style="background-size: cover; background-position: 50% 20%;">
-            <div class="absolute inset-0 bg-gradient-to-r from-[#060608] via-[#060608]/70 to-transparent w-full md:w-[80%]"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-transparent to-[#060608]/40 h-full"></div>
-            
-            <div class="relative z-10 flex flex-col justify-end h-full px-4 md:px-14 pb-12 md:pb-24 max-w-4xl w-full">
-                <div class="flex items-center space-x-3 mb-3 md:mb-4 animate-in slide-in-from-left duration-500">
-                    <span class="text-white/80 font-black tracking-[0.3em] text-[9px] md:text-[11px] uppercase bg-white/5 px-3 py-1 rounded-full border border-white/10 shadow-sm"><i class="fas fa-bolt text-[#a855f7] mr-1"></i> À la une</span>
-                </div>
-                
-                <h1 id="heroTitle" class="text-4xl md:text-6xl lg:text-7xl font-black pb-2 tracking-tighter text-white drop-shadow-[0_0_30px_rgba(0,0,0,0.9)] leading-tight animate-in slide-in-from-bottom duration-700 line-clamp-3">
-                    Chargement...
-                </h1>
-                
-                <div class="flex items-center gap-3 mt-1 mb-3 text-[10px] md:text-xs font-bold text-white/60 uppercase tracking-widest" id="heroMeta"></div>
-
-                <p id="heroDesc" class="w-full text-[12px] md:text-[15px] text-white/80 font-medium leading-relaxed max-w-2xl text-justify drop-shadow-lg animate-in fade-in duration-1000 delay-300 line-clamp-3 md:line-clamp-4">
-                </p>
-
-                <div class="flex flex-wrap gap-3 mt-5 md:mt-6" id="heroButtons" style="display: none;">
-                    <button onclick="window.playHeroMovie('play')" class="flex-1 md:flex-none items-center justify-center flex gap-2 px-6 md:px-8 py-3 bg-white text-black rounded-xl text-[11px] md:text-[13px] font-black uppercase tracking-widest hover:bg-gray-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.3)] active:scale-95">
-                        <i class="fas fa-play text-sm md:text-lg"></i> <span data-i18n="play">Lecture</span>
-                    </button>
-                    <button onclick="window.playHeroMovie('info')" class="flex-1 md:flex-none items-center justify-center flex gap-2 px-6 md:px-8 py-3 bg-white/10 border border-white/20 rounded-xl text-[11px] md:text-[13px] font-bold text-white uppercase tracking-widest hover:bg-white/20 transition-all active:scale-95 backdrop-blur-md">
-                        <i class="fas fa-info-circle text-sm md:text-lg"></i> <span data-i18n="details">Plus d'infos</span>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <div id="searchTitleContainer" class="hidden px-4 md:px-14 pb-4 mt-24 relative z-30">
-            <h2 class="text-xl md:text-2xl font-black text-white uppercase tracking-widest border-l-4 border-[#a855f7] pl-3">Résultats de recherche</h2>
-            <div id="searchGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6"></div>
+          </div>
+          <button id="logoutBtn" class="btn-logout"><i class="fas fa-power-off"></i></button>
         </div>
 
-        <main id="rowsContainer" class="pb-24 relative z-20 space-y-8 md:space-y-10 mt-6 md:-mt-10">
-        </main>
-    </div>
-
-    <!-- 4. MODAL PARAMÈTRES (TABLEAU DE BORD PREMIUM) -->
-    <div id="settingsModal" class="hidden fixed inset-0 z-[9000] flex justify-center items-center p-4 sm:p-8 bg-[#060608]/95 backdrop-blur-3xl overflow-hidden">
-        <div class="holo-card relative w-full max-w-3xl rounded-[2rem] p-6 md:p-8 flex flex-col text-center animate-in zoom-in duration-300 z-10 shadow-[0_0_80px_rgba(0,0,0,0.9)] max-h-[95vh] overflow-y-auto no-scrollbar">
-            
-            <button onclick="window.closeSettings()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/5 hover:bg-red-500 flex items-center justify-center text-white/50 hover:text-white transition-colors shadow-sm z-20">
-                <i class="fas fa-times text-lg"></i>
-            </button>
-            
-            <!-- En-tête Profil -->
-            <div class="flex flex-col items-center mb-6">
-                <div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-[#151520] border-2 border-[#a855f7]/50 shadow-[0_0_20px_rgba(168,85,247,0.3)] overflow-hidden mb-4 flex items-center justify-center">
-                    <img id="settingsAvatarImg" src="" class="w-full h-full object-cover hidden" alt="Avatar">
-                    <span id="settingsInitial" class="text-4xl font-black text-[#a855f7]">U</span>
-                </div>
-                <h2 id="settingsUserName" class="text-2xl font-black text-white uppercase tracking-widest mb-1 drop-shadow-md">Utilisateur</h2>
-                <p id="settingsUserEmail" class="text-xs text-white/50 font-mono mb-2">email@inconnu.com</p>
-                <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-[10px] font-black tracking-widest border border-green-500/30 uppercase">Compte Premium Actif</span>
-            </div>
-
-            <!-- Bouton LevelIA -->
-            <a href="https://levelupia.vercel.app" target="_blank" class="w-full relative overflow-hidden group rounded-2xl p-[2px] mb-8 block no-underline">
-                <span class="absolute inset-0 bg-gradient-to-r from-purple-600 via-[#a855f7] to-pink-600 rounded-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></span>
-                <div class="relative bg-[#0a0a0f] px-6 py-4 rounded-[14px] flex items-center justify-center gap-3 transition-all group-hover:bg-transparent">
-                    <i class="fas fa-bolt text-white text-xl"></i>
-                    <span class="text-white font-black text-sm uppercase tracking-widest drop-shadow-md">Découvrir l'écosystème LevelIA</span>
-                </div>
-            </a>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full text-left">
-                <!-- Colonne 1 : Compte & Contenu -->
-                <div class="space-y-4">
-                    <h3 class="text-[10px] font-black text-[#a855f7] uppercase tracking-widest pl-2 border-l-2 border-[#a855f7]">Préférences du Contenu</h3>
-                    
-                    <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/10 shadow-inner">
-                        <span class="text-[11px] font-bold text-white/80 uppercase tracking-widest flex items-center gap-3"><i class="fas fa-filter text-[#a855f7] w-4"></i> Origine des Films</span>
-                        <select id="contentLangSelect" onchange="window.changeContentLang(this.value)" class="bg-black/80 border border-white/20 rounded-lg text-white text-[10px] font-bold uppercase tracking-widest p-2 outline-none cursor-pointer">
-                            <option value="all">Monde (Tous)</option>
-                            <option value="en">US / Anglais (VO)</option>
-                            <option value="fr">Français (VF)</option>
-                        </select>
-                    </div>
-
-                    <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/10 shadow-inner">
-                        <span class="text-[11px] font-bold text-white/80 uppercase tracking-widest flex items-center gap-3"><i class="fas fa-globe text-[#a855f7] w-4"></i> Langue Interface</span>
-                        <button onclick="window.handleLangToggle()" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-colors flex items-center gap-2 border border-white/10">
-                            <span id="settingsLangText">FR</span>
-                        </button>
-                    </div>
-
-                    <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/10 shadow-inner">
-                        <span class="text-[11px] font-bold text-white/80 uppercase tracking-widest flex items-center gap-3"><i class="fas fa-bookmark text-[#a855f7] w-4"></i> Films Favoris</span>
-                        <span id="settingsWatchlistCount" class="px-3 py-1 bg-[#a855f7]/20 text-[#a855f7] rounded-lg text-xs font-bold border border-[#a855f7]/30">0</span>
-                    </div>
-                </div>
-
-                <!-- Colonne 2 : Vidéo & Sécurité -->
-                <div class="space-y-4">
-                    <h3 class="text-[10px] font-black text-[#a855f7] uppercase tracking-widest pl-2 border-l-2 border-[#a855f7]">Système & Vidéo</h3>
-                    
-                    <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/10 shadow-inner">
-                        <span class="text-[11px] font-bold text-white/80 uppercase tracking-widest flex items-center gap-3"><i class="fas fa-tv text-[#a855f7] w-4"></i> Qualité Vidéo</span>
-                        <span class="px-3 py-1 bg-white/10 text-white/70 rounded-lg text-[10px] font-black tracking-widest border border-white/10 uppercase">Auto (4K HDR)</span>
-                    </div>
-
-                    <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/10 shadow-inner">
-                        <span class="text-[11px] font-bold text-white/80 uppercase tracking-widest flex items-center gap-3"><i class="fas fa-child text-[#a855f7] w-4"></i> Filtre Parental</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer">
-                            <div class="w-9 h-5 bg-black/50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white/70 after:border-white/20 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#a855f7] peer-checked:after:bg-white shadow-inner"></div>
-                        </label>
-                    </div>
-
-                    <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/10 shadow-inner">
-                        <span class="text-[11px] font-bold text-white/80 uppercase tracking-widest flex items-center gap-3"><i class="fas fa-hdd text-[#a855f7] w-4"></i> Cache Système</span>
-                        <button onclick="window.showToast('Cache nettoyé avec succès.', 'success')" class="px-3 py-1.5 bg-red-500/20 text-red-400 rounded-lg text-[10px] font-bold uppercase hover:bg-red-500 hover:text-white transition-all border border-red-500/30">Vider</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- API Logos -->
-            <div class="w-full mt-8 pt-6 border-t border-white/10 text-center">
-                <span class="text-[9px] font-bold text-white/40 uppercase tracking-widest block mb-4">Données fournies par les API Officielles :</span>
-                <div class="flex justify-center items-center gap-6 opacity-80 flex-wrap">
-                    <span class="text-sm font-black tracking-widest text-[#90cea1]">TMDB</span>
-                    <span class="text-sm font-black tracking-widest text-[#f5c518]">OMDb</span>
-                    <span class="text-sm font-black tracking-widest text-[#3c948b]">TVMaze</span>
-                    <span class="text-sm font-black tracking-widest text-white flex items-center gap-1"><i class="fas fa-university"></i> ARCHIVE</span>
-                </div>
-            </div>
-            
-            <button onclick="window.handleLogout()" class="w-full text-center px-4 py-4 mt-8 bg-red-500/10 text-[11px] font-bold text-red-400 uppercase tracking-widest hover:bg-red-500/20 border border-red-500/20 rounded-xl transition-colors flex justify-center items-center gap-3 active:scale-95 shadow-md">
-                <i class="fas fa-sign-out-alt"></i> Se Déconnecter de LevelMovie
-            </button>
-            <p class="text-[9px] text-white/20 uppercase tracking-widest mt-6">LevelMovie Premium OS • Architecture V8.0</p>
+        <!-- Chargement -->
+        <div id="sectionLoading" style="padding: 40px 0;">
+          <i class="fas fa-circle-notch fa-spin text-purple" style="font-size: 2rem; margin-bottom: 16px;"></i>
+          <p style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">Analyse sécurisée...</p>
         </div>
-    </div>
 
-    <!-- 5. MODAL VIDÉO PREMIUM (EXHAUSTIF ET PRO) -->
-    <div id="videoModal" class="hidden fixed inset-0 z-[8000] flex justify-center items-start md:items-center p-0 md:p-6 bg-[#060608]/95 backdrop-blur-3xl overflow-y-auto no-scrollbar">
-        <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#a855f7]/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-        <div class="fixed inset-0 z-0" onclick="window.closeVideoModal()"></div>
-        
-        <div class="holo-card relative w-full min-h-[100vh] md:min-h-0 md:h-auto max-h-full md:max-h-[90vh] max-w-6xl md:rounded-[2rem] overflow-x-hidden overflow-y-auto shadow-[0_0_80px_rgba(0,0,0,0.9)] border-white/10 animate-in slide-in-from-bottom md:zoom-in duration-300 flex flex-col bg-[#0a0a0f] z-10 md:my-auto my-0">
-            
-            <button onclick="window.closeVideoModal()" class="md:hidden absolute top-4 right-4 z-50 w-10 h-10 bg-black/50 backdrop-blur-md rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-all group shadow-2xl">
-                <i class="fas fa-times text-white/70 group-hover:text-black text-lg"></i>
-            </button>
-            
-            <!-- Espace Lecteur Vidéo / Backdrop -->
-            <div class="relative pt-[56.25%] md:pt-[45%] w-full bg-black shrink-0 overflow-hidden border-b border-[#a855f7]/30 shadow-lg" id="videoContainer">
-                <!-- Iframe or Backdrop injected here -->
-            </div>
-            
-            <!-- Barre de Contrôle Pro (Bouton Fermeture en bas à droite du lecteur) -->
-            <div class="w-full bg-[#0a0a0f] border-b border-white/5 flex justify-end px-4 md:px-8 py-3 shrink-0 sticky top-0 z-50 shadow-md">
-                <button onclick="window.closeVideoModal()" class="flex items-center gap-2 px-5 py-2.5 bg-red-500/10 text-red-400 border border-red-500/30 rounded-xl text-[10px] md:text-[11px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all shadow-sm active:scale-95">
-                    <i class="fas fa-times text-sm"></i> <span data-i18n="closePlayer">Fermer le lecteur</span>
-                </button>
-            </div>
-
-            <!-- Contenu d'information -->
-            <div class="p-5 md:p-10 shrink-0 bg-gradient-to-b from-[#15092a]/40 to-transparent h-full">
-                
-                <!-- Zone Lecture : Options Serveurs et Liens Légaux -->
-                <div id="modalServerOptions" class="mb-8 flex flex-col gap-5 bg-black/40 p-5 md:p-6 rounded-2xl border border-white/5 hidden shadow-inner">
-                    <!-- Liens Légaux (Prime, Netflix etc) affichés si mode Play -->
-                    <div id="modalPlayProviders" class="hidden pb-5 border-b border-white/10"></div>
-                    
-                    <div>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-[11px] font-black text-white/70 uppercase tracking-widest"><i class="fas fa-server mr-2 text-[#a855f7]"></i> Sources Externes (Gratuites)</span>
-                            <button onclick="window.switchModalMode('info')" class="text-[10px] font-bold text-white/50 hover:text-white uppercase tracking-widest border border-white/10 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors"><i class="fas fa-info-circle mr-1"></i> Infos du film</button>
-                        </div>
-                        <div class="flex flex-wrap gap-3">
-                            <button id="btn-server-vidsrc" onclick="window.playFullMovieAction('vidsrc')" class="px-4 py-2.5 bg-[#a855f7] text-white border border-[#a855f7]/30 rounded-xl text-[10px] font-bold uppercase shadow-[0_0_15px_rgba(168,85,247,0.3)] transition-all">Serveur 1 (VF/VOSTFR)</button>
-                            <button id="btn-server-vidsrc_me" onclick="window.playFullMovieAction('vidsrc_me')" class="px-4 py-2.5 bg-white/5 text-white/70 border border-white/10 rounded-xl text-[10px] font-bold uppercase hover:bg-white/10 transition-all">Serveur 2 (Global)</button>
-                            <button id="btn-server-superembed" onclick="window.playFullMovieAction('superembed')" class="px-4 py-2.5 bg-white/5 text-white/70 border border-white/10 rounded-xl text-[10px] font-bold uppercase hover:bg-white/10 transition-all">Serveur 3 (Alternatif)</button>
-                            <button id="btn-server-archive" onclick="window.playFullMovieAction('archive')" class="hidden px-4 py-2.5 bg-white/5 text-white/70 border border-white/10 rounded-xl text-[10px] font-bold uppercase hover:bg-white/10 transition-all"><i class="fas fa-university mr-1 text-gray-400"></i> Domaine Public (Direct)</button>
-                            <button id="btnYoutubeFull" onclick="window.playFullMovieAction('youtube_full')" class="hidden px-4 py-2.5 bg-red-500/10 text-red-400 border border-red-500/30 rounded-xl text-[10px] font-bold uppercase hover:bg-red-500 hover:text-white transition-all ml-auto shadow-[0_0_15px_rgba(239,68,68,0.2)]"><i class="fab fa-youtube text-sm mr-1"></i> YouTube Complet</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Zone Infos : Détails Film (Cachée en mode Lecture) -->
-                <div id="modalDetailsRow" class="flex flex-col lg:flex-row gap-8 lg:gap-12">
-                    <!-- Colonne Principale -->
-                    <div class="flex-1">
-                        <h2 id="modalMovieTitle" class="text-3xl md:text-5xl font-black mb-2 text-white uppercase tracking-tighter drop-shadow-lg leading-tight"></h2>
-                        <div class="text-[#a855f7] italic text-sm md:text-base font-medium mb-4 drop-shadow-sm flex items-center gap-2">
-                            <span id="modalMovieTagline"></span>
-                        </div>
-
-                        <div class="flex items-center space-x-3 mb-6 flex-wrap gap-y-3">
-                            <span class="text-green-400 font-black text-[11px] md:text-[12px] uppercase tracking-widest border border-green-400/30 px-2 py-1 rounded bg-green-400/10 shadow-sm" data-i18n="match">Recommandé</span>
-                            <span id="modalMovieStatus" class="text-blue-400 font-bold text-[10px] md:text-[11px] uppercase tracking-widest border border-blue-400/30 px-2 py-1 rounded bg-blue-400/10 hidden"></span>
-                            <span id="modalMovieYear" class="text-white/80 font-bold text-[12px] md:text-[13px] border-l border-white/20 pl-3"></span>
-                            <span id="modalMovieRuntime" class="text-white/80 font-bold text-[12px] md:text-[13px] border-l border-white/20 pl-3"></span>
-                            <span id="modalMovieLang" class="text-white/60 font-bold text-[11px] uppercase tracking-widest border-l border-white/20 pl-3"></span>
-                            <span class="px-2 py-1 border border-white/20 rounded text-[10px] font-bold text-white uppercase tracking-widest bg-white/5 shadow-sm border-l border-white/20 pl-3 ml-2">HD 1080p</span>
-                        </div>
-
-                        <div class="mb-4">
-                            <span class="text-white/40 font-bold text-[10px] uppercase tracking-widest block mb-1">Titre Original</span>
-                            <span id="modalMovieOriginalTitle" class="text-white/70 font-medium text-[12px] italic"></span>
-                        </div>
-
-                        <!-- Provider Section (Légal) -->
-                        <div id="modalMovieProviders" class="mb-6 p-5 bg-white/5 rounded-2xl border border-white/10 shadow-inner hidden">
-                            <!-- Injecté via JS -->
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex flex-wrap gap-3 mb-6" id="modalActionButtons">
-                            <button onclick="window.switchModalMode('play')" class="flex-1 sm:flex-none items-center justify-center flex gap-2 px-8 py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl text-[11px] md:text-[13px] font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-[0_0_20px_rgba(168,85,247,0.4)] active:scale-95">
-                                <i class="fas fa-play text-sm"></i> <span data-i18n="playMovie">Regarder le Film</span>
-                            </button>
-                            <button onclick="window.playTrailerAction()" class="flex-1 sm:flex-none items-center justify-center flex gap-2 px-6 py-3.5 bg-white/10 border border-white/20 rounded-xl text-[11px] md:text-[13px] font-bold text-white uppercase tracking-widest hover:bg-white/20 transition-all active:scale-95 backdrop-blur-md">
-                                <i class="fas fa-video text-sm"></i> <span data-i18n="trailer">Bande-annonce</span>
-                            </button>
-                        </div>
-
-                        <!-- Description Pro Markdown -->
-                        <div id="modalMovieDesc" class="markdown-pro pr-2 text-justify"></div>
-                        
-                        <div class="mt-8 flex gap-8 pt-6 border-t border-white/10">
-                            <button onclick="window.toggleWatchlist()" id="watchlistBtn" class="flex items-center gap-3 px-5 py-2.5 rounded-xl border border-white/20 text-white/70 hover:text-white hover:bg-white/5 transition-colors group outline-none">
-                                <i id="watchlistIcon" class="fas fa-plus text-lg text-[#a855f7]"></i>
-                                <span class="text-[11px] font-bold uppercase tracking-widest" data-i18n="myList">Ma Liste</span>
-                            </button>
-                            <button onclick="window.shareMovie()" class="flex items-center gap-3 px-5 py-2.5 rounded-xl border border-white/20 text-white/70 hover:text-white hover:bg-white/5 transition-colors group outline-none">
-                                <i class="fas fa-share-alt text-lg text-blue-400"></i>
-                                <span class="text-[11px] font-bold uppercase tracking-widest">Partager</span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Colonne Secondaire avec les NOUVELLES INFOS (Avis, Réal) -->
-                    <div class="w-full lg:w-[35%] space-y-6 bg-black/40 p-5 md:p-6 rounded-2xl border border-white/5 shadow-inner h-fit">
-                        <div>
-                            <span class="text-white/40 font-bold block mb-3 uppercase tracking-widest text-[10px] flex items-center gap-2"><i class="fas fa-users text-[#a855f7]"></i> <span data-i18n="cast">Casting Principal</span></span>
-                            <div id="modalMovieCastContainer" class="flex gap-4 overflow-x-auto no-scrollbar pb-2 row-container">
-                                <!-- Acteurs injectés ici -->
-                            </div>
-                        </div>
-                        <div class="w-full h-px bg-white/10"></div>
-                        <div>
-                            <span class="text-white/40 font-bold block mb-1 uppercase tracking-widest text-[10px] flex items-center gap-2"><i class="fas fa-video text-[#a855f7]"></i> Réalisation / Écriture</span>
-                            <span class="text-white/90 font-medium text-[12px] block mt-2" id="modalMovieDirector">N/A</span>
-                        </div>
-                        <div class="w-full h-px bg-white/10"></div>
-                        <div>
-                            <span class="text-white/40 font-bold block mb-1 uppercase tracking-widest text-[10px] flex items-center gap-2"><i class="fas fa-tags text-[#a855f7]"></i> Genres & Origine</span>
-                            <span id="modalMovieGenre" class="text-white/90 font-bold text-[11px] uppercase tracking-widest leading-relaxed block mt-2"></span>
-                            <span id="modalMovieOrigin" class="text-white/50 font-medium text-[10px] block mt-2 uppercase tracking-widest"></span>
-                        </div>
-                        <div class="w-full h-px bg-white/10"></div>
-                        <div>
-                            <span class="text-white/40 font-bold block mb-1 uppercase tracking-widest text-[10px] flex items-center gap-2"><i class="fas fa-building text-[#a855f7]"></i> Production / Finance</span>
-                            <span class="text-white/90 font-medium text-[12px] block mt-2" id="modalMovieProd">LevelUp Entertainment</span>
-                            <span class="text-white/50 font-medium text-[10px] block mt-1" id="modalMovieFinance"></span>
-                        </div>
-                        <div class="w-full h-px bg-white/10"></div>
-                        <div>
-                            <span class="text-white/40 font-bold block mb-1 uppercase tracking-widest text-[10px] flex items-center gap-2"><i class="fas fa-star text-yellow-500"></i> Notes & Avis TMDB</span>
-                            <div class="mt-2 text-[11px] text-white/60 font-bold tracking-wide flex items-center gap-2">
-                                <span class="text-yellow-400 text-base" id="modalMovieScore">0.0</span> <span class="text-white/40">/ 10</span>
-                                <span class="border-l border-white/20 pl-2 ml-1" id="modalMovieVotes">0 avis certifiés</span>
-                            </div>
-                            <div id="modalMovieReview" class="mt-4 p-4 bg-white/5 rounded-xl border border-white/10 text-[11px] text-white/70 italic hidden leading-relaxed shadow-inner">
-                                <!-- Avis injecté ici -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Titres Similaires (Visible tout le temps) -->
-                <div class="mt-12 pt-8 border-t border-white/10">
-                    <h3 class="text-white/90 text-sm md:text-base font-black mb-5 uppercase tracking-[0.2em] border-l-4 border-[#a855f7] pl-3" data-i18n="similar">Titres Similaires</h3>
-                    <div id="modalSimilarMovies" class="flex overflow-x-auto gap-4 no-scrollbar pb-4 row-container">
-                        <!-- Injecté via JS -->
-                    </div>
-                </div>
-            </div>
+        <!-- Pas de Clé (Génération) -->
+        <div id="sectionNoKey" class="hidden">
+          <i class="fas fa-key text-purple" style="font-size: 2.5rem; margin-bottom: 16px;"></i>
+          <h3 style="margin-bottom: 8px;">Générer l'Accès</h3>
+          <p style="font-size: 0.85rem; margin-bottom: 24px;">Créez votre clé unique pour déverrouiller l'écosystème d'applications.</p>
+          <button id="generateKeyBtn" class="btn-modal-primary">Créer ma clé</button>
         </div>
+
+        <!-- Clé Active (Affichage 3 min) -->
+        <div id="sectionHasKey" class="hidden">
+          <p style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--text-dim);">Clé d'accès globale</p>
+          <div class="key-display-box">
+            <div id="myKeyDisplay" class="key-text">---</div>
+            <div id="blurOverlay" class="blur-overlay-active hidden">Sécurité Active</div>
+          </div>
+          <button id="copyBtn" class="btn-modal-primary" style="margin-bottom: 16px;"><i class="fas fa-copy"></i> Copier la Clé</button>
+          <p style="font-size: 0.8rem; margin-bottom: 16px; color: var(--text-muted);">Utilisez cette clé copiée pour vous connecter sur n'importe quelle application de l'écosystème.</p>
+          <p style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-dim);">Masquage automatique : <span id="timeRemaining" style="color: var(--purple-main);">--:--</span></p>
+        </div>
+
+        <!-- Attente (24h Cooldown) -->
+        <div id="sectionWait" class="hidden">
+          <i class="fas fa-shield-lock text-purple" style="font-size: 2.5rem; margin-bottom: 16px;"></i>
+          <h3 style="margin-bottom: 8px;">Sécurité Active</h3>
+          <p style="font-size: 0.85rem; margin-bottom: 16px;">Par mesure de sécurité, votre clé est temporairement masquée.</p>
+          <div class="cooldown-box">
+            <p style="font-size: 0.65rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-bottom: 4px;">Nouvel affichage dans</p>
+            <div id="cooldownRemaining" class="cooldown-timer">--:--:--</div>
+          </div>
+        </div>
+
+        <!-- Revoir Clé (Après 24h) -->
+        <div id="sectionResee" class="hidden">
+          <i class="fas fa-eye text-purple" style="font-size: 2.5rem; margin-bottom: 16px;"></i>
+          <h3 style="margin-bottom: 8px;">Accès Disponible</h3>
+          <p style="font-size: 0.85rem; margin-bottom: 24px;">Le délai de sécurité est écoulé, vous pouvez afficher votre clé.</p>
+          <button id="reseeBtn" class="btn-modal-primary">Revoir ma clé</button>
+        </div>
+
+      </div>
     </div>
-
-    <!-- SCRIPT PRINCIPAL -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, collectionGroup, getDocs, setDoc, deleteDoc, doc, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-        // CONFIGS
-        const firebaseConfig = {
-            apiKey: "AIzaSyA3JgvNu5p-43037jvm4WRDaJHI9ES7uGM",
-            authDomain: "levelup-ia.firebaseapp.com",
-            projectId: "levelup-ia",
-            storageBucket: "levelup-ia.firebasestorage.app",
-            messagingSenderId: "229420004282",
-            appId: "1:229420004282:web:6735f059a947f0936ae383",
-            measurementId: "G-MSRDY2574K"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        const API_KEY = '027cc951d888c64e5f15dcb853c7347a';
-        const BASE_URL = 'https://api.themoviedb.org/3';
-        const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500'; 
-        const IMAGE_ORIGINAL = 'https://image.tmdb.org/t/p/original';
-
-        // STATE GLOBAL
-        window.currentLang = localStorage.getItem('levelmovie_lang') || 'fr';
-        window.currentContentLang = localStorage.getItem('levelmovie_content_lang') || 'all';
-        window.moviesMap = {}; 
-        window.watchlist = []; 
-        window.watchlistData = []; 
-        window.currentUserUid = null;
-        window.currentModalMovie = null;
-        window.currentModalMovieData = null;
-        window.currentModalMode = 'info'; 
-        window.currentTrailerKey = null;
-        window.currentYoutubeFullKey = null;
-        window.disclaimerAccepted = false;
-        window.currentHeroMovie = null;
-        let currentCategory = 'home'; 
-        let searchTimeout = null;
-
-        const getRequests = (lang) => {
-            const tmdbLang = lang === 'fr' ? 'fr-FR' : 'en-US';
-            return {
-                fetchTrending: `/trending/all/week?api_key=${API_KEY}&language=${tmdbLang}`,
-                fetchTopRated: `/movie/top_rated?api_key=${API_KEY}&language=${tmdbLang}`,
-                fetchActionMovies: `/discover/movie?api_key=${API_KEY}&with_genres=28&language=${tmdbLang}`,
-                fetchComedyMovies: `/discover/movie?api_key=${API_KEY}&with_genres=35&language=${tmdbLang}`,
-                fetchHorrorMovies: `/discover/movie?api_key=${API_KEY}&with_genres=27&language=${tmdbLang}`,
-            };
-        };
-
-        window.i18n = {
-            fr: {
-                appTitle: "LevelMovie",
-                enterKey: "Clé d'Accès requise",
-                verifyKey: "Déverrouiller",
-                home: "Accueil", series: "Séries", movies: "Films", myList: "Ma liste",
-                trending: "Tendances Mondiales",
-                freeVOD: "Films Gratuits",
-                topRated: "Chefs-d'œuvre",
-                action: "Action & Adrénaline",
-                comedy: "Comédies",
-                horror: "Frissons & Terreur",
-                scifi: "Science-Fiction",
-                animation: "Animation & Anime",
-                docs: "Documentaires",
-                war: "Guerre & Épique",
-                history: "Histoire",
-                mystery: "Mystère & Thriller",
-                music: "Musique & Concerts",
-                kdrama: "K-Dramas & Séries Asiatiques",
-                fantasy: "Fantastique",
-                family: "En Famille",
-                play: "Lecture", details: "Plus d'infos",
-                playMovie: "Regarder le Film",
-                trailer: "Bande-annonce",
-                notFound: "Contenu Indisponible",
-                notFoundDesc: "Le lecteur sécurisé n'a pas pu trouver de vidéo officielle pour ce titre.",
-                match: "Recommandé",
-                cast: "Casting Principal",
-                similar: "Titres Similaires",
-                legalWatch: "Disponible sur :",
-                noLegal: "Aucune offre de streaming légal recensée dans votre région.",
-                closePlayer: "Fermer le lecteur",
-                warningTitle: "Avertissement Sécurité & Publicités",
-                warningText: "Les films complets sont diffusés via des API tierces. <b>LevelUp n'héberge aucun contenu</b>. Des pop-ups et des publicités indépendantes peuvent apparaître sur ces lecteurs.<br><br>🛡️ <b>Conseil Pro :</b> Pour une expérience fluide, utilisez un navigateur avec bloqueur de pubs (comme <b>Opera</b> ou <b>Brave</b>) et privilégiez le <b>Serveur 2 (Global)</b>.",
-                warningCheckbox: "J'accepte de visionner le contenu depuis ces serveurs et je suis averti des publicités.",
-                warningBtn: "Lancer le film",
-                publicDomain: "Classiques Sans Pub (Domaine Public)"
-            },
-            en: {
-                appTitle: "LevelMovie",
-                enterKey: "Access Key required",
-                verifyKey: "Unlock",
-                home: "Home", series: "TV Shows", movies: "Movies", myList: "My List",
-                trending: "Global Trends",
-                freeVOD: "Free Movies",
-                topRated: "Masterpieces",
-                action: "Action & Adrenaline",
-                comedy: "Comedies",
-                horror: "Thrills & Terror",
-                scifi: "Sci-Fi",
-                animation: "Animation & Anime",
-                docs: "Documentaries",
-                war: "War & Epic",
-                history: "History",
-                mystery: "Mystery & Thriller",
-                music: "Music & Concerts",
-                kdrama: "K-Dramas & Asian TV",
-                fantasy: "Fantasy",
-                family: "Family Time",
-                play: "Play", details: "More Info",
-                playMovie: "Play Movie",
-                trailer: "Trailer",
-                notFound: "Content Unavailable",
-                notFoundDesc: "The secure player could not find an official video for this title.",
-                match: "Recommended",
-                cast: "Main Cast",
-                similar: "Similar Titles",
-                legalWatch: "Available on:",
-                noLegal: "No legal streaming offers found in your region.",
-                closePlayer: "Close Player",
-                warningTitle: "Security & Ads Warning",
-                warningText: "Full movies are streamed via third-party APIs. <b>LevelUp does not host any content</b>. Independent pop-ups and ads may appear on these players.<br><br>🛡️ <b>Pro Tip:</b> For a smooth experience, use a browser with a built-in ad blocker (like <b>Opera</b> or <b>Brave</b>) and prefer <b>Server 2 (Global)</b>.",
-                warningCheckbox: "I agree to watch content from these servers and am aware of the ads.",
-                warningBtn: "Start Movie",
-                publicDomain: "Ad-Free Classics (Public Domain)"
-            }
-        };
-
-        // --- DRAG TO SCROLL (PC) ---
-        window.attachDragToScroll = () => {
-            const sliders = document.querySelectorAll('.row-container');
-            sliders.forEach(slider => {
-                let isDown = false;
-                let startX;
-                let scrollLeft;
-                
-                const newSlider = slider.cloneNode(true);
-                slider.parentNode.replaceChild(newSlider, slider);
-                
-                newSlider.addEventListener('mousedown', (e) => {
-                    isDown = true;
-                    startX = e.pageX - newSlider.offsetLeft;
-                    scrollLeft = newSlider.scrollLeft;
-                });
-                newSlider.addEventListener('mouseleave', () => { isDown = false; });
-                newSlider.addEventListener('mouseup', () => { isDown = false; });
-                newSlider.addEventListener('mousemove', (e) => {
-                    if (!isDown) return;
-                    e.preventDefault();
-                    const x = e.pageX - newSlider.offsetLeft;
-                    const walk = (x - startX) * 2; 
-                    newSlider.scrollLeft = scrollLeft - walk;
-                });
-            });
-        };
-
-        // --- TOASTS (SILENCIEUX) ---
-        window.showToast = (msg, type = 'info') => {
-            if(type === 'info') return; 
-
-            const container = document.getElementById('toastContainer');
-            if (!container) return;
-            const toast = document.createElement('div');
-            let iconClass = type === 'error' ? 'fa-exclamation-triangle text-red-400' : 'fa-check-circle text-green-400';
-            let colorClass = type === 'error' ? 'border-red-500/30 bg-[#0a0a0f]/95 text-red-50' : 'border-green-500/30 bg-[#0a0a0f]/95 text-green-50';
-            
-            toast.className = `flex items-center gap-4 p-4 rounded-2xl backdrop-blur-3xl border shadow-2xl transition-all duration-500 transform translate-x-full opacity-0 ${colorClass} min-w-[280px] pointer-events-auto mt-3`;
-            toast.innerHTML = `<i class="fas ${iconClass} text-xl"></i><span class="text-[12px] font-bold tracking-wide">${msg}</span>`;
-            
-            container.appendChild(toast);
-            requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.remove('translate-x-full', 'opacity-0')));
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-x-10');
-                setTimeout(() => toast.remove(), 500);
-            }, 3000);
-        };
-
-        // --- LANG ---
-        window.handleLangToggle = () => {
-            window.currentLang = window.currentLang === 'fr' ? 'en' : 'fr';
-            localStorage.setItem('levelmovie_lang', window.currentLang);
-            
-            const i18nTexts = window.i18n[window.currentLang];
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (i18nTexts[key]) el.innerHTML = i18nTexts[key]; // Allow HTML in translation
-            });
-            
-            const langDisplay = window.currentLang === 'fr' ? 'EN' : 'FR';
-            ['authLangText', 'navLangText', 'settingsLangText'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.innerText = langDisplay;
-            });
-            
-            const authPage = document.getElementById('authPage');
-            if (authPage && !authPage.classList.contains('hidden')) return;
-            if (typeof window.fetchTMDBData === 'function') window.fetchTMDBData();
-        };
-
-        window.changeContentLang = (val) => {
-            window.currentContentLang = val;
-            localStorage.setItem('levelmovie_content_lang', val);
-            window.showToast(window.currentLang === 'fr' ? 'Filtre appliqué. Rechargement...' : 'Filter applied. Reloading...', 'success');
-            if (typeof window.fetchTMDBData === 'function') window.fetchTMDBData();
-        };
-
-        // --- INIT ---
-        signInAnonymously(auth).catch(()=>{});
-        
-        setTimeout(() => { const s = document.getElementById('splash1'); if (s) s.classList.add('active'); }, 200);
-        setTimeout(() => { const s = document.getElementById('splash1'); if (s) { s.classList.remove('active'); s.classList.add('exit'); } }, 1200);
-        setTimeout(() => { const s = document.getElementById('splash2'); if (s) s.classList.add('active'); }, 1500);
-        setTimeout(() => { const s = document.getElementById('splash2'); if (s) { s.classList.remove('active'); s.classList.add('exit'); } }, 2800);
-
-        setTimeout(() => {
-            const splashScreen = document.getElementById('splashScreen');
-            if(splashScreen) splashScreen.style.opacity = '0';
-            setTimeout(() => {
-                if(splashScreen) splashScreen.classList.add('hidden');
-                const savedKey = localStorage.getItem('levelmovie_saved_key');
-                if (savedKey) {
-                    const savedName = localStorage.getItem('levelmovie_user_name');
-                    const savedPhoto = localStorage.getItem('levelmovie_user_photo');
-                    const savedEmail = localStorage.getItem('levelmovie_user_email');
-                    window.currentUserUid = localStorage.getItem('levelmovie_user_uid');
-                    
-                    const selectEl = document.getElementById('contentLangSelect');
-                    if (selectEl) selectEl.value = window.currentContentLang;
-
-                    setupUserProfile(savedName, savedPhoto, savedEmail);
-                    loadWatchlist();
-                    launchApp();
-                } else {
-                    const authPage = document.getElementById('authPage');
-                    if (authPage) authPage.classList.remove('hidden');
-                }
-                
-                const currentLangTemp = window.currentLang;
-                window.currentLang = ''; 
-                window.currentLang = currentLangTemp === 'fr' ? 'en' : 'fr';
-                window.handleLangToggle(); 
-            }, 500);
-        }, 3200);
-
-        function setupUserProfile(name, photoUrl, email) {
-            const userNameStr = name || "Utilisateur";
-            
-            const userNameDisplay = document.getElementById('userNameDisplay');
-            if (userNameDisplay) userNameDisplay.innerText = userNameStr;
-            
-            const settingsUserName = document.getElementById('settingsUserName');
-            if (settingsUserName) settingsUserName.innerText = userNameStr;
-            
-            const settingsUserEmail = document.getElementById('settingsUserEmail');
-            if (email && settingsUserEmail) settingsUserEmail.innerText = email;
-            
-            const userAvatarImg = document.getElementById('userAvatarImg');
-            const userInitial = document.getElementById('userInitial');
-            const settingsAvatarImg = document.getElementById('settingsAvatarImg');
-            const settingsInitial = document.getElementById('settingsInitial');
-            
-            if (photoUrl && photoUrl !== 'null') {
-                if (userAvatarImg) { userAvatarImg.src = photoUrl; userAvatarImg.classList.remove('hidden'); }
-                if (userInitial) userInitial.classList.add('hidden');
-                
-                if (settingsAvatarImg) { settingsAvatarImg.src = photoUrl; settingsAvatarImg.classList.remove('hidden'); }
-                if (settingsInitial) settingsInitial.classList.add('hidden');
-            } else {
-                const initial = userNameStr.charAt(0).toUpperCase();
-                if (userInitial) { userInitial.innerText = initial; userInitial.classList.remove('hidden'); }
-                if (userAvatarImg) userAvatarImg.classList.add('hidden');
-                
-                if (settingsInitial) { settingsInitial.innerText = initial; settingsInitial.classList.remove('hidden'); }
-                if (settingsAvatarImg) settingsAvatarImg.classList.add('hidden');
-            }
-        }
-
-        // --- AUTH ---
-        window.handleLogin = async () => {
-            const accessKeyInput = document.getElementById('accessKeyInput');
-            if(!accessKeyInput) return;
-            const key = accessKeyInput.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
-            if (!key) return;
-            
-            const btn = document.getElementById('verifyKeyBtn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin text-xl"></i>`;
-            
-            try {
-                const q = collectionGroup(db, 'security');
-                const querySnapshot = await getDocs(q);
-                let foundUserData = null;
-                
-                querySnapshot.forEach(docSnap => { if (docSnap.data().key === key) foundUserData = docSnap.data(); });
-                
-                if (foundUserData) {
-                    const email = foundUserData.owner || "email@inconnu.com";
-                    const name = foundUserData.name || foundUserData.displayName || email.split('@')[0] || "Utilisateur";
-                    const photo = foundUserData.photoURL || foundUserData.picture || null;
-                    window.currentUserUid = foundUserData.uid || key;
-                    
-                    localStorage.setItem('levelmovie_saved_key', key);
-                    localStorage.setItem('levelmovie_user_name', name);
-                    localStorage.setItem('levelmovie_user_photo', photo);
-                    localStorage.setItem('levelmovie_user_email', email);
-                    localStorage.setItem('levelmovie_user_uid', window.currentUserUid);
-                    
-                    setupUserProfile(name, photo, email);
-                    loadWatchlist();
-                    window.showToast(`Connexion sécurisée : ${name}`, 'success');
-                    document.getElementById('authPage').classList.add('hidden');
-                    launchApp();
-                } else {
-                    document.getElementById('authErrorMsg').innerText = "Clé invalide ou introuvable.";
-                    document.getElementById('authErrorMsg').classList.remove('hidden');
-                }
-            } catch (error) {
-                document.getElementById('authErrorMsg').innerText = "Erreur serveur.";
-                document.getElementById('authErrorMsg').classList.remove('hidden');
-            }
-            btn.innerHTML = originalText;
-        };
-
-        window.handleLogout = () => {
-            localStorage.clear();
-            document.getElementById('settingsModal').classList.add('hidden');
-            document.getElementById('mainApp').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('flex');
-            document.getElementById('authPage').classList.remove('hidden');
-        };
-
-        // --- FAVORIS (WATCHLIST) ---
-        const loadWatchlist = async () => {
-            if(!window.currentUserUid) return;
-            try {
-                const q = collection(db, "artifacts", "1:229420004282:web:6735f059a947f0936ae383", "users", window.currentUserUid, "watchlist");
-                const snaps = await getDocs(q);
-                window.watchlist = [];
-                window.watchlistData = [];
-                snaps.forEach(doc => {
-                    const data = doc.data();
-                    window.watchlist.push(data.id);
-                    window.watchlistData.push(data);
-                });
-                const countEl = document.getElementById('settingsWatchlistCount');
-                if (countEl) countEl.innerText = window.watchlist.length;
-            } catch(e) {}
-        };
-
-        window.toggleWatchlist = async () => {
-            if(!window.currentUserUid || !window.currentModalMovie) {
-                return;
-            }
-            const movie = window.currentModalMovie;
-            const movieIdStr = movie.id.toString();
-            const ref = doc(db, "artifacts", "1:229420004282:web:6735f059a947f0936ae383", "users", window.currentUserUid, "watchlist", movieIdStr);
-            
-            const btnIcon = document.getElementById('watchlistIcon');
-            try {
-                if (window.watchlist.includes(movie.id)) {
-                    await deleteDoc(ref);
-                    window.watchlist = window.watchlist.filter(id => id !== movie.id);
-                    window.watchlistData = window.watchlistData.filter(m => m.id !== movie.id);
-                    if(btnIcon) { btnIcon.classList.remove('fa-check', 'text-green-400'); btnIcon.classList.add('fa-plus'); }
-                } else {
-                    const dataObj = {
-                        id: movie.id,
-                        title: movie.title || movie.name,
-                        poster_path: movie.poster_path,
-                        backdrop_path: movie.backdrop_path,
-                        vote_average: movie.vote_average,
-                        first_air_date: movie.first_air_date || null,
-                        release_date: movie.release_date || null,
-                        media_type: movie.first_air_date ? 'tv' : 'movie',
-                        addedAt: Date.now()
-                    };
-                    await setDoc(ref, dataObj);
-                    window.watchlist.push(movie.id);
-                    window.watchlistData.push(dataObj);
-                    if(btnIcon) { btnIcon.classList.remove('fa-plus'); btnIcon.classList.add('fa-check', 'text-green-400'); }
-                }
-                const countEl = document.getElementById('settingsWatchlistCount');
-                if (countEl) countEl.innerText = window.watchlist.length;
-                
-                if(currentCategory === 'watchlist') window.setCategory('watchlist');
-            } catch(e) {}
-        };
-
-        window.scrollToWatchlist = () => {
-            window.setCategory('watchlist');
-        };
-
-        // --- SHARE ---
-        window.shareMovie = () => {
-            if(!window.currentModalMovie) return;
-            const m = window.currentModalMovie;
-            const type = m.first_air_date ? 'tv' : 'movie';
-            const url = `https://www.themoviedb.org/${type}/${m.id}`;
-            const text = `Regarde "${m.title || m.name}" sur LevelMovie !`;
-            
-            if (navigator.share) {
-                navigator.share({ title: 'LevelMovie', text: text, url: url }).catch(()=>{});
-            } else {
-                navigator.clipboard.writeText(`${text} ${url}`);
-            }
-        };
-
-        // --- SETTINGS MODAL ---
-        window.openSettings = () => {
-            const modal = document.getElementById('settingsModal');
-            if(modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
-        };
-        window.closeSettings = () => {
-            const modal = document.getElementById('settingsModal');
-            if(modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
-        };
-
-        // --- TMDB API & UI ---
-        const fetchJSON = async (url) => { const res = await fetch(url); return res.json(); };
-
-        const buildRowHTML = (title, movies, isLarge, index) => {
-            if(!movies || movies.length === 0) return '';
-            const containerId = `row-scroll-${index}`;
-            
-            let moviesHtml = movies.map(movie => {
-                if(!movie.poster_path) return '';
-                window.moviesMap[movie.id] = movie; 
-                const imgClass = isLarge ? 'w-[140px] md:w-[200px] h-[210px] md:h-[300px]' : 'w-[200px] md:w-[260px] h-[112px] md:h-[146px]';
-                const imgSrc = `${IMAGE_BASE_URL}${isLarge ? movie.poster_path : (movie.backdrop_path || movie.poster_path)}`;
-                const titleStr = movie.title || movie.name || "";
-                
-                return `
-                <div class="relative flex-none movie-card-hover cursor-pointer rounded-xl overflow-hidden shadow-lg border border-white/5 bg-[#151520]" onclick="window.openVideoModal(${movie.id}, 'info')">
-                    <img class="object-cover ${imgClass} transition-opacity duration-500" src="${imgSrc}" loading="lazy" alt="Poster" onload="this.style.opacity=1" style="opacity:0" draggable="false"/>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3 md:p-4 pointer-events-none">
-                        <p class="text-white font-black text-[10px] md:text-sm uppercase tracking-wider truncate drop-shadow-md">${titleStr}</p>
-                        <div class="flex items-center gap-2 mt-1 md:mt-2">
-                            <span class="text-[#a855f7] font-bold text-[9px] md:text-[10px]"><i class="fas fa-star"></i> ${movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}</span>
-                        </div>
-                    </div>
-                </div>`;
-            }).join('');
-
-            return `
-            <div class="group relative ml-4 md:ml-12 animate-in fade-in duration-700">
-                <h2 class="text-white/90 text-[13px] md:text-lg font-black mb-3 md:mb-5 uppercase tracking-[0.2em] border-l-4 border-[#a855f7] pl-3 md:pl-4 drop-shadow-sm flex items-center gap-3">
-                    ${title} <i class="fas fa-chevron-right text-[10px] text-white/30"></i>
-                </h2>
-                <div onclick="document.getElementById('${containerId}').scrollBy({left: -400, behavior: 'smooth'})" class="absolute left-0 top-12 bottom-0 z-40 w-10 bg-gradient-to-r from-[#060608] via-[#060608]/80 to-transparent opacity-0 md:group-hover:opacity-100 flex items-center justify-start cursor-pointer transition-opacity duration-300 -ml-4 md:-ml-12 hidden md:flex">
-                    <i class="fas fa-chevron-left text-white hover:text-[#a855f7] transition-colors text-2xl md:text-3xl ml-1 drop-shadow-lg"></i>
-                </div>
-                <div id="${containerId}" class="flex overflow-y-hidden overflow-x-scroll py-2 md:py-4 space-x-3 md:space-x-5 no-scrollbar pr-8 row-container">
-                    ${moviesHtml}
-                </div>
-                <div onclick="document.getElementById('${containerId}').scrollBy({left: 400, behavior: 'smooth'})" class="absolute right-0 top-12 bottom-0 z-40 w-12 bg-gradient-to-l from-[#060608] via-[#060608]/80 to-transparent opacity-0 md:group-hover:opacity-100 flex items-center justify-end cursor-pointer transition-opacity duration-300 hidden md:flex">
-                    <i class="fas fa-chevron-right text-white hover:text-[#a855f7] transition-colors text-2xl md:text-3xl mr-2 drop-shadow-lg"></i>
-                </div>
-            </div>`;
-        };
-
-        const launchApp = () => {
-            const mainApp = document.getElementById('mainApp');
-            if(mainApp) { mainApp.classList.remove('hidden'); mainApp.classList.add('flex'); }
-            if (typeof window.fetchTMDBData === 'function') window.fetchTMDBData();
-            
-            window.addEventListener('scroll', () => {
-                const header = document.getElementById('mainHeader');
-                if(header) {
-                    if (window.scrollY > 30) {
-                        header.classList.remove('bg-gradient-to-b', 'from-[#060608]', 'to-transparent');
-                        header.classList.add('bg-black/80', 'backdrop-blur-2xl', 'border-b', 'border-white/5', 'shadow-xl');
-                    } else {
-                        header.classList.add('bg-gradient-to-b', 'from-[#060608]', 'to-transparent');
-                        header.classList.remove('bg-black/80', 'backdrop-blur-2xl', 'border-b', 'border-white/5', 'shadow-xl');
-                    }
-                }
-            });
-        };
-
-        window.setCategory = (cat) => {
-            currentCategory = cat;
-            const searchInput = document.getElementById('searchInput');
-            if(searchInput) searchInput.value = '';
-            
-            const searchTitleContainer = document.getElementById('searchTitleContainer');
-            if(searchTitleContainer) searchTitleContainer.classList.add('hidden');
-            
-            const heroBanner = document.getElementById('heroBanner');
-            if(heroBanner) heroBanner.style.display = 'flex';
-            
-            ['nav-home', 'nav-tv', 'nav-movie', 'nav-watchlist', 'mob-nav-home', 'mob-nav-tv', 'mob-nav-movie', 'mob-nav-watchlist'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) {
-                    el.classList.remove('text-[#a855f7]');
-                    if(id.startsWith('mob')) el.classList.add('text-white/50');
-                    else el.classList.add('text-white');
-                }
-            });
-            if(cat !== 'home' && cat !== 'watchlist') {
-                if(document.getElementById(`nav-${cat}`)) document.getElementById(`nav-${cat}`).classList.replace('text-white', 'text-[#a855f7]');
-                if(document.getElementById(`mob-nav-${cat}`)) document.getElementById(`mob-nav-${cat}`).classList.replace('text-white/50', 'text-[#a855f7]');
-            } else if (cat === 'home') {
-                if(document.getElementById('nav-home')) document.getElementById('nav-home').classList.replace('text-white', 'text-[#a855f7]');
-                if(document.getElementById('mob-nav-home')) document.getElementById('mob-nav-home').classList.replace('text-white/50', 'text-[#a855f7]');
-            } else if (cat === 'watchlist') {
-                if(document.getElementById('nav-watchlist')) document.getElementById('nav-watchlist').classList.replace('text-white', 'text-[#a855f7]');
-                if(document.getElementById('mob-nav-watchlist')) document.getElementById('mob-nav-watchlist').classList.replace('text-white/50', 'text-[#a855f7]');
-            }
-            
-            window.scrollTo({top: 0, behavior: 'smooth'});
-            if (typeof window.fetchTMDBData === 'function') window.fetchTMDBData();
-        };
-
-        window.toggleSearch = () => {
-            const input = document.getElementById('searchInput');
-            if(input) {
-                if (input.classList.contains('hidden')) {
-                    input.classList.remove('hidden');
-                    input.focus();
-                } else {
-                    input.classList.add('hidden');
-                    if(input.value.trim() !== '') {
-                        input.value = '';
-                        window.setCategory('home');
-                    }
-                }
-            }
-        };
-
-        const searchInputEl = document.getElementById('searchInput');
-        if (searchInputEl) {
-            searchInputEl.addEventListener('input', (e) => {
-                clearTimeout(searchTimeout);
-                const query = e.target.value.trim();
-                if (query === '') {
-                    const searchTitleContainer = document.getElementById('searchTitleContainer');
-                    if(searchTitleContainer) searchTitleContainer.classList.add('hidden');
-                    const heroBanner = document.getElementById('heroBanner');
-                    if(heroBanner) heroBanner.style.display = 'flex';
-                    const rowsContainer = document.getElementById('rowsContainer');
-                    rowsContainer.style.display = 'block';
-                    
-                    if (typeof window.fetchTMDBData === 'function') window.fetchTMDBData();
-                    return;
-                }
-                
-                searchTimeout = setTimeout(async () => {
-                    const langCode = window.currentLang === 'fr' ? 'fr-FR' : 'en-US';
-                    try {
-                        const data = await fetchJSON(`${BASE_URL}/search/multi?api_key=${API_KEY}&language=${langCode}&query=${encodeURIComponent(query)}`);
-                        const movies = data.results.filter(m => m.media_type === 'movie' || m.media_type === 'tv');
-                        
-                        const heroBanner = document.getElementById('heroBanner');
-                        if(heroBanner) heroBanner.style.display = 'none';
-                        
-                        const rowsContainer = document.getElementById('rowsContainer');
-                        if(rowsContainer) rowsContainer.style.display = 'none';
-                        
-                        const searchTitleContainer = document.getElementById('searchTitleContainer');
-                        if(searchTitleContainer) searchTitleContainer.classList.remove('hidden');
-                        
-                        const grid = document.getElementById('searchGrid');
-                        if(grid) {
-                            grid.innerHTML = movies.map(movie => {
-                                if(!movie.poster_path) return '';
-                                window.moviesMap[movie.id] = movie;
-                                return `
-                                <div class="relative cursor-pointer rounded-xl overflow-hidden shadow-lg border border-white/5 bg-[#151520] hover:scale-105 transition-transform" onclick="window.openVideoModal(${movie.id}, 'info')">
-                                    <img class="object-cover w-full h-[220px] md:h-[280px]" src="${IMAGE_BASE_URL}${movie.poster_path}" loading="lazy"/>
-                                </div>`;
-                            }).join('') || `<p class="text-white/50 py-10 col-span-full text-center">Aucun résultat trouvé.</p>`;
-                        }
-                    } catch(e) {}
-                }, 500);
-            });
-        }
-
-        window.fetchTMDBData = async () => {
-            const langCode = window.currentLang === 'fr' ? 'fr-FR' : 'en-US';
-            let langFilter = '';
-            if(window.currentContentLang === 'fr') langFilter = '&with_original_language=fr';
-            if(window.currentContentLang === 'en') langFilter = '&with_original_language=en';
-
-            const t = window.i18n[window.currentLang];
-            const container = document.getElementById('rowsContainer');
-            if(!container) return;
-            
-            document.getElementById('searchTitleContainer').classList.add('hidden');
-            document.getElementById('rowsContainer').style.display = 'block';
-            document.getElementById('heroBanner').style.display = 'flex';
-            
-            if (currentCategory === 'watchlist') {
-                document.getElementById('heroBanner').style.display = 'none';
-                let html = `<h2 class="text-xl md:text-2xl font-black text-white uppercase tracking-widest pl-4 md:pl-14 mb-6"><i class="fas fa-bookmark text-[#a855f7] mr-2"></i> Ma Liste</h2>`;
-                if(window.watchlistData.length === 0) {
-                    container.innerHTML = html + `<p class="text-white/50 text-center py-20 text-sm">Votre liste est vide.</p>`;
-                } else {
-                    html += `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4 md:px-14">` + window.watchlistData.map(movie => {
-                        window.moviesMap[movie.id] = movie;
-                        return `
-                        <div class="relative cursor-pointer rounded-xl overflow-hidden shadow-lg border border-white/5 bg-[#151520] hover:scale-105 transition-transform" onclick="window.openVideoModal(${movie.id}, 'info')">
-                            <img class="object-cover w-full h-[220px] md:h-[280px]" src="${IMAGE_BASE_URL}${movie.poster_path}" loading="lazy"/>
-                        </div>`;
-                    }).join('') + `</div>`;
-                    container.innerHTML = html;
-                }
-                return;
-            }
-            
-            container.innerHTML = `<div class="flex justify-center py-20"><i class="fas fa-spinner fa-spin text-4xl text-[#a855f7]"></i></div>`;
-            
-            try {
-                let typePrefix = currentCategory === 'tv' ? '/tv' : '/movie';
-                if (currentCategory === 'home') { typePrefix = '/movie'; }
-
-                const trendUrl = currentCategory === 'home' ? `/trending/all/week` : `${typePrefix}/popular`;
-                const trendData = await fetchJSON(`${BASE_URL}${trendUrl}?api_key=${API_KEY}&language=${langCode}${langFilter}`);
-                
-                const validTrend = trendData.results.filter(m => m.backdrop_path);
-                window.currentHeroMovie = validTrend[Math.floor(Math.random() * validTrend.length)];
-                
-                if (window.currentHeroMovie) {
-                    window.moviesMap[window.currentHeroMovie.id] = window.currentHeroMovie;
-                    const header = document.getElementById('heroBanner');
-                    if(header) header.style.backgroundImage = `url("${IMAGE_ORIGINAL}${window.currentHeroMovie.backdrop_path}")`;
-                    
-                    const heroTitle = document.getElementById('heroTitle');
-                    if(heroTitle) heroTitle.innerText = window.currentHeroMovie.title || window.currentHeroMovie.name || window.currentHeroMovie.original_name;
-                    
-                    let desc = window.currentHeroMovie.overview;
-                    const heroDesc = document.getElementById('heroDesc');
-                    if(heroDesc) heroDesc.innerText = desc || "";
-                    
-                    const meta = document.getElementById('heroMeta');
-                    if(meta) {
-                        meta.innerHTML = `
-                            <span class="text-green-400 border border-green-400/30 bg-green-400/10 px-2 py-0.5 rounded shadow-sm" data-i18n="match">${t.match}</span>
-                            <span>${(window.currentHeroMovie.release_date || window.currentHeroMovie.first_air_date || '').substring(0,4)}</span>
-                            <span><i class="fas fa-star text-[#a855f7]"></i> ${window.currentHeroMovie.vote_average?.toFixed(1)}</span>
-                        `;
-                    }
-                    const heroButtons = document.getElementById('heroButtons');
-                    if(heroButtons) heroButtons.style.display = 'flex';
-                }
-
-                // MASSIVE CATALOGUE AVEC FILTRE DE LANGUE
-                let rowsConfig = [];
-                if (currentCategory === 'home' || currentCategory === 'movie') {
-                    rowsConfig.push(
-                        { title: t.trending, url: `/trending/movie/week?api_key=${API_KEY}&language=${langCode}${langFilter}`, large: true },
-                        { title: t.freeVOD, url: `/discover/movie?api_key=${API_KEY}&language=${langCode}&with_watch_monetization_types=free&watch_region=FR&sort_by=popularity.desc${langFilter}`, large: false },
-                        { title: t.publicDomain, url: `/discover/movie?api_key=${API_KEY}&language=${langCode}&primary_release_date.lte=1970-01-01&sort_by=vote_average.desc&vote_count.gte=200${langFilter}`, large: true },
-                        { title: t.topRated, url: `/movie/top_rated?api_key=${API_KEY}&language=${langCode}${langFilter}`, large: false },
-                        { title: t.action, url: `/discover/movie?api_key=${API_KEY}&language=${langCode}&with_genres=28${langFilter}`, large: false },
-                        { title: t.scifi, url: `/discover/movie?api_key=${API_KEY}&language=${langCode}&with_genres=878${langFilter}`, large: false },
-                        { title: t.comedy, url: `/discover/movie?api_key=${API_KEY}&language=${langCode}&with_genres=35${langFilter}`, large: false },
-                        { title: t.horror, url: `/discover/movie?api_key=${API_KEY}&language=${langCode}&with_genres=27${langFilter}`, large: false },
-                        { title: t.animation, url: `/discover/movie?api_key=${API_KEY}&language=${langCode}&with_genres=16${langFilter}`, large: false },
-                        { title: t.docs, url: `/discover/movie?api_key=${API_KEY}&language=${langCode}&with_genres=99${langFilter}`, large: false },
-                        { title: t.war, url: `/discover/movie?api_key=${API_KEY}&language=${langCode}&with_genres=10752${langFilter}`, large: false },
-                        { title: t.history, url: `/discover/movie?api_key=${API_KEY}&language=${langCode}&with_genres=36${langFilter}`, large: false },
-                        { title: t.mystery, url: `/discover/movie?api_key=${API_KEY}&language=${langCode}&with_genres=9648${langFilter}`, large: false },
-                        { title: t.music, url: `/discover/movie?api_key=${API_KEY}&language=${langCode}&with_genres=10402${langFilter}`, large: false },
-                        { title: t.fantasy, url: `/discover/movie?api_key=${API_KEY}&language=${langCode}&with_genres=14${langFilter}`, large: false },
-                        { title: t.family, url: `/discover/movie?api_key=${API_KEY}&language=${langCode}&with_genres=10751${langFilter}`, large: false }
-                    );
-                } else if (currentCategory === 'tv') {
-                    rowsConfig.push(
-                        { title: "Séries Tendances", url: `/trending/tv/week?api_key=${API_KEY}&language=${langCode}${langFilter}`, large: true },
-                        { title: t.kdrama, url: `/discover/tv?api_key=${API_KEY}&language=${langCode}&with_original_language=ko`, large: false },
-                        { title: t.animation, url: `/discover/tv?api_key=${API_KEY}&language=${langCode}&with_genres=16&with_original_language=ja`, large: false },
-                        { title: "Les Mieux Notées", url: `/tv/top_rated?api_key=${API_KEY}&language=${langCode}${langFilter}`, large: false },
-                        { title: "Action & Aventure", url: `/discover/tv?api_key=${API_KEY}&language=${langCode}&with_genres=10759${langFilter}`, large: false },
-                        { title: "Comédies", url: `/discover/tv?api_key=${API_KEY}&language=${langCode}&with_genres=35${langFilter}`, large: false },
-                        { title: "Crime & Enquête", url: `/discover/tv?api_key=${API_KEY}&language=${langCode}&with_genres=80${langFilter}`, large: false },
-                        { title: "Drame", url: `/discover/tv?api_key=${API_KEY}&language=${langCode}&with_genres=18${langFilter}`, large: false },
-                        { title: "Mystère", url: `/discover/tv?api_key=${API_KEY}&language=${langCode}&with_genres=9648${langFilter}`, large: false },
-                        { title: "Sci-Fi & Fantastique", url: `/discover/tv?api_key=${API_KEY}&language=${langCode}&with_genres=10765${langFilter}`, large: false },
-                        { title: "Documentaires", url: `/discover/tv?api_key=${API_KEY}&language=${langCode}&with_genres=99${langFilter}`, large: false }
-                    );
-                }
-
-                const promises = rowsConfig.map(conf => fetchJSON(`${BASE_URL}${conf.url}`));
-                const results = await Promise.all(promises);
-
-                let allRowsHtml = "";
-                results.forEach((data, index) => {
-                    allRowsHtml += buildRowHTML(rowsConfig[index].title, data.results, rowsConfig[index].large, index);
-                });
-                container.innerHTML = allRowsHtml;
-                
-                window.attachDragToScroll();
-
-            } catch (err) {}
-        };
-
-        window.switchModalMode = (mode) => {
-            window.currentModalMode = mode;
-            const vContainer = document.getElementById('videoContainer');
-            const detailsRow = document.getElementById('modalDetailsRow');
-            const serverOpt = document.getElementById('modalServerOptions');
-            const m = window.currentModalMovieData;
-            
-            if (!m) return;
-            
-            if (mode === 'play') {
-                if (detailsRow) detailsRow.classList.add('hidden');
-                if (serverOpt) serverOpt.classList.remove('hidden');
-                
-                const modalHoloCard = document.querySelector('#videoModal .holo-card');
-                if (modalHoloCard) modalHoloCard.scrollTo({top: 0, behavior: 'smooth'});
-                
-                window.playFullMovieAction('vidsrc');
-                
-            } else {
-                if (detailsRow) detailsRow.classList.remove('hidden');
-                if (serverOpt) serverOpt.classList.add('hidden');
-                
-                if (window.currentTrailerKey) {
-                    vContainer.innerHTML = `
-                        <iframe
-                            class="absolute inset-0 w-full h-full bg-black"
-                            src="https://www.youtube.com/embed/${window.currentTrailerKey}?autoplay=1&controls=1&modestbranding=1&rel=0&showinfo=0"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                        ></iframe>`;
-                } else if (m.backdrop_path) {
-                    vContainer.innerHTML = `<img src="${IMAGE_ORIGINAL}${m.backdrop_path}" class="absolute inset-0 w-full h-full object-cover opacity-60">`;
-                } else {
-                    vContainer.innerHTML = `<div class="absolute inset-0 bg-black flex items-center justify-center text-white/30"><i class="fas fa-film text-6xl"></i></div>`;
-                }
-            }
-        };
-
-        window.playFullMovieAction = (serverId = 'vidsrc') => {
-            const serverBtns = ['vidsrc', 'vidsrc_me', 'superembed', 'archive'];
-            serverBtns.forEach(id => {
-                const btn = document.getElementById(`btn-server-${id}`);
-                if(btn) {
-                    if(id === serverId) {
-                        btn.className = "px-4 py-2.5 bg-[#a855f7] text-white border border-[#a855f7]/30 rounded-xl text-[10px] font-bold uppercase shadow-[0_0_15px_rgba(168,85,247,0.3)] transition-all";
-                    } else {
-                        btn.className = "px-4 py-2.5 bg-white/5 text-white/70 border border-white/10 rounded-xl text-[10px] font-bold uppercase hover:bg-white/10 transition-all";
-                    }
-                }
-            });
-
-            const vContainer = document.getElementById('videoContainer');
-            const movieId = window.currentModalMovie.id;
-            const isTV = window.currentModalMovie.first_air_date !== undefined;
-            const typeStr = isTV ? 'tv' : 'movie';
-            const t = window.i18n[window.currentLang];
-
-            if (vContainer) {
-                if (!window.disclaimerAccepted) {
-                    vContainer.innerHTML = `
-                        <div class="absolute inset-0 flex flex-col bg-[#060608] z-50">
-                            <div class="p-6 shrink-0 flex flex-col items-center justify-center border-b border-white/5">
-                                <h2 class="text-2xl md:text-3xl font-black uppercase tracking-wider drop-shadow-md">
-                                    <span class="text-white">Level</span><span class="text-[#a855f7]">Movie</span>
-                                </h2>
-                            </div>
-                            <div class="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col items-center justify-center">
-                                <div class="bg-red-500/10 border border-red-500/30 p-4 md:p-5 rounded-2xl max-w-lg w-full text-left shadow-inner mb-4">
-                                    <h3 class="text-red-400 font-bold text-sm mb-2 flex items-center gap-2">
-                                        <i class="fas fa-exclamation-triangle"></i> ${t.warningTitle}
-                                    </h3>
-                                    <p class="text-white/70 text-[11px] md:text-xs leading-relaxed" data-i18n="warningText">
-                                        ${t.warningText}
-                                    </p>
-                                </div>
-                                <label class="flex items-start gap-3 cursor-pointer text-left max-w-lg w-full bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition-colors shadow-sm mb-4">
-                                    <input type="checkbox" id="acceptDisclaimer" class="mt-0.5 w-5 h-5 accent-[#a855f7] cursor-pointer" onchange="document.getElementById('proceedBtn').disabled = !this.checked; document.getElementById('proceedBtn').classList.toggle('opacity-50'); document.getElementById('proceedBtn').classList.toggle('hover:scale-105');">
-                                    <span class="text-white/90 text-xs font-bold select-none leading-tight" data-i18n="warningCheckbox">
-                                        ${t.warningCheckbox}
-                                    </span>
-                                </label>
-                            </div>
-                            <div class="p-4 md:p-6 shrink-0 bg-[#060608] border-t border-white/5 flex justify-center pb-safe">
-                                <button id="proceedBtn" disabled class="w-full max-w-lg py-4 bg-[#a855f7] text-white font-black uppercase tracking-widest rounded-xl opacity-50 transition-all shadow-[0_0_20px_rgba(168,85,247,0.3)] active:scale-95" onclick="window.disclaimerAccepted = true; window.loadIframeStream('${serverId}', '${typeStr}', ${movieId})">
-                                    ${t.warningBtn}
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    window.loadIframeStream(serverId, typeStr, movieId);
-                }
-            }
-        };
-
-        window.loadIframeStream = (serverId, typeStr, movieId) => {
-            const vContainer = document.getElementById('videoContainer');
-            if (!vContainer) return;
-
-            let iframeSrc = '';
-            if (serverId === 'youtube_full' && window.currentYoutubeFullKey) {
-                iframeSrc = `https://www.youtube.com/embed/${window.currentYoutubeFullKey}?autoplay=1`;
-            } else if (serverId === 'vidsrc') {
-                iframeSrc = `https://vidsrc.to/embed/${typeStr}/${movieId}`;
-            } else if (serverId === 'vidsrc_me') {
-                iframeSrc = `https://vidsrc.me/embed/${typeStr}?tmdb=${movieId}`;
-            } else if (serverId === 'superembed') {
-                iframeSrc = `https://multiembed.mov/?video_id=${movieId}&tmdb=1`;
-            } else if (serverId === 'archive') {
-                const title = window.currentModalMovie.title || window.currentModalMovie.name;
-                const suffix = window.currentLang === 'fr' ? ' film complet' : ' full movie';
-                const q = encodeURIComponent(title + suffix);
-                iframeSrc = `https://www.youtube.com/embed?listType=search&list=${q}&autoplay=1`;
-            }
-
-            vContainer.innerHTML = `
-                <div class="absolute inset-0 flex items-center justify-center bg-black/80 z-0">
-                    <i class="fas fa-circle-notch fa-spin text-5xl text-[#a855f7]"></i>
-                </div>
-                <iframe
-                    class="absolute inset-0 w-full h-full bg-transparent z-10"
-                    src="${iframeSrc}"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                ></iframe>`;
-        };
-
-        window.playHeroMovie = (mode) => {
-            if(window.currentHeroMovie) {
-                window.openVideoModal(window.currentHeroMovie.id, mode);
-            }
-        };
-
-        window.openVideoModal = async (movieId, mode = 'info') => {
-            const movie = window.moviesMap[movieId];
-            if (!movie) return;
-
-            window.currentModalMovie = movie;
-            window.currentModalMode = mode;
-            window.disclaimerAccepted = false; 
-            
-            const isTV = movie.first_air_date !== undefined;
-            const typeStr = isTV ? 'tv' : 'movie';
-            const langCode = window.currentLang === 'fr' ? 'fr-FR' : 'en-US';
-            const t = window.i18n[window.currentLang];
-            
-            const modalMovieTitle = document.getElementById('modalMovieTitle');
-            if (modalMovieTitle) modalMovieTitle.innerText = movie.title || movie.name || movie.original_name;
-            
-            const modalMovieYear = document.getElementById('modalMovieYear');
-            if (modalMovieYear) modalMovieYear.innerText = (movie.release_date || movie.first_air_date || '').substring(0, 4);
-            
-            const btnIcon = document.getElementById('watchlistIcon');
-            if (btnIcon) {
-                if (window.watchlist.includes(movie.id)) {
-                    btnIcon.classList.remove('fa-plus'); btnIcon.classList.add('fa-check', 'text-green-400');
-                } else {
-                    btnIcon.classList.remove('fa-check', 'text-green-400'); btnIcon.classList.add('fa-plus');
-                }
-            }
-
-            const vContainer = document.getElementById('videoContainer');
-            if (vContainer) {
-                vContainer.innerHTML = `
-                    <div class="absolute inset-0 flex items-center justify-center bg-black/80">
-                        <i class="fas fa-circle-notch fa-spin text-5xl text-[#a855f7]"></i>
-                    </div>`;
-            }
-            
-            document.getElementById('modalDetailsRow').classList.add('hidden');
-            document.getElementById('modalServerOptions').classList.add('hidden');
-            
-            const videoModal = document.getElementById('videoModal');
-            if (videoModal) videoModal.classList.remove('hidden');
-
-            try {
-                const detailsData = await fetchJSON(`${BASE_URL}/${typeStr}/${movieId}?api_key=${API_KEY}&language=${langCode}&append_to_response=credits,similar,watch/providers,videos,reviews`);
-                window.currentModalMovieData = detailsData;
-                
-                const modalMovieDesc = document.getElementById('modalMovieDesc');
-                if (modalMovieDesc) {
-                    let descHtml = "";
-                    if (detailsData.tagline) {
-                        descHtml += `<p class="text-[#a855f7] italic text-sm md:text-base font-medium mb-4">"${detailsData.tagline}"</p>`;
-                    }
-                    if (movie.overview) {
-                        const paras = movie.overview.split('\n').filter(p => p.trim().length > 0);
-                        paras.forEach(p => { descHtml += `<p class="mb-3">${p}</p>`; });
-                    } else {
-                        descHtml += `<p>${t.noDesc}</p>`;
-                    }
-                    modalMovieDesc.innerHTML = descHtml;
-                }
-
-                const modalMovieOriginalTitle = document.getElementById('modalMovieOriginalTitle');
-                if (modalMovieOriginalTitle) {
-                    modalMovieOriginalTitle.innerText = detailsData.original_title || detailsData.original_name || "N/A";
-                }
-
-                const modalMovieStatus = document.getElementById('modalMovieStatus');
-                if (modalMovieStatus && detailsData.status) {
-                    modalMovieStatus.innerText = detailsData.status;
-                    modalMovieStatus.classList.remove('hidden');
-                }
-
-                const modalMovieLang = document.getElementById('modalMovieLang');
-                if (modalMovieLang && detailsData.original_language) {
-                    modalMovieLang.innerText = `VO: ${detailsData.original_language.toUpperCase()}`;
-                }
-
-                if (detailsData.runtime) {
-                    const h = Math.floor(detailsData.runtime / 60);
-                    const m = detailsData.runtime % 60;
-                    document.getElementById('modalMovieRuntime').innerText = `${h}h ${m}m`;
-                } else if (detailsData.episode_run_time && detailsData.episode_run_time.length > 0) {
-                    document.getElementById('modalMovieRuntime').innerText = `${detailsData.episode_run_time[0]} min/ep`;
-                }
-
-                if (detailsData.vote_count) {
-                    const votesEl = document.getElementById('modalMovieVotes');
-                    if (votesEl) votesEl.innerText = detailsData.vote_count + " avis certifiés";
-                }
-
-                const modalMovieScore = document.getElementById('modalMovieScore');
-                if (modalMovieScore) modalMovieScore.innerText = detailsData.vote_average ? detailsData.vote_average.toFixed(1) : 'N/A';
-
-                const modalMovieDirector = document.getElementById('modalMovieDirector');
-                if (modalMovieDirector) {
-                    let directors = [];
-                    if (detailsData.credits && detailsData.credits.crew) {
-                        directors = detailsData.credits.crew.filter(c => c.job === 'Director').map(c => c.name);
-                    }
-                    if (directors.length === 0 && detailsData.created_by) {
-                        directors = detailsData.created_by.map(c => c.name);
-                    }
-                    modalMovieDirector.innerText = directors.length > 0 ? directors.join(', ') : "Non spécifié";
-                }
-
-                const modalMovieFinance = document.getElementById('modalMovieFinance');
-                if (modalMovieFinance) {
-                    let financeStr = "";
-                    if (detailsData.budget && detailsData.budget > 0) financeStr += `Budget: $${(detailsData.budget / 1000000).toFixed(1)}M`;
-                    if (detailsData.revenue && detailsData.revenue > 0) financeStr += (financeStr ? ` • ` : '') + `Revenus: $${(detailsData.revenue / 1000000).toFixed(1)}M`;
-                    modalMovieFinance.innerText = financeStr;
-                    modalMovieFinance.style.display = financeStr ? 'block' : 'none';
-                }
-
-                const modalMovieOrigin = document.getElementById('modalMovieOrigin');
-                if (modalMovieOrigin) {
-                    if (detailsData.production_countries && detailsData.production_countries.length > 0) {
-                        modalMovieOrigin.innerText = detailsData.production_countries.map(c => c.name).join(', ');
-                    } else {
-                        modalMovieOrigin.innerText = "";
-                    }
-                }
-
-                const modalMovieReview = document.getElementById('modalMovieReview');
-                if (modalMovieReview) {
-                    if (detailsData.reviews && detailsData.reviews.results && detailsData.reviews.results.length > 0) {
-                        const rev = detailsData.reviews.results[0];
-                        let content = rev.content;
-                        if (content.length > 250) content = content.substring(0, 250) + '...';
-                        modalMovieReview.innerHTML = `"${content}" <br><span class="text-[#a855f7] font-bold mt-2 block">- ${rev.author}</span>`;
-                        modalMovieReview.classList.remove('hidden');
-                    } else {
-                        modalMovieReview.classList.add('hidden');
-                    }
-                }
-
-                const modalMovieGenre = document.getElementById('modalMovieGenre');
-                if (modalMovieGenre) {
-                    if(detailsData.genres && detailsData.genres.length > 0) {
-                        modalMovieGenre.innerHTML = detailsData.genres.map(g => `<span class="bg-white/10 px-2 py-1 rounded inline-block mb-1 mr-1">${g.name}</span>`).join('');
-                    } else {
-                        modalMovieGenre.innerText = '';
-                    }
-                }
-                
-                const modalMovieCastContainer = document.getElementById('modalMovieCastContainer');
-                if (modalMovieCastContainer) {
-                    if(detailsData.credits && detailsData.credits.cast && detailsData.credits.cast.length > 0) {
-                        const castHtml = detailsData.credits.cast.slice(0, 15).map(c => {
-                            const imgUrl = c.profile_path ? `https://image.tmdb.org/t/p/w185${c.profile_path}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=151520&color=a855f7`;
-                            const roleName = c.character ? `<span class="text-[8px] text-[#a855f7] truncate w-[80px] text-center mt-0.5">${c.character}</span>` : '';
-                            return `
-                            <div class="flex flex-col items-center min-w-[70px] gap-1 shrink-0 select-none">
-                                <img src="${imgUrl}" class="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover border border-white/10 shadow-md bg-black/50" draggable="false">
-                                <span class="text-[9px] text-white/90 text-center font-bold w-[80px] truncate px-1 mt-1">${c.name}</span>
-                                ${roleName}
-                            </div>`;
-                        }).join('');
-                        modalMovieCastContainer.innerHTML = castHtml;
-                    } else {
-                        modalMovieCastContainer.innerHTML = '<span class="text-white/50 text-xs">Casting non disponible</span>';
-                    }
-                }
-
-                const modalMovieProd = document.getElementById('modalMovieProd');
-                if (modalMovieProd) {
-                    if(detailsData.production_companies && detailsData.production_companies.length > 0) {
-                        modalMovieProd.innerText = detailsData.production_companies.map(c => c.name).join(', ');
-                    } else {
-                        modalMovieProd.innerText = "Non spécifié";
-                    }
-                }
-                
-                const providersContainer = document.getElementById('modalMovieProviders');
-                const region = window.currentLang === 'fr' ? 'FR' : 'US';
-                const providerData = detailsData['watch/providers']?.results?.[region];
-                
-                if (providerData) {
-                    const allProviders = [...(providerData.flatrate || []), ...(providerData.free || []), ...(providerData.ads || [])];
-                    const uniqueProviders = [];
-                    const seen = new Set();
-                    for (const p of allProviders) {
-                        if (!seen.has(p.provider_id)) {
-                            seen.add(p.provider_id);
-                            uniqueProviders.push(p);
-                        }
-                    }
-
-                    if (uniqueProviders.length > 0) {
-                        let html = `<h4 class="text-white/50 text-[10px] md:text-xs uppercase font-bold tracking-widest mb-3 flex items-center gap-2"><i class="fas fa-play-circle text-green-400"></i> ${t.legalWatch}</h4><div class="flex flex-wrap gap-3">`;
-                        uniqueProviders.slice(0, 8).forEach(p => {
-                            html += `<a href="${providerData.link}" target="_blank" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl px-4 py-2 transition-all hover:scale-105 active:scale-95 no-underline shadow-sm">
-                                <img src="https://image.tmdb.org/t/p/w45${p.logo_path}" class="w-5 h-5 rounded-md shadow-sm">
-                                <span class="text-[11px] font-bold text-white">${p.provider_name}</span>
-                            </a>`;
-                        });
-                        html += `</div>`;
-                        providersContainer.innerHTML = html;
-                        providersContainer.classList.remove('hidden');
-                    } else {
-                        providersContainer.innerHTML = `<h4 class="text-white/50 text-[10px] md:text-xs uppercase font-bold tracking-widest mb-3 flex items-center gap-2"><i class="fas fa-play-circle text-green-400"></i> ${t.legalWatch}</h4><p class="text-white/40 text-[11px] italic">${t.noLegal}</p>`;
-                        providersContainer.classList.remove('hidden');
-                    }
-                } else {
-                    providersContainer.innerHTML = `<h4 class="text-white/50 text-[10px] md:text-xs uppercase font-bold tracking-widest mb-3 flex items-center gap-2"><i class="fas fa-play-circle text-green-400"></i> ${t.legalWatch}</h4><p class="text-white/40 text-[11px] italic">${t.noLegal}</p>`;
-                    providersContainer.classList.remove('hidden');
-                }
-
-                // Affichage Boutons Youtube & Archive intelligent
-                const youtubeFullFeature = detailsData.videos?.results?.find(v => v.type === 'Feature Film' && v.site === 'YouTube');
-                const btnYoutubeFull = document.getElementById('btnYoutubeFull');
-                if (youtubeFullFeature) {
-                    window.currentYoutubeFullKey = youtubeFullFeature.key;
-                    if(btnYoutubeFull) btnYoutubeFull.classList.remove('hidden');
-                } else {
-                    window.currentYoutubeFullKey = null;
-                    if(btnYoutubeFull) btnYoutubeFull.classList.add('hidden');
-                }
-
-                const releaseYear = movie.release_date ? parseInt(movie.release_date.substring(0, 4)) : 9999;
-                const btnArchive = document.getElementById('btn-server-archive');
-                if (btnArchive) {
-                    if (releaseYear <= 1970) btnArchive.classList.remove('hidden');
-                    else btnArchive.classList.add('hidden');
-                }
-
-                let trailerKey = '';
-                if (detailsData.videos && detailsData.videos.results) {
-                    const trailer = detailsData.videos.results.find(v => v.type === 'Trailer' && v.site === 'YouTube') || detailsData.videos.results.find(v=>v.site==='YouTube');
-                    trailerKey = trailer ? trailer.key : '';
-                }
-                
-                if(!trailerKey && window.currentLang === 'fr') {
-                    let resFallback = await fetchJSON(`${BASE_URL}/${typeStr}/${movieId}/videos?api_key=${API_KEY}&language=en-US`);
-                    const trailerF = resFallback.results?.find(v => v.type === 'Trailer' && v.site === 'YouTube');
-                    trailerKey = trailerF ? trailerF.key : '';
-                }
-                window.currentTrailerKey = trailerKey;
-
-                const modalSimilarMovies = document.getElementById('modalSimilarMovies');
-                if (modalSimilarMovies) {
-                    if(detailsData.similar && detailsData.similar.results && detailsData.similar.results.length > 0) {
-                        const simHtml = detailsData.similar.results.slice(0, 10).map(sm => {
-                            if(!sm.poster_path) return '';
-                            window.moviesMap[sm.id] = sm;
-                            return `
-                            <div class="relative flex-none cursor-pointer rounded-xl overflow-hidden shadow-lg border border-white/5 bg-[#151520] hover:scale-105 transition-transform w-[120px] md:w-[150px] h-[180px] md:h-[225px]" onclick="window.openVideoModal(${sm.id}, 'info')">
-                                <img class="object-cover w-full h-full" src="${IMAGE_BASE_URL}${sm.poster_path}" loading="lazy" draggable="false"/>
-                            </div>`;
-                        }).join('');
-                        modalSimilarMovies.innerHTML = simHtml;
-                    } else {
-                        modalSimilarMovies.innerHTML = '<p class="text-white/50 text-sm">Aucun titre similaire trouvé.</p>';
-                    }
-                }
-                
-                window.attachDragToScroll();
-
-                window.switchModalMode(mode);
-
-            } catch (e) {
-                if (vContainer) {
-                    vContainer.innerHTML = `
-                        <div class="absolute inset-0 flex flex-col items-center justify-center bg-[#060608] text-center p-6 border-b border-[#a855f7]/30">
-                            <h2 class="text-3xl font-black tracking-widest mb-6 opacity-80"><span class="text-white">Level</span><span class="text-[#a855f7]">Movie</span></h2>
-                            <div class="bg-red-500/10 p-4 rounded-full mb-4">
-                                <i class="fas fa-video-slash text-3xl text-red-400"></i>
-                            </div>
-                            <h3 class="text-lg font-black mb-2 text-white uppercase tracking-widest drop-shadow-md">Contenu Indisponible</h3>
-                            <p class="text-white/60 text-xs max-w-sm">Nous vous prions de nous excuser. Le flux vidéo officiel pour ce programme est introuvable ou a été retiré de nos serveurs partenaires.</p>
-                        </div>`;
-                }
-            }
-        };
-
-        window.closeVideoModal = () => {
-            const videoModal = document.getElementById('videoModal');
-            if (videoModal) videoModal.classList.add('hidden');
-            
-            const vContainer = document.getElementById('videoContainer');
-            if (vContainer) vContainer.innerHTML = ''; 
-        };
-
-    </script>
+  </div>
+</div>
+
+<div class="toast-notification" id="toast">Copié !</div>
+
+<!-- SCRIPTS UNIFIÉS (UI + Auth + Firestore) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, signInAnonymously, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA3JgvNu5p-43037jvm4WRDaJHI9ES7uGM",
+  authDomain: "levelup-ia.firebaseapp.com",
+  projectId: "levelup-ia",
+  storageBucket: "levelup-ia.firebasestorage.app",
+  messagingSenderId: "229420004282",
+  appId: "1:229420004282:web:6735f059a947f0936ae383",
+  measurementId: "G-MSRDY2574K"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+const APP_ID = "level-ia-premium";
+const VIEW_DURATION = 180 * 1000; 
+const COOLDOWN_DURATION = 24 * 60 * 60 * 1000; 
+
+let currentUser = null;
+let isRealUser = false; // Différencie Google Auth de l'Auth Anonyme
+let activeInterval;
+
+// --- UTILS UI GENERAUX ---
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  if (window.scrollY > 50) {
+    nav.style.background = 'rgba(3,3,3,0.9)';
+    nav.style.padding = '12px 5%';
+  } else {
+    nav.style.background = 'rgba(3,3,3,0.7)';
+    nav.style.padding = '16px 5%';
+  }
+});
+
+// --- VARIABLES BOT & ADN IA ---
+let botApiKeys = [];
+let currentBotKeyIndex = 0;
+const fallbackKey = firebaseConfig.apiKey; 
+let configUnsubscribe = null;
+
+// Fonction de récupération de la config (exécutée uniquement quand l'utilisateur est authentifié)
+function fetchBotConfig() {
+  if (configUnsubscribe) return;
+  configUnsubscribe = onSnapshot(
+    doc(db, "artifacts", "level-ia-premium", "system", "config"), 
+    (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const rawKeys = data.gemini_api_keys || data.gemini_api_key;
+        if (Array.isArray(rawKeys) && rawKeys.length > 0) botApiKeys = rawKeys.map(k => k.trim());
+        else if (typeof rawKeys === 'string' && rawKeys.trim()) botApiKeys = [rawKeys.trim()];
+      }
+    },
+    (error) => {
+      console.warn("Erreur de permission Firestore ignorée pour la config :", error);
+    }
+  );
+}
+
+// -- GESTION DE L'AUTHENTIFICATION HYBRIDE --
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    fetchBotConfig(); // Récupère la config en toute sécurité une fois l'authentification établie
+
+    if (!user.isAnonymous) {
+      // Connexion Réelle (Clé Google)
+      currentUser = user;
+      isRealUser = true;
+      document.getElementById('userName').innerText = user.displayName || "Utilisateur";
+      document.getElementById('userAvatar').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}`;
+      
+      if (modalOverlay.classList.contains('active')) {
+        viewLogin.classList.add('hidden');
+        viewAppContent.classList.remove('hidden');
+        processUserKeyData();
+      }
+    } else {
+      // Connexion Anonyme (Chatbot & ADN)
+      isRealUser = false;
+    }
+  } else {
+    // Si déconnecté de Google, on connecte en anonyme pour le site
+    signInAnonymously(auth).catch(e => console.error(e));
+    isRealUser = false;
+    viewLogin.classList.remove('hidden');
+    viewAppContent.classList.add('hidden');
+  }
+});
+
+
+// ==========================================
+// LOGIQUE DE LA MODALE & CLÉ
+// ==========================================
+
+const modalOverlay = document.getElementById('keyModalOverlay');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const viewLogin = document.getElementById('viewLogin');
+const viewAppContent = document.getElementById('viewAppContent');
+
+const sections = {
+  loading: document.getElementById('sectionLoading'),
+  noKey: document.getElementById('sectionNoKey'),
+  hasKey: document.getElementById('sectionHasKey'),
+  wait: document.getElementById('sectionWait'),
+  resee: document.getElementById('sectionResee')
+};
+
+// Ouverture de la modale "Obtenir une clé"
+document.querySelectorAll('.btn-get-key').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    modalOverlay.classList.add('active');
+    if (isRealUser) {
+      viewLogin.classList.add('hidden');
+      viewAppContent.classList.remove('hidden');
+      processUserKeyData();
+    } else {
+      viewLogin.classList.remove('hidden');
+      viewAppContent.classList.add('hidden');
+    }
+  });
+});
+
+closeModalBtn.addEventListener('click', () => {
+  modalOverlay.classList.remove('active');
+});
+
+function hideAllSections() {
+  Object.values(sections).forEach(s => s.classList.add('hidden'));
+  if (activeInterval) clearInterval(activeInterval);
+}
+
+// Connexion / Déconnexion Google manuelle
+document.getElementById('googleLoginBtn').onclick = async () => {
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (error) {
+    showToast("Erreur de connexion.");
+  }
+};
+document.getElementById('logoutBtn').onclick = () => { signOut(auth); };
+
+// Gestion de la BDD et clés
+async function processUserKeyData() {
+  hideAllSections();
+  sections.loading.classList.remove('hidden');
+  try {
+    const keyRef = doc(db, "artifacts", APP_ID, "users", currentUser.uid, "security", "data");
+    const snap = await getDoc(keyRef);
+    sections.loading.classList.add('hidden');
+    if (snap.exists()) {
+      handleExistingKey(snap.data());
+    } else {
+      sections.noKey.classList.remove('hidden');
+    }
+  } catch (e) { showToast("Erreur de base de données"); }
+}
+
+function handleExistingKey(data) {
+  const now = Date.now();
+  const lastViewedAt = data.lastViewedAt || data.createdAt || 0;
+  const viewEndsAt = lastViewedAt + VIEW_DURATION;
+  const cooldownEndsAt = lastViewedAt + COOLDOWN_DURATION;
+
+  const keyDisplay = document.getElementById('myKeyDisplay');
+  const blurOverlay = document.getElementById('blurOverlay');
+  const copyBtn = document.getElementById('copyBtn');
+
+  keyDisplay.classList.remove('blur-secure');
+  blurOverlay.classList.add('hidden');
+  copyBtn.disabled = false;
+  copyBtn.style.opacity = '1';
+
+  if (now < viewEndsAt) {
+    keyDisplay.innerText = data.key;
+    sections.hasKey.classList.remove('hidden');
+    startViewCountdown(viewEndsAt);
+  } else if (now >= viewEndsAt && now < cooldownEndsAt) {
+    sections.wait.classList.remove('hidden');
+    startCooldownCountdown(cooldownEndsAt);
+  } else {
+    sections.resee.classList.remove('hidden');
+  }
+}
+
+// Génération de clé
+document.getElementById('generateKeyBtn').onclick = async () => {
+  const btn = document.getElementById('generateKeyBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Création...`;
+
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let p1 = '', p2 = '';
+  for(let i=0; i<5; i++) p1 += chars.charAt(Math.floor(Math.random() * chars.length));
+  for(let i=0; i<5; i++) p2 += chars.charAt(Math.floor(Math.random() * chars.length));
+  const newKey = `LVL-${p1}-${p2}`;
+  const now = Date.now();
+
+  let emailSentStatus = false;
+  try {
+    if (currentUser.email) {
+      await window.emailjs.send("service_yzyqexy", "template_bmdd4zl", {
+        email: currentUser.email, to_name: currentUser.displayName || "Utilisateur", access_key: newKey
+      }, "7UQM4yu7KUSpooMy9");
+      emailSentStatus = true;
+    }
+  } catch(e) {}
+
+  try {
+    const keyRef = doc(db, "artifacts", APP_ID, "users", currentUser.uid, "security", "data");
+    await setDoc(keyRef, {
+      key: newKey, uid: currentUser.uid, email: currentUser.email || "",
+      name: currentUser.displayName || "Utilisateur", displayName: currentUser.displayName || "Utilisateur",
+      owner: currentUser.email || "inconnu", photoURL: currentUser.photoURL || "",
+      picture: currentUser.photoURL || "", createdAt: now, lastViewedAt: now, emailSent: emailSentStatus
+    });
+    
+    document.getElementById('myKeyDisplay').innerText = newKey;
+    hideAllSections();
+    sections.hasKey.classList.remove('hidden');
+    startViewCountdown(now + VIEW_DURATION);
+  } catch (e) {
+    showToast("Erreur de création");
+    btn.disabled = false; btn.innerText = "Créer ma clé";
+  }
+};
+
+// Revoir la clé
+document.getElementById('reseeBtn').onclick = async () => {
+  const btn = document.getElementById('reseeBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Autorisation...`;
+
+  try {
+    const now = Date.now();
+    const keyRef = doc(db, "artifacts", APP_ID, "users", currentUser.uid, "security", "data");
+    const snap = await getDoc(keyRef);
+    const data = snap.data();
+
+    let emailSentStatus = data.emailSent || false;
+    if (!emailSentStatus && currentUser.email) {
+      try {
+        await window.emailjs.send("service_yzyqexy", "template_bmdd4zl", {
+          email: currentUser.email, to_name: currentUser.displayName || "Utilisateur", access_key: data.key
+        }, "7UQM4yu7KUSpooMy9");
+        emailSentStatus = true;
+      } catch(e) {}
+    }
+
+    await setDoc(keyRef, { lastViewedAt: now, emailSent: emailSentStatus }, { merge: true });
+    data.lastViewedAt = now;
+    
+    hideAllSections();
+    handleExistingKey(data);
+  } catch (e) {
+    showToast("Erreur système");
+  } finally {
+    btn.disabled = false; btn.innerHTML = `Revoir ma clé`;
+  }
+};
+
+// Timers de la modale
+function startViewCountdown(expiresAt) {
+  if (activeInterval) clearInterval(activeInterval);
+  const update = () => {
+    const diff = expiresAt - Date.now();
+    if (diff <= 0) {
+      clearInterval(activeInterval);
+      document.getElementById('myKeyDisplay').classList.add('blur-secure');
+      document.getElementById('blurOverlay').classList.remove('hidden');
+      document.getElementById('timeRemaining').innerText = "EXPIRÉ";
+      const copyBtn = document.getElementById('copyBtn');
+      copyBtn.disabled = true; copyBtn.style.opacity = '0.5';
+      setTimeout(() => processUserKeyData(), 2000); 
+      return;
+    }
+    const m = Math.floor(diff / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('timeRemaining').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+  update();
+  activeInterval = setInterval(update, 1000);
+}
+
+function startCooldownCountdown(cooldownEndsAt) {
+  if (activeInterval) clearInterval(activeInterval);
+  const display = document.getElementById('cooldownRemaining');
+  const update = () => {
+    const diff = cooldownEndsAt - Date.now();
+    if (diff <= 0) {
+      clearInterval(activeInterval);
+      display.innerText = "00:00:00";
+      processUserKeyData(); 
+      return;
+    }
+    const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+    const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+    display.innerText = `${h}:${m}:${s}`;
+  };
+  update();
+  activeInterval = setInterval(update, 1000);
+}
+
+// Bouton copier
+document.getElementById('copyBtn').onclick = () => {
+  const k = document.getElementById('myKeyDisplay').innerText.trim();
+  if (k !== "---") {
+    navigator.clipboard.writeText(k).then(() => showToast("Clé copiée")).catch(() => {
+      const tx = document.createElement("textarea"); tx.value = k; document.body.appendChild(tx); tx.select();
+      try { document.execCommand('copy'); showToast("Clé copiée"); } catch(e){} document.body.removeChild(tx);
+    });
+  }
+};
+
+function showToast(m) {
+  const t = document.getElementById('toast');
+  t.innerText = m;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+
+// ==========================================
+// CHATBOT & ADN IA
+// ==========================================
+
+const botToggleBtn = document.getElementById('botToggleBtn');
+const botWindow = document.getElementById('botWindow');
+const botMessages = document.getElementById('botMessages');
+const botInput = document.getElementById('botInput');
+const botSendBtn = document.getElementById('botSendBtn');
+let isBotOpen = false;
+
+botToggleBtn.addEventListener('click', () => {
+  isBotOpen = !isBotOpen;
+  if (isBotOpen) {
+    botWindow.classList.add('open');
+    botToggleBtn.classList.add('open');
+    botInput.focus();
+  } else {
+    botWindow.classList.remove('open');
+    botToggleBtn.classList.remove('open');
+  }
+});
+
+const chatHistory = [
+  { role: "user", parts: [{ text: "Tu es l'assistant IA intégré au site vitrine de l'écosystème LevelUp. Tu agis en 'Mode Auto'. Aide les visiteurs à comprendre comment obtenir la clé unique pour accéder aux applications. Sois concis." }] },
+  { role: "model", parts: [{ text: "Compris ! Je suis prêt." }] }
+];
+
+function addBotMessage(text, sender) {
+  const bubble = document.createElement('div');
+  bubble.className = `bot-bubble ${sender}`;
+  bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  botMessages.appendChild(bubble);
+  botMessages.scrollTop = botMessages.scrollHeight;
+}
+
+function addTypingIndicator() {
+  const bubble = document.createElement('div');
+  bubble.className = 'bot-bubble ai bot-typing-indicator';
+  bubble.innerHTML = '<div class="bot-typing"><span></span><span></span><span></span></div>';
+  botMessages.appendChild(bubble);
+  botMessages.scrollTop = botMessages.scrollHeight;
+}
+
+async function sendBotMessage() {
+  const text = botInput.value.trim();
+  if (!text) return;
+  botInput.value = '';
+  addBotMessage(text, 'user');
+  addTypingIndicator();
+  chatHistory.push({ role: "user", parts: [{ text: text }] });
+
+  let success = false, attempts = 0, reply = "";
+  let maxAttempts = botApiKeys.length > 0 ? botApiKeys.length : 1;
+
+  while (!success && attempts < maxAttempts) {
+    let apiKey = botApiKeys.length > 0 ? botApiKeys[currentBotKeyIndex] : fallbackKey;
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: chatHistory })
+      });
+      if (!res.ok) throw new Error("API Error");
+      const data = await res.json();
+      reply = data.candidates[0].content.parts[0].text;
+      success = true;
+    } catch (e) {
+      attempts++;
+      if (botApiKeys.length > 0) currentBotKeyIndex = (currentBotKeyIndex + 1) % botApiKeys.length;
+    }
+  }
+
+  const indicator = document.querySelector('.bot-typing-indicator');
+  if (indicator) indicator.remove();
+
+  if (success) {
+    chatHistory.push({ role: "model", parts: [{ text: reply }] });
+    addBotMessage(reply, 'ai');
+  } else {
+    addBotMessage("Désolé, problème technique.", 'ai');
+    chatHistory.pop();
+  }
+}
+
+botSendBtn.addEventListener('click', sendBotMessage);
+botInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendBotMessage(); });
+
+// ADN Générateur Live
+const dnaBtn = document.getElementById('dnaBtn');
+const dnaInput = document.getElementById('dnaInput');
+const dnaResult = document.getElementById('dnaResult');
+
+dnaBtn.addEventListener('click', async () => {
+  const profile = dnaInput.value.trim();
+  if (!profile) return;
+  dnaBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyse...';
+  dnaBtn.disabled = true;
+  dnaResult.classList.remove('hidden');
+  dnaResult.innerHTML = '<div class="bot-typing" style="margin:0;"><span></span><span></span><span></span></div>';
+
+  const prompt = `L'utilisateur se décrit comme : "${profile}". En 2 phrases très chill, dis-lui quel mode de l'IA "LevelUp" il devrait utiliser aujourd'hui et pourquoi.`;
+  let success = false, attempts = 0, reply = "";
+  let maxAttempts = botApiKeys.length > 0 ? botApiKeys.length : 1;
+
+  while (!success && attempts < maxAttempts) {
+    let apiKey = botApiKeys.length > 0 ? botApiKeys[currentBotKeyIndex] : fallbackKey;
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }] })
+      });
+      if (!res.ok) throw new Error("API Error");
+      const data = await res.json();
+      reply = data.candidates[0].content.parts[0].text;
+      success = true;
+    } catch (e) {
+      attempts++;
+      if (botApiKeys.length > 0) currentBotKeyIndex = (currentBotKeyIndex + 1) % botApiKeys.length;
+    }
+  }
+
+  if (success) {
+    dnaResult.innerHTML = reply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  } else {
+    dnaResult.innerHTML = "Oups, nos serveurs surchauffent !";
+  }
+  dnaBtn.innerHTML = 'Analyser mon profil ✨';
+  dnaBtn.disabled = false;
+});
+dnaInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') dnaBtn.click(); });
+
+</script>
 </body>
 </html>
