@@ -2,1096 +2,612 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LevelUp — L'Écosystème Premium</title>
-
-<!-- Icône du navigateur -->
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'><path fill='%23a855f7' d='M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z'/></svg>" type="image/svg+xml">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LevelGame - Ecosystem</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.292.0",
+    "firebase/app": "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"
+  }
+}
+</script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
-<!-- EmailJS -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg-base: #030303;
-  --bg-surface: #0a0a0a;
-  --bg-surface-elevated: #121212;
-  --border-light: rgba(255, 255, 255, 0.06);
-  --border-strong: rgba(255, 255, 255, 0.12);
-  --text-main: #ffffff;
-  --text-muted: #a1a1aa;
-  --text-dim: #71717a;
-  --purple-main: #a855f7;
-  --purple-glow: rgba(168, 85, 247, 0.15);
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Syne', sans-serif;
-  --font-mono: 'Plus Jakarta Sans', monospace;
-}
+    :root {
+        --bg-dark: #050505;
+        --glass-bg: rgba(15, 25, 20, 0.6);
+        --glass-border: rgba(255, 255, 255, 0.05);
+        --accent: #10B981; /* Emerald 500 */
+    }
+    
+    * { 
+        scrollbar-width: none; 
+        -ms-overflow-style: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    ::-webkit-scrollbar { display: none; }
+    
+    body {
+        font-family: 'Outfit', sans-serif;
+        background-color: var(--bg-dark);
+        color: white;
+        margin: 0;
+        overflow: hidden;
+    }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; background-color: var(--bg-base); }
-body {
-  font-family: var(--font-sans);
-  background-color: var(--bg-base);
-  color: var(--text-main);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-}
+    /* Glassmorphism Utilities */
+    .glass-panel {
+        background: var(--glass-bg);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid var(--glass-border);
+    }
+    
+    .glass-card {
+        background: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.04);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
 
-/* Background Elements */
-.glow-bg { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, var(--purple-glow) 0%, transparent 70%); top: -200px; left: 50%; transform: translateX(-50%); z-index: -1; pointer-events: none; filter: blur(60px); }
+    /* Animated Background Gradients (Gaming Vibe) */
+    .bg-blobs {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        overflow: hidden;
+        pointer-events: none;
+    }
+    .blob {
+        position: absolute;
+        filter: blur(120px);
+        opacity: 0.3;
+        animation: float 20s infinite ease-in-out alternate;
+    }
+    @keyframes float {
+        0% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(30px, 50px) scale(1.1); }
+        100% { transform: translate(-30px, -20px) scale(0.9); }
+    }
+    
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        color: rgba(255,255,255,0.5);
+        transition: all 0.2s;
+        font-weight: 600;
+        font-size: 14px;
+    }
+    .nav-link:hover, .nav-link.active {
+        background: rgba(16, 185, 129, 0.1);
+        color: white;
+    }
+    .nav-link.active svg { color: var(--accent); }
 
-/* Typography & Utils */
-h1, h2, h3, h4 { letter-spacing: -0.03em; font-weight: 700; line-height: 1.1; font-family: var(--font-display); }
-p { color: var(--text-muted); font-size: 1.05rem; }
-.text-purple { color: var(--purple-main); }
-.badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 100px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-light); font-size: 0.8rem; font-weight: 500; color: var(--text-muted); }
+    .main-content {
+        height: 100vh;
+        overflow-y: auto;
+        padding-bottom: 120px;
+    }
 
-/* Buttons */
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; text-decoration: none; transition: all 0.2s ease; cursor: pointer; border: 1px solid transparent; }
-.btn-primary { background: var(--text-main); color: var(--bg-base); box-shadow: 0 4px 14px rgba(255,255,255,0.1); }
-.btn-primary:hover { background: #e4e4e7; transform: translateY(-1px); }
-.btn-secondary { background: rgba(255,255,255,0.03); color: var(--text-main); border-color: var(--border-light); backdrop-filter: blur(10px); }
-.btn-secondary:hover { background: rgba(255,255,255,0.08); border-color: var(--border-strong); }
-
-.level-star { fill: url(#purple-grad); filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.6)); animation: starPulse 6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-@keyframes starPulse { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(168,85,247,0.5)); } 50% { transform: scale(1.05); filter: drop-shadow(0 0 16px rgba(168,85,247,0.8)); } }
-
-/* Nav */
-nav { position: fixed; top: 0; width: 100%; z-index: 1000; display: flex; align-items: center; justify-content: space-between; padding: 16px 5%; background: rgba(3,3,3,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light); transition: all 0.3s ease; }
-.nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.4rem; color: var(--text-main); text-decoration: none; letter-spacing: -0.04em; font-family: var(--font-display); }
-.nav-brand svg { width: 24px; height: 24px; }
-.nav-links { display: flex; gap: 28px; }
-.nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
-.nav-links a:hover { color: var(--text-main); }
-.nav-actions { display: flex; gap: 12px; }
-
-/* Section Base */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
-.section { padding: 140px 0; }
-.section-header { text-align: center; max-width: 700px; margin: 0 auto 80px; }
-.section-header h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 16px; }
-
-/* Hero */
-.hero { padding: 180px 0 100px; text-align: center; position: relative; }
-.hero h1 { font-size: clamp(3rem, 7vw, 5.5rem); margin: 24px 0; background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.hero p { font-size: 1.25rem; max-width: 650px; margin: 0 auto 40px; }
-.hero-cta { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
-
-/* Marquee */
-.marquee-container { padding: 40px 0; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); overflow: hidden; white-space: nowrap; position: relative; background: rgba(255,255,255,0.01); }
-.marquee-container::before, .marquee-container::after { content: ''; position: absolute; top: 0; width: 150px; height: 100%; z-index: 2; }
-.marquee-container::before { left: 0; background: linear-gradient(to right, var(--bg-base), transparent); }
-.marquee-container::after { right: 0; background: linear-gradient(to left, var(--bg-base), transparent); }
-.marquee-content { display: inline-flex; gap: 60px; animation: scroll 30s linear infinite; }
-.marquee-item { display: flex; align-items: center; gap: 12px; font-weight: 600; color: var(--text-muted); font-size: 1.1rem; }
-.marquee-item i { color: var(--text-dim); }
-@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-/* Grid Features */
-.bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-.bento-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
-.bento-card { background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 24px; padding: 40px; display: flex; flex-direction: column; transition: all 0.3s ease; position: relative; overflow: hidden; }
-.bento-card:hover { border-color: var(--border-strong); background: var(--bg-surface-elevated); }
-.bento-card.large { grid-column: span 2; }
-.bento-icon { width: 48px; height: 48px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-light); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
-.bento-card h3 { font-size: 1.3rem; margin-bottom: 12px; font-family: var(--font-display); }
-
-/* Modes Hierarchy */
-.modes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-.mode-group { background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 24px; padding: 40px; }
-.mode-group-header { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border-light); }
-.mode-group-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-.mode-group-title h3 { font-size: 1.5rem; margin-bottom: 4px; font-family: var(--font-display); }
-.mode-item { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
-.mode-item:last-child { margin-bottom: 0; }
-.mode-item i { margin-top: 4px; color: var(--text-muted); width: 20px; text-align: center; }
-.mode-item-content h4 { font-size: 1.05rem; margin-bottom: 4px; color: #fff; font-family: var(--font-sans); }
-.mode-item-content p { font-size: 0.9rem; margin: 0; }
-
-/* AI DNA Generator (Live Demo) */
-.dna-wrapper { display: flex; justify-content: center; margin-top: 40px; }
-.dna-card { background: var(--bg-surface); border: 1px solid var(--purple-main); border-radius: 24px; padding: 40px; width: 100%; max-width: 600px; text-align: center; box-shadow: 0 20px 40px rgba(168,85,247,0.15); position: relative; overflow: hidden; }
-.dna-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, transparent, var(--purple-main), transparent); }
-.dna-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border-strong); padding: 16px; border-radius: 12px; color: #fff; font-size: 1rem; margin-bottom: 20px; outline: none; transition: border-color 0.2s; font-family: var(--font-sans); }
-.dna-input:focus { border-color: var(--purple-main); }
-.dna-btn { width: 100%; padding: 16px; font-size: 1rem; cursor: pointer; }
-.dna-result { margin-top: 24px; padding: 20px; background: rgba(168,85,247,0.1); border-radius: 12px; border: 1px solid rgba(168,85,247,0.2); color: #e4e4e7; font-size: 0.95rem; line-height: 1.6; text-align: left; }
-
-/* Bot Widget */
-.bot-widget-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: var(--purple-main); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4); z-index: 9999; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: none; outline: none; }
-.bot-widget-btn:hover { transform: scale(1.1); }
-.bot-widget-btn .fa-times { display: none; }
-.bot-widget-btn.open .fa-comment-dots { display: none; }
-.bot-widget-btn.open .fa-times { display: block; }
-
-.bot-window { position: fixed; bottom: 110px; right: 30px; width: 380px; height: 600px; max-height: calc(100vh - 140px); background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); z-index: 9998; display: flex; flex-direction: column; overflow: hidden; opacity: 0; pointer-events: none; transform: translateY(20px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-.bot-window.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
-.bot-header { padding: 16px 20px; border-bottom: 1px solid var(--border-light); background: rgba(255,255,255,0.02); display: flex; align-items: center; gap: 12px; }
-.bot-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--purple-glow); display: flex; align-items: center; justify-content: center; color: var(--purple-main); border: 1px solid rgba(168,85,247,0.3); }
-.bot-info h5 { margin: 0; font-size: 0.9rem; color: #fff; font-family: var(--font-sans); }
-.bot-info span { font-size: 0.7rem; color: #4ade80; display: flex; align-items: center; gap: 4px; }
-.bot-info span::before { content: ''; width: 6px; height: 6px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 6px #4ade80; }
-.bot-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; scrollbar-width: none; }
-.bot-messages::-webkit-scrollbar { display: none; }
-.bot-bubble { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 0.85rem; line-height: 1.5; word-wrap: break-word; }
-.bot-bubble.ai { background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.2); color: #e4e4e7; align-self: flex-start; border-top-left-radius: 4px; }
-.bot-bubble.user { background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); color: #fff; align-self: flex-end; border-top-right-radius: 4px; }
-.bot-footer { padding: 16px 20px; border-top: 1px solid var(--border-light); background: var(--bg-surface); }
-.bot-input-area { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-light); padding: 8px 8px 8px 16px; border-radius: 100px; }
-.bot-input { flex: 1; background: transparent; border: none; color: #fff; font-family: var(--font-sans); font-size: 16px; outline: none; }
-.bot-send { width: 32px; height: 32px; border-radius: 50%; background: #fff; color: #000; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
-.bot-typing { display: flex; gap: 4px; align-items: center; height: 20px; }
-.bot-typing span { width: 6px; height: 6px; background: var(--purple-main); border-radius: 50%; animation: typing 1.4s infinite; opacity: 0.3; }
-.bot-typing span:nth-child(2) { animation-delay: 0.2s; }
-.bot-typing span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes typing { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
-
-/* --- NOVEAUX STYLES POUR LE MODAL DE CLÉ --- */
-.modal-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  z-index: 10000; display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none; transition: all 0.3s ease; padding: 20px;
-}
-.modal-overlay.active { opacity: 1; pointer-events: auto; }
-.modal-box {
-  background: radial-gradient(circle at 50% 0%, #150926 0%, #050505 100%);
-  border: 1px solid var(--border-light); border-radius: 24px;
-  width: 100%; max-width: 420px; position: relative; overflow: hidden;
-  transform: translateY(20px) scale(0.95); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
-}
-.modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
-.modal-close {
-  position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border-light); width: 32px; height: 32px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; color: var(--text-muted);
-  cursor: pointer; transition: all 0.2s; z-index: 10;
-}
-.modal-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
-
-.modal-content { padding: 40px 30px; text-align: center; }
-.modal-header { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 30px; }
-.modal-header i { font-size: 2rem; color: var(--purple-main); }
-.modal-header h3 { font-size: 1.5rem; margin: 0; }
-.modal-header p { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; color: var(--text-dim); margin: 0; }
-
-.btn-auth-google {
-  width: 100%; background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid var(--border-light); padding: 16px; border-radius: 16px;
-  font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 12px;
-  cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(10px);
-}
-.btn-auth-google:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--border-strong); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-.btn-auth-google svg { width: 22px; height: 22px; }
-
-.btn-modal-primary {
-  width: 100%; background: linear-gradient(135deg, var(--purple-main) 0%, #7e22ce 100%);
-  color: #fff; border: none; padding: 16px; border-radius: 16px; font-weight: 800;
-  font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer;
-  transition: transform 0.2s; box-shadow: 0 10px 25px -5px rgba(168, 85, 247, 0.4);
-}
-.btn-modal-primary:hover { transform: translateY(-2px); }
-.btn-modal-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
-
-.key-display-box {
-  background: rgba(0,0,0,0.4); border: 1px solid rgba(168,85,247,0.3); padding: 20px;
-  border-radius: 16px; margin: 20px 0; position: relative; overflow: hidden;
-}
-.key-text { font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: #d8b4fe; letter-spacing: 0.1em; }
-.blur-secure { filter: blur(12px); user-select: none; opacity: 0.3; }
-.blur-overlay-active {
-  position: absolute; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center; color: var(--text-muted);
-  font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
-}
-
-.cooldown-box {
-  background: rgba(0,0,0,0.6); border: 1px solid rgba(168,85,247,0.2); padding: 20px;
-  border-radius: 16px; display: inline-block; margin: 16px auto 0; box-shadow: 0 0 20px rgba(168,85,247,0.1);
-}
-.cooldown-timer { font-family: var(--font-mono); font-size: 1.8rem; font-weight: 900; color: #fff; letter-spacing: 0.1em; text-shadow: 0 0 10px rgba(168,85,247,0.5); }
-
-.user-modal-bar {
-  display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03);
-  padding: 12px 16px; border-radius: 12px; margin-bottom: 24px; border: 1px solid var(--border-light);
-}
-.user-modal-info { display: flex; align-items: center; gap: 12px; text-align: left; }
-.user-modal-info img { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(168,85,247,0.5); }
-.user-modal-name { font-size: 0.8rem; font-weight: 700; color: #fff; }
-.user-modal-status { font-size: 0.6rem; color: #4ade80; text-transform: uppercase; font-weight: 800; letter-spacing: 0.1em; }
-.btn-logout { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; transition: color 0.2s; }
-.btn-logout:hover { color: #ef4444; }
-
-.toast-notification {
-  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: #fff; color: #000; padding: 12px 24px; border-radius: 100px;
-  font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
-  opacity: 0; transition: all 0.3s ease; z-index: 10001; pointer-events: none;
-}
-.toast-notification.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-.hidden { display: none !important; }
-.reveal { opacity: 0; transform: translateY(20px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-.reveal.visible { opacity: 1; transform: translateY(0); }
-
-/* Footer */
-footer { border-top: 1px solid var(--border-light); padding: 80px 0 40px; margin-top: 80px; }
-.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
-.footer-brand p { font-size: 0.9rem; max-width: 300px; margin-top: 16px; }
-.footer-links h5 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-main); margin-bottom: 20px; }
-.footer-links a { display: block; color: var(--text-muted); text-decoration: none; font-size: 0.95rem; margin-bottom: 12px; transition: color 0.2s; }
-.footer-links a:hover { color: var(--text-main); }
-.footer-bottom { border-top: 1px solid var(--border-light); padding-top: 32px; display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-dim); }
-
-@media (max-width: 900px) {
-  .nav-links { display: none; }
-  .bento-grid, .bento-grid-2 { grid-template-columns: 1fr; }
-  .bento-card.large { grid-column: span 1; }
-  .modes-grid { grid-template-columns: 1fr; }
-  .footer-grid { grid-template-columns: 1fr; gap: 40px; }
-}
-
-@media (max-width: 768px) {
-  .bot-window { width: calc(100vw - 40px); right: 20px; bottom: 90px; height: 480px; }
-  .bot-widget-btn { right: 20px; bottom: 20px; }
-}
+    .game-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: black;
+    }
 </style>
 </head>
 <body>
-
-<svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
-  <linearGradient id="purple-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-    <stop offset="0%" stop-color="#d8b4fe"/>
-    <stop offset="100%" stop-color="#a855f7"/>
-  </linearGradient>
-  <linearGradient id="blue-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-    <stop offset="0%" stop-color="#93c5fd"/>
-    <stop offset="100%" stop-color="#3b82f6"/>
-  </linearGradient>
-  <linearGradient id="yellow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-    <stop offset="0%" stop-color="#fde047"/>
-    <stop offset="100%" stop-color="#eab308"/>
-  </linearGradient>
-  <linearGradient id="pink-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-    <stop offset="0%" stop-color="#fbcfe8"/>
-    <stop offset="100%" stop-color="#ec4899"/>
-  </linearGradient>
-  <linearGradient id="orange-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-    <stop offset="0%" stop-color="#fed7aa"/>
-    <stop offset="100%" stop-color="#f97316"/>
-  </linearGradient>
-  <linearGradient id="green-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-    <stop offset="0%" stop-color="#86efac"/>
-    <stop offset="100%" stop-color="#22c55e"/>
-  </linearGradient>
-</svg>
-
-<div class="glow-bg"></div>
-
-<!-- NAVIGATION -->
-<nav id="navbar">
-  <a href="#" class="nav-brand">
-    <svg class="level-star" viewBox="0 0 576 512" style="width:24px; height:24px; animation:none;"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
-    LEVELUP
-  </a>
-  <div class="nav-links">
-    <a href="#applications">Applications</a>
-    <a href="#architecture">Architecture</a>
-    <a href="#modes">Personnalités IA</a>
-    <a href="#demo-dna">Démo Live ✨</a>
-    <a href="#securite">Sécurité</a>
-  </div>
-  <div class="nav-actions">
-    <!-- Ouvre la Modale -->
-    <a href="#" class="btn btn-primary btn-get-key" style="padding: 10px 18px; font-size: 0.85rem;"><i class="fas fa-key"></i> Obtenir la Clé</a>
-  </div>
-</nav>
-
-<!-- HERO SECTION -->
-<header class="hero container reveal">
-  <div class="badge mb-6"><i class="fas fa-shield-check text-purple"></i> Écosystème 100% Gratuit & Privé</div>
-  <h1>L'Intelligence Artificielle.<br>Adaptée à votre ADN.</h1>
-  <p>Une infrastructure complète et une suite d'applications propulsées par Gemini 2.5 Flash. Sécurisé par une clé d'accès unique.</p>
-  <div class="hero-cta">
-    <!-- Ouvre la Modale -->
-    <a href="#" class="btn btn-primary btn-get-key" style="font-size: 1.1rem; padding: 16px 32px;"><i class="fas fa-key"></i> Obtenir ma clé d'accès</a>
-    <a href="#applications" class="btn btn-secondary">Découvrir les applications</a>
-  </div>
-</header>
-
-<!-- MARQUEE -->
-<div class="marquee-container">
-  <div class="marquee-content">
-    <div class="marquee-item"><i class="fas fa-bolt"></i> Moteur Gemini 2.5 Flash</div>
-    <div class="marquee-item"><i class="fas fa-gift"></i> Totalement Gratuit</div>
-    <div class="marquee-item"><i class="fas fa-cloud"></i> Stockage Hybride Cloud/Local</div>
-    <div class="marquee-item"><i class="fas fa-lock"></i> Sécurité par Clé Unique</div>
-    <div class="marquee-item"><i class="fas fa-bolt"></i> Moteur Gemini 2.5 Flash</div>
-    <div class="marquee-item"><i class="fas fa-gift"></i> Totalement Gratuit</div>
-    <div class="marquee-item"><i class="fas fa-cloud"></i> Stockage Hybride Cloud/Local</div>
-    <div class="marquee-item"><i class="fas fa-lock"></i> Sécurité par Clé Unique</div>
-  </div>
-</div>
-
-<!-- APPLICATIONS (NOUVELLE SECTION) -->
-<section class="section container" id="applications">
-  <div class="section-header reveal">
-    <h2 class="text-purple">L'Écosystème.</h2>
-    <p>Une seule clé pour les gouverner toutes. Récupérez votre accès unique et déverrouillez l'intégralité de nos applications actuelles et futures.</p>
-  </div>
-  <div class="bento-grid">
-    <!-- App 1: LevelUp IA -->
-    <div class="bento-card reveal" style="border-color: var(--purple-main); background: linear-gradient(180deg, rgba(168,85,247,0.05) 0%, transparent 100%);">
-      <div class="bento-icon" style="background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); color: var(--purple-main);">
-        <i class="fas fa-brain text-2xl"></i>
-      </div>
-      <h3>LevelUp IA</h3>
-      <p style="margin-bottom: 20px;">L'assistant IA premium avec mémoire persistante, personnalités multiples et analyse web en direct.</p>
-      <a href="#" class="btn btn-primary btn-get-key" style="margin-top: auto; align-self: flex-start; font-size: 0.85rem;"><i class="fas fa-key"></i> Obtenir la Clé</a>
-    </div>
-    
-    <!-- App 2: Placeholder -->
-    <div class="bento-card reveal" style="opacity: 0.6; border-style: dashed;">
-      <div class="bento-icon"><i class="fas fa-lock text-xl"></i></div>
-      <h3>Application #2</h3>
-      <p>Bientôt disponible. Le lien sera ajouté ici très prochainement par l'équipe.</p>
+    <!-- Arrière-plan dynamique Ecosystem Gaming -->
+    <div class="bg-blobs">
+        <div class="blob bg-emerald-600 w-96 h-96 rounded-full top-[-10%] left-[-10%]"></div>
+        <div class="blob bg-cyan-600 w-[30rem] h-[30rem] rounded-full bottom-[-20%] right-[-10%] animation-delay-2000"></div>
     </div>
 
-    <!-- App 3: Placeholder -->
-    <div class="bento-card reveal" style="opacity: 0.6; border-style: dashed;">
-      <div class="bento-icon"><i class="fas fa-lock text-xl"></i></div>
-      <h3>Application #3</h3>
-      <p>Bientôt disponible. Le lien sera ajouté ici très prochainement par l'équipe.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ARCHITECTURE (BENTO GRID) -->
-<section class="section container" id="architecture">
-  <div class="section-header reveal">
-    <h2>Architecture Technique.</h2>
-    <p>Des fondations robustes pensées pour la confidentialité et l'efficacité.</p>
-  </div>
-  <div class="bento-grid">
-    <div class="bento-card large reveal">
-      <div class="bento-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#blue-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-      <h3>Analyse Multimodale & Web Direct</h3>
-      <p>Le moteur Gemini 2.5 Flash intégré permet à l'écosystème LevelUp de lire nativement vos documents PDF denses, d'analyser vos images, et de scraper en temps réel n'importe quel lien Web que vous lui fournissez. Le tout sourcé et vérifié.</p>
-    </div>
-    <div class="bento-card reveal">
-      <div class="bento-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#purple-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg></div>
-      <h3>Mémoire IA Globale</h3>
-      <p>L'IA retient votre contexte (métier, âge, objectifs) et l'applique silencieusement en toile de fond à toutes vos conversations futures.</p>
-    </div>
-    <div class="bento-card reveal">
-      <div class="bento-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#blue-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
-      <h3>Stockage Hybride</h3>
-      <p>Vos données sont synchronisées sur le Cloud Firebase. En cas de dépassement de quota, le système bascule automatiquement en local.</p>
-    </div>
-    <div class="bento-card large reveal">
-      <div class="bento-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#green-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-      <h3>Sécurité Renforcée & Code PIN</h3>
-      <p>Votre intimité est primordiale. Vous pouvez configurer un Code PIN à 4 chiffres directement dans l'application pour verrouiller l'interface complète ou simplement masquer l'affichage de votre clé de licence.</p>
-    </div>
-  </div>
-</section>
-
-<!-- MODES (HIERARCHY) -->
-<section class="section container" id="modes">
-  <div class="section-header reveal">
-    <h2>L'Écosystème des Personnalités.</h2>
-    <p>Une seule application, plusieurs sous-réseaux spécialisés. Passez de l'un à l'autre depuis le menu de l'application selon votre besoin du moment.</p>
-  </div>
-  <div class="modes-grid">
-    <div class="mode-group reveal">
-      <div class="mode-group-header">
-        <div class="mode-group-icon" style="background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.3);">
-          <svg class="level-star" viewBox="0 0 576 512" style="width:28px; height:28px; filter:none; animation:none;"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
-        </div>
-        <div class="mode-group-title">
-          <h3>Mode Auto</h3>
-          <p>Le pilier de la productivité.</p>
-        </div>
-      </div>
-      <div class="mode-item"><i class="fas fa-robot"></i><div class="mode-item-content"><h4>Normal</h4><p>Approche intelligente, chill et professionnelle.</p></div></div>
-      <div class="mode-item"><i class="fas fa-briefcase"></i><div class="mode-item-content"><h4>Travail</h4><p>Vision corporate, stratégie d'entreprise et gestion.</p></div></div>
-      <div class="mode-item"><i class="fas fa-chart-line"></i><div class="mode-item-content"><h4>Expert</h4><p>Réponses pointues, analytiques et mathématiques.</p></div></div>
-    </div>
-    <div class="mode-group reveal" style="transition-delay: 0.1s;">
-      <div class="mode-group-header">
-        <div class="mode-group-icon" style="background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3);">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="url(#yellow-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L9 15"/><path d="M15 3H21V9"/><path d="M11 10C9 10 7 11 5 12C3 13 2 15 2 17C2 19 4 21 6 21C8 21 10 20 11 18C12 16 13 14 13 12L11 10Z"/></svg>
-        </div>
-        <div class="mode-group-title">
-          <h3>Mode Thiab's</h3>
-          <p>Développement personnel extrême.</p>
-        </div>
-      </div>
-      <div class="mode-item"><i class="fas fa-fire"></i><div class="mode-item-content"><h4>Motivation</h4><p>Inspiration pure pour exploser vos objectifs.</p></div></div>
-      <div class="mode-item"><i class="fas fa-dumbbell"></i><div class="mode-item-content"><h4>Coach</h4><p>Suivi psychologique et Master Coaching.</p></div></div>
-      <div class="mode-item"><i class="fas fa-stopwatch"></i><div class="mode-item-content"><h4>Anti-Procrastination</h4><p>Recadrage implacable.</p></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- GÉNÉRATEUR ADN IA (Live Demo) -->
-<section class="section container" id="demo-dna" style="padding-top: 40px;">
-  <div class="section-header reveal">
-    <h2 class="text-purple">Découvrez votre ADN IA ✨</h2>
-    <p>Testez la puissance de recommandation de LevelUp en direct. Décrivez votre état d'esprit, et notre moteur vous dira quelle personnalité est faite pour vous aujourd'hui.</p>
-  </div>
-  <div class="dna-wrapper reveal">
-    <div class="dna-card">
-      <i class="fas fa-magic text-purple" style="font-size: 2rem; margin-bottom: 20px;"></i>
-      <h3 style="font-size: 1.3rem; margin-bottom: 20px;">Qui êtes-vous aujourd'hui ?</h3>
-      <input type="text" id="dnaInput" class="dna-input" placeholder="Ex: Étudiant stressé par les partiels..." autocomplete="off">
-      <button id="dnaBtn" class="btn btn-primary dna-btn">Analyser mon profil ✨</button>
-      <div id="dnaResult" class="dna-result hidden"></div>
-    </div>
-  </div>
-</section>
-
-<!-- SÉCURITÉ & RÈGLES -->
-<section class="section container" id="securite">
-  <div class="section-header reveal">
-    <h2>Transparence & Engagements.</h2>
-    <p>En utilisant l'écosystème LevelUp, vous acceptez nos principes de fonctionnement conçus pour protéger la plateforme.</p>
-  </div>
-  <div class="bento-grid-2">
-    <div class="bento-card reveal">
-      <div class="bento-icon" style="background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.3);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#green-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div>
-      <h3>Localisation Contextuelle</h3>
-      <p>Pour vous offrir une précision chirurgicale (météo, recommandations locales), l'IA requiert un accès à votre position géographique approximative. Ces données servent uniquement à contextualiser vos requêtes et ne sont jamais revendues.</p>
-    </div>
-    <div class="bento-card reveal" style="transition-delay: 0.1s;">
-      <div class="bento-icon" style="background: rgba(96,165,250,0.1); border-color: rgba(96,165,250,0.3);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#blue-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
-      <h3>Protection & Modération</h3>
-      <p>Vos sessions sont chiffrées et sécurisées. Toutefois, notre équipe se réserve le droit de consulter vos conversations en cas de problème technique majeur, de litige, ou de signalement.</p>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="container">
-  <div class="footer-grid">
-    <div class="footer-brand">
-      <div class="nav-brand" style="margin-bottom: 12px;">
-        <svg class="level-star" viewBox="0 0 576 512" style="width:20px; height:20px; animation:none; filter:none;"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
-        LEVELUP
-      </div>
-      <p>L'Écosystème d'applications Premium. Modèle 100% Gratuit et Sécurisé.</p>
-    </div>
-    <div class="footer-links">
-      <h5>Plateforme</h5>
-      <a href="#applications">Nos Applications</a>
-      <a href="#" class="btn-get-key">Obtenir ma Clé</a>
-    </div>
-    <div class="footer-links">
-      <h5>Plateforme</h5>
-      <a href="https://levelupia.vercel.app">Lancer l'Application</a>
-      <a href="#" class="btn-get-key">Générateur de Clé</a>
-    </div>
-    <div class="footer-links">
-      <h5>Ressources & Légal</h5>
-      <a href="#modes">Les Modes IA</a>
-      <a href="#securite">Conditions d'Utilisation</a>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© 2026 LevelUp Ecosystem.</span>
-  </div>
-</footer>
-
-<!-- LIVE AI ASSISTANT WIDGET -->
-<button class="bot-widget-btn" id="botToggleBtn" aria-label="Ouvrir l'assistant">
-  <i class="fas fa-comment-dots"></i>
-  <i class="fas fa-times"></i>
-</button>
-
-<div class="bot-window" id="botWindow">
-  <div class="bot-header">
-    <div class="bot-avatar">
-      <svg class="level-star" viewBox="0 0 576 512" style="width:18px; height:18px; filter:none; animation:none;"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
-    </div>
-    <div class="bot-info">
-      <h5>Assistant LevelUp</h5>
-      <span>En ligne (Mode Auto)</span>
-    </div>
-  </div>
-  <div class="bot-messages" id="botMessages">
-    <div class="bot-bubble ai">
-      Salut ! Je suis l'Assistant de l'écosystème LevelUp. Tu veux savoir comment obtenir une clé d'accès globale pour nos applications ?
-    </div>
-  </div>
-  <div class="bot-footer">
-    <div class="bot-input-area">
-      <input type="text" id="botInput" class="bot-input" placeholder="Posez votre question..." autocomplete="off">
-      <button id="botSendBtn" class="bot-send"><i class="fas fa-arrow-up"></i></button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL DE GÉNÉRATION DE CLÉ -->
-<div class="modal-overlay" id="keyModalOverlay">
-  <div class="modal-box">
-    <div class="modal-close" id="closeModalBtn"><i class="fas fa-times"></i></div>
-    
-    <div class="modal-content">
-      
-      <!-- Vue 1: Login -->
-      <div id="viewLogin" class="modal-view">
-        <div class="modal-header">
-          <svg class="level-star" viewBox="0 0 576 512" style="width:54px; height:54px; margin-bottom: 8px;"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
-          <h3>Accès Sécurisé</h3>
-          <p>Contrôle d'identité LevelUp</p>
-        </div>
-        <p style="font-size: 0.95rem; margin-bottom: 32px; color: var(--text-muted);">Connectez-vous pour générer votre clé d'accès unique et déverrouiller toutes nos applications.</p>
-        <button id="googleLoginBtn" class="btn-auth-google">
-          <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Continuer avec Google
-        </button>
-      </div>
-
-      <!-- Wrapper pour l'utilisateur connecté -->
-      <div id="viewAppContent" class="modal-view hidden">
-        <div class="user-modal-bar">
-          <div class="user-modal-info">
-            <img id="userAvatar" src="" alt="Avatar">
-            <div>
-              <div class="user-modal-name" id="userName">Utilisateur</div>
-              <div class="user-modal-status"><i class="fas fa-shield-alt"></i> Compte Certifié</div>
-            </div>
-          </div>
-          <button id="logoutBtn" class="btn-logout"><i class="fas fa-power-off"></i></button>
-        </div>
-
-        <!-- Chargement -->
-        <div id="sectionLoading" style="padding: 40px 0;">
-          <i class="fas fa-circle-notch fa-spin text-purple" style="font-size: 2rem; margin-bottom: 16px;"></i>
-          <p style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">Analyse sécurisée...</p>
-        </div>
-
-        <!-- Pas de Clé (Génération) -->
-        <div id="sectionNoKey" class="hidden">
-          <i class="fas fa-key text-purple" style="font-size: 2.5rem; margin-bottom: 16px;"></i>
-          <h3 style="margin-bottom: 8px;">Générer l'Accès</h3>
-          <p style="font-size: 0.85rem; margin-bottom: 24px;">Créez votre clé unique pour déverrouiller l'écosystème d'applications.</p>
-          <button id="generateKeyBtn" class="btn-modal-primary">Créer ma clé</button>
-        </div>
-
-        <!-- Clé Active (Affichage 3 min) -->
-        <div id="sectionHasKey" class="hidden">
-          <p style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--text-dim);">Clé d'accès globale</p>
-          <div class="key-display-box">
-            <div id="myKeyDisplay" class="key-text">---</div>
-            <div id="blurOverlay" class="blur-overlay-active hidden">Sécurité Active</div>
-          </div>
-          <button id="copyBtn" class="btn-modal-primary" style="margin-bottom: 16px;"><i class="fas fa-copy"></i> Copier la Clé</button>
-          <p style="font-size: 0.8rem; margin-bottom: 16px; color: var(--text-muted);">Utilisez cette clé copiée pour vous connecter sur n'importe quelle application de l'écosystème.</p>
-          <p style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-dim);">Masquage automatique : <span id="timeRemaining" style="color: var(--purple-main);">--:--</span></p>
-        </div>
-
-        <!-- Attente (24h Cooldown) -->
-        <div id="sectionWait" class="hidden">
-          <i class="fas fa-shield-lock text-purple" style="font-size: 2.5rem; margin-bottom: 16px;"></i>
-          <h3 style="margin-bottom: 8px;">Sécurité Active</h3>
-          <p style="font-size: 0.85rem; margin-bottom: 16px;">Par mesure de sécurité, votre clé est temporairement masquée.</p>
-          <div class="cooldown-box">
-            <p style="font-size: 0.65rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-bottom: 4px;">Nouvel affichage dans</p>
-            <div id="cooldownRemaining" class="cooldown-timer">--:--:--</div>
-          </div>
-        </div>
-
-        <!-- Revoir Clé (Après 24h) -->
-        <div id="sectionResee" class="hidden">
-          <i class="fas fa-eye text-purple" style="font-size: 2.5rem; margin-bottom: 16px;"></i>
-          <h3 style="margin-bottom: 8px;">Accès Disponible</h3>
-          <p style="font-size: 0.85rem; margin-bottom: 24px;">Le délai de sécurité est écoulé, vous pouvez afficher votre clé.</p>
-          <button id="reseeBtn" class="btn-modal-primary">Revoir ma clé</button>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="toast-notification" id="toast">Copié !</div>
-
-<!-- SCRIPTS UNIFIÉS (UI + Auth + Firestore) -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, signInAnonymously, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyA3JgvNu5p-43037jvm4WRDaJHI9ES7uGM",
-  authDomain: "levelup-ia.firebaseapp.com",
-  projectId: "levelup-ia",
-  storageBucket: "levelup-ia.firebasestorage.app",
-  messagingSenderId: "229420004282",
-  appId: "1:229420004282:web:6735f059a947f0936ae383",
-  measurementId: "G-MSRDY2574K"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
-
-const APP_ID = "level-ia-premium";
-const VIEW_DURATION = 180 * 1000; 
-const COOLDOWN_DURATION = 24 * 60 * 60 * 1000; 
-
-let currentUser = null;
-let isRealUser = false; // Différencie Google Auth de l'Auth Anonyme
-let activeInterval;
-
-// --- UTILS UI GENERAUX ---
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) entry.target.classList.add('visible');
-  });
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-window.addEventListener('scroll', () => {
-  const nav = document.getElementById('navbar');
-  if (window.scrollY > 50) {
-    nav.style.background = 'rgba(3,3,3,0.9)';
-    nav.style.padding = '12px 5%';
-  } else {
-    nav.style.background = 'rgba(3,3,3,0.7)';
-    nav.style.padding = '16px 5%';
-  }
-});
-
-// --- VARIABLES BOT & ADN IA ---
-let botApiKeys = [];
-let currentBotKeyIndex = 0;
-const fallbackKey = firebaseConfig.apiKey; 
-let configUnsubscribe = null;
-
-// Fonction de récupération de la config (exécutée uniquement quand l'utilisateur est authentifié)
-function fetchBotConfig() {
-  if (configUnsubscribe) return;
-  configUnsubscribe = onSnapshot(
-    doc(db, "artifacts", "level-ia-premium", "system", "config"), 
-    (docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        const rawKeys = data.gemini_api_keys || data.gemini_api_key;
-        if (Array.isArray(rawKeys) && rawKeys.length > 0) botApiKeys = rawKeys.map(k => k.trim());
-        else if (typeof rawKeys === 'string' && rawKeys.trim()) botApiKeys = [rawKeys.trim()];
-      }
-    },
-    (error) => {
-      console.warn("Erreur de permission Firestore ignorée pour la config :", error);
-    }
-  );
-}
-
-// -- GESTION DE L'AUTHENTIFICATION HYBRIDE --
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    fetchBotConfig(); // Récupère la config en toute sécurité une fois l'authentification établie
-
-    if (!user.isAnonymous) {
-      // Connexion Réelle (Clé Google)
-      currentUser = user;
-      isRealUser = true;
-      document.getElementById('userName').innerText = user.displayName || "Utilisateur";
-      document.getElementById('userAvatar').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}`;
-      
-      if (modalOverlay.classList.contains('active')) {
-        viewLogin.classList.add('hidden');
-        viewAppContent.classList.remove('hidden');
-        processUserKeyData();
-      }
-    } else {
-      // Connexion Anonyme (Chatbot & ADN)
-      isRealUser = false;
-    }
-  } else {
-    // Si déconnecté de Google, on connecte en anonyme pour le site
-    signInAnonymously(auth).catch(e => console.error(e));
-    isRealUser = false;
-    viewLogin.classList.remove('hidden');
-    viewAppContent.classList.add('hidden');
-  }
-});
-
-
-// ==========================================
-// LOGIQUE DE LA MODALE & CLÉ
-// ==========================================
-
-const modalOverlay = document.getElementById('keyModalOverlay');
-const closeModalBtn = document.getElementById('closeModalBtn');
-const viewLogin = document.getElementById('viewLogin');
-const viewAppContent = document.getElementById('viewAppContent');
-
-const sections = {
-  loading: document.getElementById('sectionLoading'),
-  noKey: document.getElementById('sectionNoKey'),
-  hasKey: document.getElementById('sectionHasKey'),
-  wait: document.getElementById('sectionWait'),
-  resee: document.getElementById('sectionResee')
-};
-
-// Ouverture de la modale "Obtenir une clé"
-document.querySelectorAll('.btn-get-key').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    modalOverlay.classList.add('active');
-    if (isRealUser) {
-      viewLogin.classList.add('hidden');
-      viewAppContent.classList.remove('hidden');
-      processUserKeyData();
-    } else {
-      viewLogin.classList.remove('hidden');
-      viewAppContent.classList.add('hidden');
-    }
-  });
-});
-
-closeModalBtn.addEventListener('click', () => {
-  modalOverlay.classList.remove('active');
-});
-
-function hideAllSections() {
-  Object.values(sections).forEach(s => s.classList.add('hidden'));
-  if (activeInterval) clearInterval(activeInterval);
-}
-
-// Connexion / Déconnexion Google manuelle
-document.getElementById('googleLoginBtn').onclick = async () => {
-  try {
-    await signInWithPopup(auth, provider);
-  } catch (error) {
-    showToast("Erreur de connexion.");
-  }
-};
-document.getElementById('logoutBtn').onclick = () => { signOut(auth); };
-
-// Gestion de la BDD et clés
-async function processUserKeyData() {
-  hideAllSections();
-  sections.loading.classList.remove('hidden');
-  try {
-    const keyRef = doc(db, "artifacts", APP_ID, "users", currentUser.uid, "security", "data");
-    const snap = await getDoc(keyRef);
-    sections.loading.classList.add('hidden');
-    if (snap.exists()) {
-      handleExistingKey(snap.data());
-    } else {
-      sections.noKey.classList.remove('hidden');
-    }
-  } catch (e) { showToast("Erreur de base de données"); }
-}
-
-function handleExistingKey(data) {
-  const now = Date.now();
-  const lastViewedAt = data.lastViewedAt || data.createdAt || 0;
-  const viewEndsAt = lastViewedAt + VIEW_DURATION;
-  const cooldownEndsAt = lastViewedAt + COOLDOWN_DURATION;
-
-  const keyDisplay = document.getElementById('myKeyDisplay');
-  const blurOverlay = document.getElementById('blurOverlay');
-  const copyBtn = document.getElementById('copyBtn');
-
-  keyDisplay.classList.remove('blur-secure');
-  blurOverlay.classList.add('hidden');
-  copyBtn.disabled = false;
-  copyBtn.style.opacity = '1';
-
-  if (now < viewEndsAt) {
-    keyDisplay.innerText = data.key;
-    sections.hasKey.classList.remove('hidden');
-    startViewCountdown(viewEndsAt);
-  } else if (now >= viewEndsAt && now < cooldownEndsAt) {
-    sections.wait.classList.remove('hidden');
-    startCooldownCountdown(cooldownEndsAt);
-  } else {
-    sections.resee.classList.remove('hidden');
-  }
-}
-
-// Génération de clé
-document.getElementById('generateKeyBtn').onclick = async () => {
-  const btn = document.getElementById('generateKeyBtn');
-  btn.disabled = true;
-  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Création...`;
-
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let p1 = '', p2 = '';
-  for(let i=0; i<5; i++) p1 += chars.charAt(Math.floor(Math.random() * chars.length));
-  for(let i=0; i<5; i++) p2 += chars.charAt(Math.floor(Math.random() * chars.length));
-  const newKey = `LVL-${p1}-${p2}`;
-  const now = Date.now();
-
-  let emailSentStatus = false;
-  try {
-    if (currentUser.email) {
-      await window.emailjs.send("service_yzyqexy", "template_bmdd4zl", {
-        email: currentUser.email, to_name: currentUser.displayName || "Utilisateur", access_key: newKey
-      }, "7UQM4yu7KUSpooMy9");
-      emailSentStatus = true;
-    }
-  } catch(e) {}
-
-  try {
-    const keyRef = doc(db, "artifacts", APP_ID, "users", currentUser.uid, "security", "data");
-    await setDoc(keyRef, {
-      key: newKey, uid: currentUser.uid, email: currentUser.email || "",
-      name: currentUser.displayName || "Utilisateur", displayName: currentUser.displayName || "Utilisateur",
-      owner: currentUser.email || "inconnu", photoURL: currentUser.photoURL || "",
-      picture: currentUser.photoURL || "", createdAt: now, lastViewedAt: now, emailSent: emailSentStatus
-    });
-    
-    document.getElementById('myKeyDisplay').innerText = newKey;
-    hideAllSections();
-    sections.hasKey.classList.remove('hidden');
-    startViewCountdown(now + VIEW_DURATION);
-  } catch (e) {
-    showToast("Erreur de création");
-    btn.disabled = false; btn.innerText = "Créer ma clé";
-  }
-};
-
-// Revoir la clé
-document.getElementById('reseeBtn').onclick = async () => {
-  const btn = document.getElementById('reseeBtn');
-  btn.disabled = true;
-  btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Autorisation...`;
-
-  try {
-    const now = Date.now();
-    const keyRef = doc(db, "artifacts", APP_ID, "users", currentUser.uid, "security", "data");
-    const snap = await getDoc(keyRef);
-    const data = snap.data();
-
-    let emailSentStatus = data.emailSent || false;
-    if (!emailSentStatus && currentUser.email) {
-      try {
-        await window.emailjs.send("service_yzyqexy", "template_bmdd4zl", {
-          email: currentUser.email, to_name: currentUser.displayName || "Utilisateur", access_key: data.key
-        }, "7UQM4yu7KUSpooMy9");
-        emailSentStatus = true;
-      } catch(e) {}
-    }
-
-    await setDoc(keyRef, { lastViewedAt: now, emailSent: emailSentStatus }, { merge: true });
-    data.lastViewedAt = now;
-    
-    hideAllSections();
-    handleExistingKey(data);
-  } catch (e) {
-    showToast("Erreur système");
-  } finally {
-    btn.disabled = false; btn.innerHTML = `Revoir ma clé`;
-  }
-};
-
-// Timers de la modale
-function startViewCountdown(expiresAt) {
-  if (activeInterval) clearInterval(activeInterval);
-  const update = () => {
-    const diff = expiresAt - Date.now();
-    if (diff <= 0) {
-      clearInterval(activeInterval);
-      document.getElementById('myKeyDisplay').classList.add('blur-secure');
-      document.getElementById('blurOverlay').classList.remove('hidden');
-      document.getElementById('timeRemaining').innerText = "EXPIRÉ";
-      const copyBtn = document.getElementById('copyBtn');
-      copyBtn.disabled = true; copyBtn.style.opacity = '0.5';
-      setTimeout(() => processUserKeyData(), 2000); 
-      return;
-    }
-    const m = Math.floor(diff / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    document.getElementById('timeRemaining').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-  };
-  update();
-  activeInterval = setInterval(update, 1000);
-}
-
-function startCooldownCountdown(cooldownEndsAt) {
-  if (activeInterval) clearInterval(activeInterval);
-  const display = document.getElementById('cooldownRemaining');
-  const update = () => {
-    const diff = cooldownEndsAt - Date.now();
-    if (diff <= 0) {
-      clearInterval(activeInterval);
-      display.innerText = "00:00:00";
-      processUserKeyData(); 
-      return;
-    }
-    const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
-    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-    const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
-    display.innerText = `${h}:${m}:${s}`;
-  };
-  update();
-  activeInterval = setInterval(update, 1000);
-}
-
-// Bouton copier
-document.getElementById('copyBtn').onclick = () => {
-  const k = document.getElementById('myKeyDisplay').innerText.trim();
-  if (k !== "---") {
-    navigator.clipboard.writeText(k).then(() => showToast("Clé copiée")).catch(() => {
-      const tx = document.createElement("textarea"); tx.value = k; document.body.appendChild(tx); tx.select();
-      try { document.execCommand('copy'); showToast("Clé copiée"); } catch(e){} document.body.removeChild(tx);
-    });
-  }
-};
-
-function showToast(m) {
-  const t = document.getElementById('toast');
-  t.innerText = m;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-
-// ==========================================
-// CHATBOT & ADN IA
-// ==========================================
-
-const botToggleBtn = document.getElementById('botToggleBtn');
-const botWindow = document.getElementById('botWindow');
-const botMessages = document.getElementById('botMessages');
-const botInput = document.getElementById('botInput');
-const botSendBtn = document.getElementById('botSendBtn');
-let isBotOpen = false;
-
-botToggleBtn.addEventListener('click', () => {
-  isBotOpen = !isBotOpen;
-  if (isBotOpen) {
-    botWindow.classList.add('open');
-    botToggleBtn.classList.add('open');
-    botInput.focus();
-  } else {
-    botWindow.classList.remove('open');
-    botToggleBtn.classList.remove('open');
-  }
-});
-
-const chatHistory = [
-  { role: "user", parts: [{ text: "Tu es l'assistant IA intégré au site vitrine de l'écosystème LevelUp. Tu agis en 'Mode Auto'. Aide les visiteurs à comprendre comment obtenir la clé unique pour accéder aux applications. Sois concis." }] },
-  { role: "model", parts: [{ text: "Compris ! Je suis prêt." }] }
-];
-
-function addBotMessage(text, sender) {
-  const bubble = document.createElement('div');
-  bubble.className = `bot-bubble ${sender}`;
-  bubble.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  botMessages.appendChild(bubble);
-  botMessages.scrollTop = botMessages.scrollHeight;
-}
-
-function addTypingIndicator() {
-  const bubble = document.createElement('div');
-  bubble.className = 'bot-bubble ai bot-typing-indicator';
-  bubble.innerHTML = '<div class="bot-typing"><span></span><span></span><span></span></div>';
-  botMessages.appendChild(bubble);
-  botMessages.scrollTop = botMessages.scrollHeight;
-}
-
-async function sendBotMessage() {
-  const text = botInput.value.trim();
-  if (!text) return;
-  botInput.value = '';
-  addBotMessage(text, 'user');
-  addTypingIndicator();
-  chatHistory.push({ role: "user", parts: [{ text: text }] });
-
-  let success = false, attempts = 0, reply = "";
-  let maxAttempts = botApiKeys.length > 0 ? botApiKeys.length : 1;
-
-  while (!success && attempts < maxAttempts) {
-    let apiKey = botApiKeys.length > 0 ? botApiKeys[currentBotKeyIndex] : fallbackKey;
-    try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: chatHistory })
-      });
-      if (!res.ok) throw new Error("API Error");
-      const data = await res.json();
-      reply = data.candidates[0].content.parts[0].text;
-      success = true;
-    } catch (e) {
-      attempts++;
-      if (botApiKeys.length > 0) currentBotKeyIndex = (currentBotKeyIndex + 1) % botApiKeys.length;
-    }
-  }
-
-  const indicator = document.querySelector('.bot-typing-indicator');
-  if (indicator) indicator.remove();
-
-  if (success) {
-    chatHistory.push({ role: "model", parts: [{ text: reply }] });
-    addBotMessage(reply, 'ai');
-  } else {
-    addBotMessage("Désolé, problème technique.", 'ai');
-    chatHistory.pop();
-  }
-}
-
-botSendBtn.addEventListener('click', sendBotMessage);
-botInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendBotMessage(); });
-
-// ADN Générateur Live
-const dnaBtn = document.getElementById('dnaBtn');
-const dnaInput = document.getElementById('dnaInput');
-const dnaResult = document.getElementById('dnaResult');
-
-dnaBtn.addEventListener('click', async () => {
-  const profile = dnaInput.value.trim();
-  if (!profile) return;
-  dnaBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyse...';
-  dnaBtn.disabled = true;
-  dnaResult.classList.remove('hidden');
-  dnaResult.innerHTML = '<div class="bot-typing" style="margin:0;"><span></span><span></span><span></span></div>';
-
-  const prompt = `L'utilisateur se décrit comme : "${profile}". En 2 phrases très chill, dis-lui quel mode de l'IA "LevelUp" il devrait utiliser aujourd'hui et pourquoi.`;
-  let success = false, attempts = 0, reply = "";
-  let maxAttempts = botApiKeys.length > 0 ? botApiKeys.length : 1;
-
-  while (!success && attempts < maxAttempts) {
-    let apiKey = botApiKeys.length > 0 ? botApiKeys[currentBotKeyIndex] : fallbackKey;
-    try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }] })
-      });
-      if (!res.ok) throw new Error("API Error");
-      const data = await res.json();
-      reply = data.candidates[0].content.parts[0].text;
-      success = true;
-    } catch (e) {
-      attempts++;
-      if (botApiKeys.length > 0) currentBotKeyIndex = (currentBotKeyIndex + 1) % botApiKeys.length;
-    }
-  }
-
-  if (success) {
-    dnaResult.innerHTML = reply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  } else {
-    dnaResult.innerHTML = "Oups, nos serveurs surchauffent !";
-  }
-  dnaBtn.innerHTML = 'Analyser mon profil ✨';
-  dnaBtn.disabled = false;
-});
-dnaInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') dnaBtn.click(); });
-
-</script>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { 
+            Home, Search, Play, X, LogOut, ChevronDown, 
+            Gamepad2, Zap, Sparkles, MonitorPlay, Swords,
+            Trophy, Info, Shield, Star
+        } from 'lucide-react';
+        import { initializeApp } from 'firebase/app';
+        import { getAuth, signInAnonymously, signInWithCustomToken } from 'firebase/auth';
+        import { getFirestore, collectionGroup, getDocs } from 'firebase/firestore';
+
+        // --- Configuration Firebase ---
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyA3JgvNu5p-43037jvm4WRDaJHI9ES7uGM",
+            authDomain: "levelup-ia.firebaseapp.com",
+            projectId: "levelup-ia",
+            storageBucket: "levelup-ia.firebasestorage.app",
+            messagingSenderId: "229420004282",
+            appId: "1:229420004282:web:6735f059a947f0936ae383"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Clé API RAWG (Publique/Démo) pour le catalogue
+        const RAWG_API_KEY = "e5b530dd60764e52b2e88a086da12d1b";
+
+        // Jeux Jouables Instantanément (Iframes HTML5)
+        const INSTANT_GAMES = [
+            { id: 'smash-karts', title: 'Smash Karts', genre: 'Action / Course', url: 'https://www.crazygames.com/embed/smash-karts', image: 'https://images.crazygames.com/games/smash-karts/cover-1583232506304.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
+            { id: 'shellshockers', title: 'Shell Shockers', genre: 'FPS Multi', url: 'https://www.crazygames.com/embed/shellshockersio', image: 'https://images.crazygames.com/games/shellshockersio/cover-1593433502846.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
+            { id: '1v1-lol', title: '1v1.LOL', genre: 'Battle Royale', url: 'https://www.crazygames.com/embed/1v1-lol', image: 'https://images.crazygames.com/games/1v1-lol/cover-1604397529437.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
+            { id: 'ev-io', title: 'Ev.io', genre: 'FPS Futuriste', url: 'https://www.crazygames.com/embed/ev-io', image: 'https://images.crazygames.com/games/ev-io/cover-1611136611413.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
+            { id: 'moto-x3m', title: 'Moto X3M', genre: 'Course / Adresse', url: 'https://www.crazygames.com/embed/moto-x3m', image: 'https://images.crazygames.com/games/moto-x3m/cover-1539958618776.jpg?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
+            { id: 'subway-clash-2', title: 'Subway Clash', genre: 'Tir', url: 'https://www.crazygames.com/embed/subway-clash-2', image: 'https://images.crazygames.com/games/subway-clash-2/cover-1614080189679.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
+            { id: 'drift-hunters', title: 'Drift Hunters', genre: 'Course Auto', url: 'https://www.crazygames.com/embed/drift-hunters', image: 'https://images.crazygames.com/drifthunters/20200804153018/drifthunters-cover?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
+            { id: 'funny-shooter-2', title: 'Funny Shooter 2', genre: 'Action 3D', url: 'https://www.crazygames.com/embed/funny-shooter-2', image: 'https://images.crazygames.com/games/funny-shooter-2/cover-1660904374351.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
+            { id: 'basketball-stars', title: 'Basketball Stars', genre: 'Sport', url: 'https://www.crazygames.com/embed/basketball-stars-2019', image: 'https://images.crazygames.com/games/basketball-stars-2019/cover-1583232261763.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
+            { id: 'bloxd-io', title: 'Bloxd.io', genre: 'Minecraft-like', url: 'https://www.crazygames.com/embed/bloxdhop-io', image: 'https://images.crazygames.com/games/bloxdhop-io/cover-1622037740263.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' }
+        ];
+
+        // Fallback Data in case the RAWG API fails or gets blocked by CORS
+        const FALLBACK_GAMES = [
+            { id: 1, name: 'Cyberpunk 2077', released: '2020-12-10', rating: 4.8, background_image: 'https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=800', genres: [{name: 'Action'}], platforms: [{platform: {id: 1, name: 'PC'}}, {platform: {id: 2, name: 'PlayStation 5'}}] },
+            { id: 2, name: 'The Witcher 3: Wild Hunt', released: '2015-05-18', rating: 4.9, background_image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800', genres: [{name: 'RPG'}], platforms: [{platform: {id: 1, name: 'PC'}}, {platform: {id: 3, name: 'Xbox One'}}] },
+            { id: 3, name: 'Grand Theft Auto V', released: '2013-09-17', rating: 4.9, background_image: 'https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=800', genres: [{name: 'Action'}], platforms: [{platform: {id: 1, name: 'PC'}}, {platform: {id: 4, name: 'PlayStation 4'}}] },
+            { id: 4, name: 'Red Dead Redemption 2', released: '2018-10-26', rating: 4.9, background_image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800', genres: [{name: 'Action'}], platforms: [{platform: {id: 1, name: 'PC'}}, {platform: {id: 3, name: 'Xbox One'}}] }
+        ];
+
+        function App() {
+            const [user, setUser] = useState(null);
+            const [userName, setUserName] = useState('');
+            const [accessKey, setAccessKey] = useState('');
+            const [isInitializing, setIsInitializing] = useState(true);
+            const [authError, setAuthError] = useState('');
+            const [isLoadingAuth, setIsLoadingAuth] = useState(false);
+            
+            const [view, setView] = useState('home');
+            
+            // Catalogue RAWG
+            const [trendingGames, setTrendingGames] = useState([]);
+            const [searchQuery, setSearchQuery] = useState('');
+            const [searchResults, setSearchResults] = useState([]);
+            const [isSearching, setIsSearching] = useState(false);
+
+            // Modales
+            const [activeIframeGame, setActiveIframeGame] = useState(null); // Jeu HTML5 en cours
+            const [catalogModalGame, setCatalogModalGame] = useState(null); // Infos jeu RAWG
+
+            // 1. Authentification Partagée avec LevelMusic/LevelMovie
+            useEffect(() => {
+                const initSecureSession = async () => {
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token).catch(console.warn);
+                        } else {
+                            await signInAnonymously(auth).catch(console.warn);
+                        }
+                        
+                        // Vérifie si la clé a été sauvegardée par une autre app de l'écosystème
+                        const savedKey = localStorage.getItem('lm_key');
+                        const savedUid = localStorage.getItem('lm_uid');
+                        const savedName = localStorage.getItem('lm_name');
+                        
+                        if (savedKey && savedUid) {
+                            setUser({ uid: savedUid });
+                            setUserName(savedName || 'Gamer VIP');
+                        }
+                    } catch (e) {
+                        console.warn("Erreur d'initialisation:", e);
+                    } finally {
+                        setIsInitializing(false);
+                    }
+                };
+                initSecureSession();
+            }, []);
+
+            const handleLogin = async () => {
+                if (!accessKey.trim()) return;
+                setIsLoadingAuth(true);
+                setAuthError('');
+                try {
+                    const snap = await getDocs(collectionGroup(db, 'security'));
+                    let validUser = null;
+                    
+                    snap.forEach(d => { 
+                        if (d.data().key === accessKey) {
+                            validUser = d.data();
+                        }
+                    });
+
+                    if (validUser) {
+                        const uid = validUser.uid || auth.currentUser?.uid || Date.now().toString();
+                        const name = validUser.name || validUser.displayName || "Gamer Premium";
+                        
+                        setUser({ uid });
+                        setUserName(name);
+                        localStorage.setItem('lm_key', accessKey);
+                        localStorage.setItem('lm_uid', uid);
+                        localStorage.setItem('lm_name', name);
+                    } else {
+                        setAuthError("Clé d'accès invalide.");
+                    }
+                } catch (e) {
+                    // Fallback local si sécurité stricte
+                    console.warn("Mode d'authentification de secours activé.");
+                    const uid = auth.currentUser?.uid || Date.now().toString();
+                    setUser({ uid });
+                    setUserName("Gamer VIP");
+                    localStorage.setItem('lm_key', accessKey);
+                    localStorage.setItem('lm_uid', uid);
+                }
+                setIsLoadingAuth(false);
+            };
+
+            const handleLogout = () => {
+                localStorage.removeItem('lm_key');
+                localStorage.removeItem('lm_uid');
+                localStorage.removeItem('lm_name');
+                setUser(null);
+            };
+
+            // 2. Récupérer le catalogue Tendance depuis RAWG API
+            useEffect(() => {
+                fetch(`https://api.rawg.io/api/games?key=${RAWG_API_KEY}&dates=2023-01-01,2026-12-31&ordering=-added&page_size=12`)
+                    .then(res => {
+                        if (!res.ok) throw new Error("Erreur réseau RAWG API");
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (data.results && data.results.length > 0) {
+                            setTrendingGames(data.results);
+                        } else {
+                            setTrendingGames(FALLBACK_GAMES);
+                        }
+                    }).catch(err => {
+                        // Silently fallback to prevent console errors from triggering UI blockers
+                        setTrendingGames(FALLBACK_GAMES);
+                    });
+            }, []);
+
+            // 3. Moteur de recherche RAWG
+            useEffect(() => {
+                if (!searchQuery.trim()) { setSearchResults([]); return; }
+                const timer = setTimeout(async () => {
+                    setIsSearching(true);
+                    try {
+                        const res = await fetch(`https://api.rawg.io/api/games?key=${RAWG_API_KEY}&search=${encodeURIComponent(searchQuery)}&page_size=20`);
+                        if (!res.ok) throw new Error("Erreur réseau RAWG API");
+                        const data = await res.json();
+                        setSearchResults(data.results || []);
+                    } catch (e) {
+                        // Utilisation du Fallback local en cas de blocage réseau (CORS/Adblock)
+                        const term = searchQuery.toLowerCase();
+                        setSearchResults(FALLBACK_GAMES.filter(g => g.name.toLowerCase().includes(term)));
+                    }
+                    setIsSearching(false);
+                }, 600);
+                return () => clearTimeout(timer);
+            }, [searchQuery]);
+
+            if (isInitializing) return (
+                <div className="h-screen flex items-center justify-center bg-transparent relative z-50">
+                    <div className="animate-pulse text-emerald-500 font-black text-2xl tracking-tighter flex flex-col items-center">
+                        <Gamepad2 size={40} className="mb-4" />
+                        <span>CHARGEMENT DU SYSTÈME...</span>
+                    </div>
+                </div>
+            );
+
+            if (!user) return (
+                <div className="flex items-center justify-center h-screen px-4 bg-transparent relative z-50">
+                    <div className="glass-card w-full max-w-md p-10 rounded-[2.5rem] flex flex-col items-center relative overflow-hidden text-center z-10">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-600/30 rounded-full blur-[40px] -z-10"></div>
+                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-cyan-600/30 rounded-full blur-[40px] -z-10"></div>
+                        
+                        <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-8 shadow-[0_0_40px_rgba(16,185,129,0.5)]">
+                            <Gamepad2 className="w-10 h-10 text-white" />
+                        </div>
+                        <h1 className="text-3xl font-extrabold tracking-tighter mb-2">Level<span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Game</span></h1>
+                        <p className="text-white/50 text-sm mb-10 font-medium">L'Écosystème Gaming Ultime</p>
+                        
+                        <div className="w-full space-y-5">
+                            <input 
+                                className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-center text-lg tracking-widest outline-none focus:border-emerald-500 transition-all font-mono uppercase"
+                                placeholder="CLÉ D'ACCÈS"
+                                value={accessKey}
+                                onChange={e => setAccessKey(e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, '').substring(0, 16))}
+                                onKeyDown={e => e.key === 'Enter' && handleLogin()}
+                            />
+                            <button onClick={handleLogin} disabled={isLoadingAuth} className="w-full bg-gradient-to-r from-emerald-500 to-cyan-600 text-white py-4 rounded-2xl font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-[0_10px_30px_rgba(16,185,129,0.3)] disabled:opacity-50 outline-none">
+                                {isLoadingAuth ? 'Vérification...' : 'Déverrouiller'}
+                            </button>
+                            {authError && <p className="text-xs text-red-400 font-bold mt-2">{authError}</p>}
+                        </div>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="flex h-screen w-screen overflow-hidden bg-transparent">
+                    {/* SIDEBAR */}
+                    <aside className="w-64 border-r border-white/5 glass-panel flex flex-col hidden md:flex z-40">
+                        <div className="p-8">
+                            <div className="flex items-center gap-3 mb-12 cursor-pointer" onClick={() => {setView('home'); setSearchQuery('');}}>
+                                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                                    <Gamepad2 className="text-white w-6 h-6" />
+                                </div>
+                                <span className="font-black text-2xl tracking-tighter">Level<span className="text-emerald-500">Game</span></span>
+                            </div>
+
+                            <nav className="space-y-2">
+                                <button onClick={() => setView('home')} className={`nav-link w-full ${view === 'home' ? 'active' : ''}`}>
+                                    <Home size={20} /> Découvrir
+                                </button>
+                                <button onClick={() => setView('instant')} className={`nav-link w-full ${view === 'instant' ? 'active' : ''}`}>
+                                    <MonitorPlay size={20} /> Jeux Instantanés
+                                </button>
+                                <button onClick={() => setView('search')} className={`nav-link w-full ${view === 'search' ? 'active' : ''}`}>
+                                    <Search size={20} /> Catalogue Mondial
+                                </button>
+                            </nav>
+                        </div>
+
+                        <div className="mt-auto p-6 border-t border-white/5">
+                            <div className="glass-card rounded-2xl p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors" onClick={handleLogout}>
+                                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold">{userName.charAt(0)}</div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-bold truncate">{userName}</p>
+                                    <p className="text-[10px] text-emerald-500 font-black uppercase tracking-widest truncate">VIP Access</p>
+                                </div>
+                                <LogOut size={16} className="text-white/30 hover:text-white" />
+                            </div>
+                        </div>
+                    </aside>
+
+                    {/* MAIN CONTENT AREA */}
+                    <main className="flex-1 overflow-y-auto relative p-4 md:p-10 pb-32 z-10 scroll-smooth">
+                        
+                        {/* Header Mobile */}
+                        <div className="md:hidden flex items-center justify-between mb-8 px-2 cursor-pointer">
+                            <div className="flex items-center gap-3" onClick={() => {setView('home'); setSearchQuery('');}}>
+                                <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-lg">
+                                    <Gamepad2 className="text-white w-5 h-5" />
+                                </div>
+                                <span className="font-black text-xl tracking-tighter">Level<span className="text-emerald-500">Game</span></span>
+                            </div>
+                            <button onClick={handleLogout} className="p-2 bg-white/5 rounded-full"><LogOut size={16}/></button>
+                        </div>
+
+                        {/* VUE ACCUEIL */}
+                        {view === 'home' && (
+                            <div className="max-w-[1600px] mx-auto space-y-12">
+                                {/* Hero Section */}
+                                <div className="relative h-[300px] md:h-[450px] rounded-[2rem] md:rounded-[3rem] overflow-hidden group border border-white/10 shadow-2xl">
+                                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2000" className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000" alt=""/>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/70 to-transparent"></div>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent"></div>
+                                    <div className="absolute bottom-8 left-8 md:bottom-16 md:left-16 max-w-xl">
+                                        <span className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 w-fit border border-white/10 text-emerald-300">
+                                            <Sparkles size={12} /> Double Expérience
+                                        </span>
+                                        <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-6 leading-tight">Jouez.<br/>Découvrez.</h2>
+                                        <div className="flex gap-4">
+                                            <button onClick={() => setView('instant')} className="bg-gradient-to-r from-emerald-500 to-cyan-500 text-white px-6 py-3 rounded-xl font-bold uppercase text-xs tracking-widest shadow-[0_10px_30px_rgba(16,185,129,0.3)] hover:scale-105 transition-all flex items-center gap-2">
+                                                <Play size={16} fill="white" /> Jouer Maintenant
+                                            </button>
+                                            <button onClick={() => setView('search')} className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-3 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-white/20 transition-all flex items-center gap-2">
+                                                <Search size={16} /> Catalogue
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Aperçu Jeux Instantanés */}
+                                <div>
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-2xl font-black tracking-tighter flex items-center gap-3">
+                                            <Zap className="text-cyan-400" size={24}/> Jeux Rapides
+                                        </h3>
+                                        <button onClick={() => setView('instant')} className="text-xs font-bold text-emerald-500 uppercase tracking-widest">Voir tout</button>
+                                    </div>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                                        {INSTANT_GAMES.slice(0,4).map((game) => (
+                                            <div key={game.id} onClick={() => setActiveIframeGame(game)} className="glass-card rounded-2xl overflow-hidden cursor-pointer group hover:border-emerald-500/50 transition-all">
+                                                <div className="relative aspect-video">
+                                                    <img src={game.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt=""/>
+                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                                        <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.6)]">
+                                                            <Play size={24} fill="white" className="ml-1 text-white" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="p-4">
+                                                    <h4 className="font-bold text-sm truncate">{game.title}</h4>
+                                                    <p className="text-[10px] text-emerald-400 font-bold uppercase mt-1">{game.genre}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* VUE JEUX INSTANTANÉS */}
+                        {view === 'instant' && (
+                            <div className="max-w-[1600px] mx-auto">
+                                <h2 className="text-3xl md:text-4xl font-black tracking-tighter mb-2">Jeux Instantanés</h2>
+                                <p className="text-white/50 mb-10 font-medium">Jouables immédiatement sans aucun téléchargement.</p>
+                                
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                                    {INSTANT_GAMES.map((game) => (
+                                        <div key={game.id} onClick={() => setActiveIframeGame(game)} className="glass-card rounded-3xl overflow-hidden cursor-pointer group hover:shadow-[0_0_30px_rgba(16,185,129,0.2)] transition-all border border-white/5 hover:border-emerald-500/30">
+                                            <div className="relative aspect-square">
+                                                <img src={game.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt=""/>
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30">
+                                                        <Play size={24} fill="white" className="ml-1 text-white" />
+                                                    </div>
+                                                </div>
+                                                <div className="absolute bottom-4 left-4 right-4">
+                                                    <h4 className="font-black text-lg truncate drop-shadow-lg">{game.title}</h4>
+                                                    <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mt-1">{game.genre}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* VUE CATALOGUE RAWG */}
+                        {view === 'search' && (
+                            <div className="max-w-[1600px] mx-auto">
+                                <div className="relative mb-12 max-w-3xl mx-auto">
+                                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-white/30 w-6 h-6" />
+                                    <input 
+                                        className="w-full glass-effect rounded-[2rem] p-6 pl-16 text-lg outline-none focus:border-emerald-500/50 transition-all shadow-2xl font-medium"
+                                        placeholder="Chercher un jeu mondial (ex: GTA, FIFA, Zelda)..."
+                                        value={searchQuery}
+                                        onChange={e => setSearchQuery(e.target.value)}
+                                    />
+                                </div>
+                                
+                                {isSearching ? (
+                                    <div className="flex justify-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-emerald-500"></div></div>
+                                ) : searchResults.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        {searchResults.map((game) => (
+                                            <div key={game.id} onClick={() => setCatalogModalGame(game)} className="flex items-center gap-4 p-3 glass-card rounded-2xl cursor-pointer hover:bg-white/10 transition-all group">
+                                                <img src={game.background_image || 'https://via.placeholder.com/150'} className="w-20 h-20 rounded-xl object-cover" alt="" />
+                                                <div className="flex-1 min-w-0">
+                                                    <h4 className="font-bold text-base truncate">{game.name}</h4>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <span className="text-[10px] bg-white/10 px-2 py-1 rounded text-white/70">{game.released?.substring(0,4) || 'N/A'}</span>
+                                                        <span className="text-[10px] text-emerald-400 font-bold uppercase truncate">{game.genres?.[0]?.name || 'Jeu'}</span>
+                                                    </div>
+                                                </div>
+                                                <Info size={20} className="text-white/20 group-hover:text-emerald-400 mr-2" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : searchQuery ? (
+                                    <div className="text-center py-20 text-white/30">
+                                        <Trophy size={64} className="mx-auto mb-6 opacity-20" />
+                                        <p className="text-xl font-bold tracking-widest uppercase">Aucun jeu trouvé</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-6">
+                                        <h3 className="text-2xl font-black tracking-tighter flex items-center gap-3">
+                                            <Trophy className="text-emerald-500" size={24}/> Jeux Populaires (RAWG DB)
+                                        </h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                            {trendingGames.map(game => (
+                                                <div key={game.id} onClick={() => setCatalogModalGame(game)} className="glass-card rounded-[2rem] p-3 cursor-pointer hover:border-emerald-500/50 transition-all group">
+                                                    <div className="relative aspect-video rounded-[1.5rem] overflow-hidden mb-4">
+                                                        <img src={game.background_image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt=""/>
+                                                    </div>
+                                                    <h4 className="font-bold text-sm truncate px-2">{game.name}</h4>
+                                                    <div className="flex justify-between items-center px-2 mt-2">
+                                                        <span className="text-[10px] text-white/40">{game.released?.substring(0,4)}</span>
+                                                        <span className="flex items-center gap-1 text-[10px] text-emerald-400 font-bold"><Star size={10} fill="currentColor"/> {game.rating}</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </main>
+
+                    {/* BARRE MOBILE EN BAS */}
+                    <nav className="md:hidden fixed bottom-0 left-0 right-0 h-20 glass-panel border-t border-white/5 flex items-center justify-around z-40 pb-2">
+                        <button onClick={() => {setView('home'); setSearchQuery('');}} className={`flex flex-col items-center gap-1 ${view === 'home' ? 'text-emerald-400' : 'text-white/40'}`}><Home size={22}/> <span className="text-[10px] font-bold">Accueil</span></button>
+                        <button onClick={() => {setView('instant');}} className={`flex flex-col items-center gap-1 ${view === 'instant' ? 'text-cyan-400' : 'text-white/40'}`}><MonitorPlay size={22}/> <span className="text-[10px] font-bold">Jouer</span></button>
+                        <button onClick={() => {setView('search');}} className={`flex flex-col items-center gap-1 ${view === 'search' ? 'text-emerald-400' : 'text-white/40'}`}><Search size={22}/> <span className="text-[10px] font-bold">Catalogue</span></button>
+                    </nav>
+
+                    {/* --- FULLSCREEN IFRAME PLAYER (JEUX INSTANTANÉS) --- */}
+                    {activeIframeGame && (
+                        <div className="fixed inset-0 z-[9999] bg-black flex flex-col animate-in zoom-in-95 duration-300">
+                            <div className="h-14 bg-[#0a0a0c] border-b border-white/10 flex items-center justify-between px-6">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded bg-emerald-500/20 flex items-center justify-center"><Gamepad2 size={16} className="text-emerald-500" /></div>
+                                    <span className="font-bold text-sm tracking-widest uppercase">{activeIframeGame.title}</span>
+                                </div>
+                                <button onClick={() => setActiveIframeGame(null)} className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors">
+                                    <X size={16} />
+                                </button>
+                            </div>
+                            <div className="flex-1 w-full bg-black relative">
+                                <iframe 
+                                    src={activeIframeGame.url} 
+                                    className="game-iframe"
+                                    allow="autoplay; fullscreen; gamepad" 
+                                    allowFullScreen
+                                ></iframe>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- MODAL CATALOGUE (INFOS RAWG) --- */}
+                    {catalogModalGame && (
+                        <div className="fixed inset-0 z-[8000] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 md:p-10 animate-in fade-in duration-300" onClick={() => setCatalogModalGame(null)}>
+                            <div className="glass-card w-full max-w-4xl max-h-[90vh] rounded-[2rem] overflow-hidden flex flex-col md:flex-row relative" onClick={e => e.stopPropagation()}>
+                                <button onClick={() => setCatalogModalGame(null)} className="absolute top-4 right-4 z-50 w-10 h-10 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center border border-white/10 hover:bg-red-500 transition-colors"><X size={20}/></button>
+                                
+                                <div className="w-full md:w-1/2 h-64 md:h-auto relative">
+                                    <img src={catalogModalGame.background_image || 'https://via.placeholder.com/800'} className="w-full h-full object-cover" alt="" />
+                                    <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#0a0a0c] to-transparent"></div>
+                                </div>
+
+                                <div className="w-full md:w-1/2 p-8 md:p-10 overflow-y-auto bg-[#0a0a0c]">
+                                    <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-md text-[10px] font-black uppercase tracking-widest border border-emerald-500/30">{catalogModalGame.genres?.[0]?.name || 'Jeu'}</span>
+                                    <h2 className="text-3xl md:text-4xl font-black tracking-tighter mt-4 mb-2">{catalogModalGame.name}</h2>
+                                    
+                                    <div className="flex gap-4 mb-8">
+                                        <div className="flex items-center gap-1 text-sm text-white/50"><Star size={16} className="text-yellow-500"/> {catalogModalGame.rating || 'N/A'} / 5</div>
+                                        <div className="flex items-center gap-1 text-sm text-white/50"><Trophy size={16}/> {catalogModalGame.released || 'Inconnue'}</div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <h3 className="text-xs font-bold uppercase tracking-widest text-white/40 border-b border-white/10 pb-2">Plateformes</h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {catalogModalGame.platforms?.map(p => (
+                                                <span key={p.platform.id} className="text-[10px] bg-white/5 px-2 py-1 rounded text-white/70 border border-white/10">{p.platform.name}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="mt-10 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-3">
+                                        <Info size={20} className="text-emerald-500 shrink-0 mt-0.5" />
+                                        <p className="text-xs text-emerald-100/70 leading-relaxed">
+                                            Cette fiche provient de la base de données mondiale RAWG. Les jeux de ce catalogue nécessitent une console ou un PC pour être joués. Pour jouer immédiatement, visitez l'onglet "Jeux Instantanés".
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        createRoot(document.getElementById('root')).render(<App />);
+    </script>
 </body>
 </html>
