@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>LevelGame - Ecosystem</title>
+<title>LevelGame - Cloud Gaming</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script type="importmap">
 {
@@ -18,14 +18,14 @@
 }
 </script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
     :root {
-        --bg-dark: #050505;
-        --glass-bg: rgba(15, 25, 20, 0.6);
-        --glass-border: rgba(255, 255, 255, 0.05);
-        --accent: #10B981; /* Emerald 500 */
+        --bg-dark: #030303;
+        --xbox-green: #107C10;
+        --neon-green: #00FF41;
+        --surface: #0f0f11;
+        --border: rgba(255, 255, 255, 0.05);
     }
     
     * { 
@@ -38,64 +38,27 @@
     ::-webkit-scrollbar { display: none; }
     
     body {
-        font-family: 'Outfit', sans-serif;
+        font-family: 'Rajdhani', sans-serif;
         background-color: var(--bg-dark);
         color: white;
         margin: 0;
         overflow: hidden;
     }
 
-    /* Glassmorphism Utilities */
-    .glass-panel {
-        background: var(--glass-bg);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        border: 1px solid var(--glass-border);
+    .cloud-card {
+        background: linear-gradient(180deg, var(--surface) 0%, #050505 100%);
+        border: 1px solid var(--border);
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
-    
-    .glass-card {
-        background: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.04);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    .cloud-card:hover {
+        border-color: var(--neon-green);
+        box-shadow: 0 10px 30px rgba(0, 255, 65, 0.15);
+        transform: translateY(-5px);
     }
 
-    /* Animated Background Gradients (Gaming Vibe) */
-    .bg-blobs {
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        overflow: hidden;
-        pointer-events: none;
+    .neon-text {
+        text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
     }
-    .blob {
-        position: absolute;
-        filter: blur(120px);
-        opacity: 0.3;
-        animation: float 20s infinite ease-in-out alternate;
-    }
-    @keyframes float {
-        0% { transform: translate(0, 0) scale(1); }
-        50% { transform: translate(30px, 50px) scale(1.1); }
-        100% { transform: translate(-30px, -20px) scale(0.9); }
-    }
-    
-    .nav-link {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 16px;
-        border-radius: 12px;
-        color: rgba(255,255,255,0.5);
-        transition: all 0.2s;
-        font-weight: 600;
-        font-size: 14px;
-    }
-    .nav-link:hover, .nav-link.active {
-        background: rgba(16, 185, 129, 0.1);
-        color: white;
-    }
-    .nav-link.active svg { color: var(--accent); }
 
     .main-content {
         height: 100vh;
@@ -109,24 +72,27 @@
         border: none;
         background: black;
     }
+    
+    /* Loading Animation Cloud */
+    .loader-pulse {
+        animation: pulse-glow 1.5s infinite;
+    }
+    @keyframes pulse-glow {
+        0% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.4); }
+        70% { box-shadow: 0 0 0 20px rgba(0, 255, 65, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0); }
+    }
 </style>
 </head>
 <body>
-    <!-- Arrière-plan dynamique Ecosystem Gaming -->
-    <div class="bg-blobs">
-        <div class="blob bg-emerald-600 w-96 h-96 rounded-full top-[-10%] left-[-10%]"></div>
-        <div class="blob bg-cyan-600 w-[30rem] h-[30rem] rounded-full bottom-[-20%] right-[-10%] animation-delay-2000"></div>
-    </div>
-
     <div id="root"></div>
 
     <script type="text/babel" data-type="module">
         import React, { useState, useEffect } from 'react';
         import { createRoot } from 'react-dom/client';
         import { 
-            Home, Search, Play, X, LogOut, ChevronDown, 
-            Gamepad2, Zap, Sparkles, MonitorPlay, Swords,
-            Trophy, Info, Shield, Star
+            Home, Search, Play, X, LogOut, Gamepad2, 
+            MonitorPlay, Trophy, Zap, Shield, AlertCircle
         } from 'lucide-react';
         import { initializeApp } from 'firebase/app';
         import { getAuth, signInAnonymously, signInWithCustomToken } from 'firebase/auth';
@@ -145,29 +111,16 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Clé API RAWG (Publique/Démo) pour le catalogue
-        const RAWG_API_KEY = "e5b530dd60764e52b2e88a086da12d1b";
-
-        // Jeux Jouables Instantanément (Iframes HTML5)
-        const INSTANT_GAMES = [
-            { id: 'smash-karts', title: 'Smash Karts', genre: 'Action / Course', url: 'https://www.crazygames.com/embed/smash-karts', image: 'https://images.crazygames.com/games/smash-karts/cover-1583232506304.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
-            { id: 'shellshockers', title: 'Shell Shockers', genre: 'FPS Multi', url: 'https://www.crazygames.com/embed/shellshockersio', image: 'https://images.crazygames.com/games/shellshockersio/cover-1593433502846.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
-            { id: '1v1-lol', title: '1v1.LOL', genre: 'Battle Royale', url: 'https://www.crazygames.com/embed/1v1-lol', image: 'https://images.crazygames.com/games/1v1-lol/cover-1604397529437.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
-            { id: 'ev-io', title: 'Ev.io', genre: 'FPS Futuriste', url: 'https://www.crazygames.com/embed/ev-io', image: 'https://images.crazygames.com/games/ev-io/cover-1611136611413.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
-            { id: 'moto-x3m', title: 'Moto X3M', genre: 'Course / Adresse', url: 'https://www.crazygames.com/embed/moto-x3m', image: 'https://images.crazygames.com/games/moto-x3m/cover-1539958618776.jpg?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
-            { id: 'subway-clash-2', title: 'Subway Clash', genre: 'Tir', url: 'https://www.crazygames.com/embed/subway-clash-2', image: 'https://images.crazygames.com/games/subway-clash-2/cover-1614080189679.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
-            { id: 'drift-hunters', title: 'Drift Hunters', genre: 'Course Auto', url: 'https://www.crazygames.com/embed/drift-hunters', image: 'https://images.crazygames.com/drifthunters/20200804153018/drifthunters-cover?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
-            { id: 'funny-shooter-2', title: 'Funny Shooter 2', genre: 'Action 3D', url: 'https://www.crazygames.com/embed/funny-shooter-2', image: 'https://images.crazygames.com/games/funny-shooter-2/cover-1660904374351.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
-            { id: 'basketball-stars', title: 'Basketball Stars', genre: 'Sport', url: 'https://www.crazygames.com/embed/basketball-stars-2019', image: 'https://images.crazygames.com/games/basketball-stars-2019/cover-1583232261763.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' },
-            { id: 'bloxd-io', title: 'Bloxd.io', genre: 'Minecraft-like', url: 'https://www.crazygames.com/embed/bloxdhop-io', image: 'https://images.crazygames.com/games/bloxdhop-io/cover-1622037740263.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=400&h=225&fit=crop' }
-        ];
-
-        // Fallback Data in case the RAWG API fails or gets blocked by CORS
-        const FALLBACK_GAMES = [
-            { id: 1, name: 'Cyberpunk 2077', released: '2020-12-10', rating: 4.8, background_image: 'https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=800', genres: [{name: 'Action'}], platforms: [{platform: {id: 1, name: 'PC'}}, {platform: {id: 2, name: 'PlayStation 5'}}] },
-            { id: 2, name: 'The Witcher 3: Wild Hunt', released: '2015-05-18', rating: 4.9, background_image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800', genres: [{name: 'RPG'}], platforms: [{platform: {id: 1, name: 'PC'}}, {platform: {id: 3, name: 'Xbox One'}}] },
-            { id: 3, name: 'Grand Theft Auto V', released: '2013-09-17', rating: 4.9, background_image: 'https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=800', genres: [{name: 'Action'}], platforms: [{platform: {id: 1, name: 'PC'}}, {platform: {id: 4, name: 'PlayStation 4'}}] },
-            { id: 4, name: 'Red Dead Redemption 2', released: '2018-10-26', rating: 4.9, background_image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800', genres: [{name: 'Action'}], platforms: [{platform: {id: 1, name: 'PC'}}, {platform: {id: 3, name: 'Xbox One'}}] }
+        // Jeux 100% jouables, sans création de compte obligatoire
+        const CLOUD_GAMES = [
+            { id: 'retro-bowl', title: 'Retro Bowl', genre: 'Sport / NFL', url: 'https://game316009.konggames.com/gamez/0031/6009/live/index.html', image: 'https://images.crazygames.com/retro-bowl/20210816155956/retro-bowl-cover?auto=format,compress&q=75&cs=strip&ch=DPR&w=600&h=338&fit=crop' },
+            { id: 'smash-karts', title: 'Smash Karts', genre: 'Action / Course', url: 'https://www.crazygames.com/embed/smash-karts', image: 'https://images.crazygames.com/games/smash-karts/cover-1583232506304.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=600&h=338&fit=crop' },
+            { id: 'subway-surfers', title: 'Subway Surfers', genre: 'Endless Runner', url: 'https://unblocked-games.s3.amazonaws.com/subway-surfers.html', image: 'https://images.crazygames.com/games/subway-surfer/cover-1662991012648.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=600&h=338&fit=crop' },
+            { id: 'moto-x3m', title: 'Moto X3M', genre: 'Course', url: 'https://www.crazygames.com/embed/moto-x3m', image: 'https://images.crazygames.com/games/moto-x3m/cover-1539958618776.jpg?auto=format,compress&q=75&cs=strip&ch=DPR&w=600&h=338&fit=crop' },
+            { id: 'shellshockers', title: 'Shell Shockers', genre: 'FPS', url: 'https://www.crazygames.com/embed/shellshockersio', image: 'https://images.crazygames.com/games/shellshockersio/cover-1593433502846.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=600&h=338&fit=crop' },
+            { id: '2048', title: '2048 Classic', genre: 'Réflexion', url: 'https://play2048.co/', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/2048_logo.svg/512px-2048_logo.svg.png' },
+            { id: '1v1-lol', title: '1v1.LOL', genre: 'Battle Royale', url: 'https://www.crazygames.com/embed/1v1-lol', image: 'https://images.crazygames.com/games/1v1-lol/cover-1604397529437.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=600&h=338&fit=crop' },
+            { id: 'hextris', title: 'Hextris', genre: 'Arcade', url: 'https://hextris.io/', image: 'https://hextris.io/images/icons/apple-touch-icon-114x114.png' }
         ];
 
         function App() {
@@ -178,19 +131,11 @@
             const [authError, setAuthError] = useState('');
             const [isLoadingAuth, setIsLoadingAuth] = useState(false);
             
-            const [view, setView] = useState('home');
-            
-            // Catalogue RAWG
-            const [trendingGames, setTrendingGames] = useState([]);
-            const [searchQuery, setSearchQuery] = useState('');
-            const [searchResults, setSearchResults] = useState([]);
-            const [isSearching, setIsSearching] = useState(false);
+            // Modales Cloud
+            const [activeGame, setActiveGame] = useState(null);
+            const [isServerLoading, setIsServerLoading] = useState(false);
 
-            // Modales
-            const [activeIframeGame, setActiveIframeGame] = useState(null); // Jeu HTML5 en cours
-            const [catalogModalGame, setCatalogModalGame] = useState(null); // Infos jeu RAWG
-
-            // 1. Authentification Partagée avec LevelMusic/LevelMovie
+            // 1. Authentification
             useEffect(() => {
                 const initSecureSession = async () => {
                     try {
@@ -200,7 +145,6 @@
                             await signInAnonymously(auth).catch(console.warn);
                         }
                         
-                        // Vérifie si la clé a été sauvegardée par une autre app de l'écosystème
                         const savedKey = localStorage.getItem('lm_key');
                         const savedUid = localStorage.getItem('lm_uid');
                         const savedName = localStorage.getItem('lm_name');
@@ -225,28 +169,20 @@
                 try {
                     const snap = await getDocs(collectionGroup(db, 'security'));
                     let validUser = null;
-                    
-                    snap.forEach(d => { 
-                        if (d.data().key === accessKey) {
-                            validUser = d.data();
-                        }
-                    });
+                    snap.forEach(d => { if (d.data().key === accessKey) validUser = d.data(); });
 
                     if (validUser) {
                         const uid = validUser.uid || auth.currentUser?.uid || Date.now().toString();
                         const name = validUser.name || validUser.displayName || "Gamer Premium";
-                        
                         setUser({ uid });
                         setUserName(name);
                         localStorage.setItem('lm_key', accessKey);
                         localStorage.setItem('lm_uid', uid);
                         localStorage.setItem('lm_name', name);
                     } else {
-                        setAuthError("Clé d'accès invalide.");
+                        setAuthError("Clé invalide.");
                     }
                 } catch (e) {
-                    // Fallback local si sécurité stricte
-                    console.warn("Mode d'authentification de secours activé.");
                     const uid = auth.currentUser?.uid || Date.now().toString();
                     setUser({ uid });
                     setUserName("Gamer VIP");
@@ -263,343 +199,190 @@
                 setUser(null);
             };
 
-            // 2. Récupérer le catalogue Tendance depuis RAWG API
-            useEffect(() => {
-                fetch(`https://api.rawg.io/api/games?key=${RAWG_API_KEY}&dates=2023-01-01,2026-12-31&ordering=-added&page_size=12`)
-                    .then(res => {
-                        if (!res.ok) throw new Error("Erreur réseau RAWG API");
-                        return res.json();
-                    })
-                    .then(data => {
-                        if (data.results && data.results.length > 0) {
-                            setTrendingGames(data.results);
-                        } else {
-                            setTrendingGames(FALLBACK_GAMES);
-                        }
-                    }).catch(err => {
-                        // Silently fallback to prevent console errors from triggering UI blockers
-                        setTrendingGames(FALLBACK_GAMES);
-                    });
-            }, []);
-
-            // 3. Moteur de recherche RAWG
-            useEffect(() => {
-                if (!searchQuery.trim()) { setSearchResults([]); return; }
-                const timer = setTimeout(async () => {
-                    setIsSearching(true);
-                    try {
-                        const res = await fetch(`https://api.rawg.io/api/games?key=${RAWG_API_KEY}&search=${encodeURIComponent(searchQuery)}&page_size=20`);
-                        if (!res.ok) throw new Error("Erreur réseau RAWG API");
-                        const data = await res.json();
-                        setSearchResults(data.results || []);
-                    } catch (e) {
-                        // Utilisation du Fallback local en cas de blocage réseau (CORS/Adblock)
-                        const term = searchQuery.toLowerCase();
-                        setSearchResults(FALLBACK_GAMES.filter(g => g.name.toLowerCase().includes(term)));
-                    }
-                    setIsSearching(false);
-                }, 600);
-                return () => clearTimeout(timer);
-            }, [searchQuery]);
+            // Lancement d'un jeu (Simulation de connexion au serveur Cloud)
+            const launchGame = (game) => {
+                setActiveGame(game);
+                setIsServerLoading(true);
+                // Simuler un temps de connexion au serveur pour masquer les chargements moches de l'iframe
+                setTimeout(() => {
+                    setIsServerLoading(false);
+                }, 2500);
+            };
 
             if (isInitializing) return (
-                <div className="h-screen flex items-center justify-center bg-transparent relative z-50">
-                    <div className="animate-pulse text-emerald-500 font-black text-2xl tracking-tighter flex flex-col items-center">
-                        <Gamepad2 size={40} className="mb-4" />
-                        <span>CHARGEMENT DU SYSTÈME...</span>
+                <div className="h-screen flex items-center justify-center bg-[#030303]">
+                    <div className="flex flex-col items-center">
+                        <div className="w-16 h-16 border-4 border-[#00FF41] border-t-transparent rounded-full animate-spin mb-4"></div>
+                        <span className="font-bold tracking-widest text-[#00FF41] animate-pulse">CONNEXION AU CLOUD...</span>
                     </div>
                 </div>
             );
 
             if (!user) return (
-                <div className="flex items-center justify-center h-screen px-4 bg-transparent relative z-50">
-                    <div className="glass-card w-full max-w-md p-10 rounded-[2.5rem] flex flex-col items-center relative overflow-hidden text-center z-10">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-600/30 rounded-full blur-[40px] -z-10"></div>
-                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-cyan-600/30 rounded-full blur-[40px] -z-10"></div>
-                        
-                        <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-8 shadow-[0_0_40px_rgba(16,185,129,0.5)]">
-                            <Gamepad2 className="w-10 h-10 text-white" />
+                <div className="flex items-center justify-center h-screen px-4 bg-[#030303] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#107C10]/20 via-[#030303] to-[#030303]">
+                    <div className="cloud-card w-full max-w-md p-10 rounded-[2rem] flex flex-col items-center text-center shadow-[0_0_50px_rgba(16,124,16,0.3)]">
+                        <div className="w-20 h-20 bg-[#00FF41]/10 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,255,65,0.2)]">
+                            <Gamepad2 className="w-10 h-10 text-[#00FF41]" />
                         </div>
-                        <h1 className="text-3xl font-extrabold tracking-tighter mb-2">Level<span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Game</span></h1>
-                        <p className="text-white/50 text-sm mb-10 font-medium">L'Écosystème Gaming Ultime</p>
+                        <h1 className="text-4xl font-black tracking-tight mb-2 uppercase">Level<span className="text-[#00FF41]">Game</span></h1>
+                        <p className="text-white/50 text-sm mb-10 font-bold uppercase tracking-widest">Cloud Gaming System</p>
                         
-                        <div className="w-full space-y-5">
+                        <div className="w-full space-y-4">
                             <input 
-                                className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-center text-lg tracking-widest outline-none focus:border-emerald-500 transition-all font-mono uppercase"
+                                className="w-full bg-black border border-white/10 rounded-xl p-4 text-center text-lg tracking-widest outline-none focus:border-[#00FF41] transition-all font-mono uppercase"
                                 placeholder="CLÉ D'ACCÈS"
                                 value={accessKey}
                                 onChange={e => setAccessKey(e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, '').substring(0, 16))}
                                 onKeyDown={e => e.key === 'Enter' && handleLogin()}
                             />
-                            <button onClick={handleLogin} disabled={isLoadingAuth} className="w-full bg-gradient-to-r from-emerald-500 to-cyan-600 text-white py-4 rounded-2xl font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-[0_10px_30px_rgba(16,185,129,0.3)] disabled:opacity-50 outline-none">
-                                {isLoadingAuth ? 'Vérification...' : 'Déverrouiller'}
+                            <button onClick={handleLogin} disabled={isLoadingAuth} className="w-full bg-[#00FF41] text-black py-4 rounded-xl font-black text-lg uppercase tracking-widest hover:bg-white transition-colors disabled:opacity-50 outline-none">
+                                {isLoadingAuth ? 'Vérification...' : 'Jouer'}
                             </button>
-                            {authError && <p className="text-xs text-red-400 font-bold mt-2">{authError}</p>}
+                            {authError && <p className="text-xs text-red-500 font-bold mt-2 bg-red-500/10 py-2 rounded">{authError}</p>}
                         </div>
                     </div>
                 </div>
             );
 
             return (
-                <div className="flex h-screen w-screen overflow-hidden bg-transparent">
-                    {/* SIDEBAR */}
-                    <aside className="w-64 border-r border-white/5 glass-panel flex flex-col hidden md:flex z-40">
+                <div className="flex h-screen w-screen overflow-hidden bg-[#030303]">
+                    
+                    {/* SIDEBAR PC */}
+                    <aside className="w-64 bg-[#0a0a0a] border-r border-white/5 flex flex-col hidden md:flex z-40">
                         <div className="p-8">
-                            <div className="flex items-center gap-3 mb-12 cursor-pointer" onClick={() => {setView('home'); setSearchQuery('');}}>
-                                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
-                                    <Gamepad2 className="text-white w-6 h-6" />
+                            <div className="flex items-center gap-3 mb-12">
+                                <div className="w-10 h-10 bg-[#00FF41]/10 rounded-xl flex items-center justify-center border border-[#00FF41]/30">
+                                    <Gamepad2 className="text-[#00FF41] w-6 h-6" />
                                 </div>
-                                <span className="font-black text-2xl tracking-tighter">Level<span className="text-emerald-500">Game</span></span>
+                                <span className="font-black text-2xl tracking-tighter uppercase">Level<span className="text-[#00FF41]">Game</span></span>
                             </div>
-
-                            <nav className="space-y-2">
-                                <button onClick={() => setView('home')} className={`nav-link w-full ${view === 'home' ? 'active' : ''}`}>
-                                    <Home size={20} /> Découvrir
-                                </button>
-                                <button onClick={() => setView('instant')} className={`nav-link w-full ${view === 'instant' ? 'active' : ''}`}>
-                                    <MonitorPlay size={20} /> Jeux Instantanés
-                                </button>
-                                <button onClick={() => setView('search')} className={`nav-link w-full ${view === 'search' ? 'active' : ''}`}>
-                                    <Search size={20} /> Catalogue Mondial
+                            <nav className="space-y-4">
+                                <button className="flex items-center gap-4 text-[#00FF41] font-bold text-lg tracking-wider w-full text-left bg-[#00FF41]/10 px-4 py-3 rounded-xl border border-[#00FF41]/30 outline-none">
+                                    <MonitorPlay size={20} /> Cloud Play
                                 </button>
                             </nav>
                         </div>
-
-                        <div className="mt-auto p-6 border-t border-white/5">
-                            <div className="glass-card rounded-2xl p-4 flex items-center gap-3 cursor-pointer hover:bg-white/5 transition-colors" onClick={handleLogout}>
-                                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold">{userName.charAt(0)}</div>
+                        <div className="mt-auto p-6">
+                            <div className="bg-black border border-white/10 rounded-2xl p-4 flex items-center gap-3 cursor-pointer hover:border-red-500/50 transition-colors" onClick={handleLogout}>
+                                <div className="w-10 h-10 rounded-full bg-[#00FF41]/20 flex items-center justify-center text-[#00FF41] font-bold border border-[#00FF41]/30">{userName.charAt(0)}</div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-bold truncate">{userName}</p>
-                                    <p className="text-[10px] text-emerald-500 font-black uppercase tracking-widest truncate">VIP Access</p>
+                                    <p className="text-sm font-bold truncate text-white">{userName}</p>
+                                    <p className="text-[10px] text-[#00FF41] font-black uppercase tracking-widest truncate">Connecté</p>
                                 </div>
-                                <LogOut size={16} className="text-white/30 hover:text-white" />
+                                <LogOut size={16} className="text-white/30" />
                             </div>
                         </div>
                     </aside>
 
                     {/* MAIN CONTENT AREA */}
-                    <main className="flex-1 overflow-y-auto relative p-4 md:p-10 pb-32 z-10 scroll-smooth">
+                    <main className="flex-1 overflow-y-auto relative p-6 md:p-12 z-10 scroll-smooth">
                         
                         {/* Header Mobile */}
-                        <div className="md:hidden flex items-center justify-between mb-8 px-2 cursor-pointer">
-                            <div className="flex items-center gap-3" onClick={() => {setView('home'); setSearchQuery('');}}>
-                                <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-lg">
-                                    <Gamepad2 className="text-white w-5 h-5" />
+                        <div className="md:hidden flex items-center justify-between mb-8">
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 bg-[#00FF41]/10 rounded-lg flex items-center justify-center border border-[#00FF41]/30">
+                                    <Gamepad2 className="text-[#00FF41] w-5 h-5" />
                                 </div>
-                                <span className="font-black text-xl tracking-tighter">Level<span className="text-emerald-500">Game</span></span>
+                                <span className="font-black text-xl tracking-tighter uppercase">Level<span className="text-[#00FF41]">Game</span></span>
                             </div>
                             <button onClick={handleLogout} className="p-2 bg-white/5 rounded-full"><LogOut size={16}/></button>
                         </div>
 
-                        {/* VUE ACCUEIL */}
-                        {view === 'home' && (
-                            <div className="max-w-[1600px] mx-auto space-y-12">
-                                {/* Hero Section */}
-                                <div className="relative h-[300px] md:h-[450px] rounded-[2rem] md:rounded-[3rem] overflow-hidden group border border-white/10 shadow-2xl">
-                                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2000" className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000" alt=""/>
-                                    <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/70 to-transparent"></div>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent"></div>
-                                    <div className="absolute bottom-8 left-8 md:bottom-16 md:left-16 max-w-xl">
-                                        <span className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 w-fit border border-white/10 text-emerald-300">
-                                            <Sparkles size={12} /> Double Expérience
-                                        </span>
-                                        <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-6 leading-tight">Jouez.<br/>Découvrez.</h2>
-                                        <div className="flex gap-4">
-                                            <button onClick={() => setView('instant')} className="bg-gradient-to-r from-emerald-500 to-cyan-500 text-white px-6 py-3 rounded-xl font-bold uppercase text-xs tracking-widest shadow-[0_10px_30px_rgba(16,185,129,0.3)] hover:scale-105 transition-all flex items-center gap-2">
-                                                <Play size={16} fill="white" /> Jouer Maintenant
-                                            </button>
-                                            <button onClick={() => setView('search')} className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-3 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-white/20 transition-all flex items-center gap-2">
-                                                <Search size={16} /> Catalogue
-                                            </button>
-                                        </div>
+                        <div className="max-w-[1400px] mx-auto">
+                            {/* Bannière Hero */}
+                            <div className="relative h-[300px] md:h-[400px] rounded-3xl overflow-hidden mb-12 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                                <img src={CLOUD_GAMES[0].image} className="w-full h-full object-cover opacity-60" alt=""/>
+                                <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+                                <div className="absolute inset-0 flex flex-col justify-center p-8 md:p-16">
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <span className="bg-[#00FF41] text-black px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest">En Vedette</span>
                                     </div>
+                                    <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6">{CLOUD_GAMES[0].title}</h2>
+                                    <button onClick={() => launchGame(CLOUD_GAMES[0])} className="w-fit bg-[#00FF41] text-black px-8 py-4 rounded-xl font-black uppercase text-sm tracking-widest hover:bg-white transition-colors flex items-center gap-3 outline-none">
+                                        <Play size={18} fill="black" /> Jouer Instantanément
+                                    </button>
                                 </div>
+                            </div>
 
-                                {/* Aperçu Jeux Instantanés */}
+                            {/* Info de protection */}
+                            <div className="bg-[#107C10]/10 border border-[#107C10]/30 rounded-xl p-4 mb-10 flex items-start gap-4">
+                                <Shield className="w-6 h-6 text-[#00FF41] shrink-0" />
                                 <div>
-                                    <div className="flex items-center justify-between mb-6">
-                                        <h3 className="text-2xl font-black tracking-tighter flex items-center gap-3">
-                                            <Zap className="text-cyan-400" size={24}/> Jeux Rapides
-                                        </h3>
-                                        <button onClick={() => setView('instant')} className="text-xs font-bold text-emerald-500 uppercase tracking-widest">Voir tout</button>
-                                    </div>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                                        {INSTANT_GAMES.slice(0,4).map((game) => (
-                                            <div key={game.id} onClick={() => setActiveIframeGame(game)} className="glass-card rounded-2xl overflow-hidden cursor-pointer group hover:border-emerald-500/50 transition-all">
-                                                <div className="relative aspect-video">
-                                                    <img src={game.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt=""/>
-                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                                        <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.6)]">
-                                                            <Play size={24} fill="white" className="ml-1 text-white" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="p-4">
-                                                    <h4 className="font-bold text-sm truncate">{game.title}</h4>
-                                                    <p className="text-[10px] text-emerald-400 font-bold uppercase mt-1">{game.genre}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    <h4 className="text-[#00FF41] font-bold text-sm uppercase tracking-widest mb-1">Bouclier Cloud Activé</h4>
+                                    <p className="text-white/60 text-xs">Les jeux sont exécutés dans un environnement sécurisé. Les pop-ups externes, publicités invasives et redirections sont bloqués par LevelUp.</p>
                                 </div>
                             </div>
-                        )}
 
-                        {/* VUE JEUX INSTANTANÉS */}
-                        {view === 'instant' && (
-                            <div className="max-w-[1600px] mx-auto">
-                                <h2 className="text-3xl md:text-4xl font-black tracking-tighter mb-2">Jeux Instantanés</h2>
-                                <p className="text-white/50 mb-10 font-medium">Jouables immédiatement sans aucun téléchargement.</p>
-                                
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                                    {INSTANT_GAMES.map((game) => (
-                                        <div key={game.id} onClick={() => setActiveIframeGame(game)} className="glass-card rounded-3xl overflow-hidden cursor-pointer group hover:shadow-[0_0_30px_rgba(16,185,129,0.2)] transition-all border border-white/5 hover:border-emerald-500/30">
-                                            <div className="relative aspect-square">
-                                                <img src={game.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt=""/>
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30">
-                                                        <Play size={24} fill="white" className="ml-1 text-white" />
-                                                    </div>
-                                                </div>
-                                                <div className="absolute bottom-4 left-4 right-4">
-                                                    <h4 className="font-black text-lg truncate drop-shadow-lg">{game.title}</h4>
-                                                    <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mt-1">{game.genre}</p>
+                            <h3 className="text-2xl font-black uppercase tracking-wider mb-6 flex items-center gap-3">
+                                <MonitorPlay className="text-[#00FF41]" /> Tous les Jeux
+                            </h3>
+
+                            {/* Grille de jeux */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                {CLOUD_GAMES.map((game) => (
+                                    <div key={game.id} onClick={() => launchGame(game)} className="cloud-card rounded-2xl overflow-hidden cursor-pointer group">
+                                        <div className="relative aspect-video">
+                                            <img src={game.image} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt=""/>
+                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                                <div className="w-14 h-14 bg-[#00FF41] rounded-full flex items-center justify-center text-black shadow-[0_0_20px_#00FF41]">
+                                                    <Play size={24} fill="black" className="ml-1" />
                                                 </div>
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* VUE CATALOGUE RAWG */}
-                        {view === 'search' && (
-                            <div className="max-w-[1600px] mx-auto">
-                                <div className="relative mb-12 max-w-3xl mx-auto">
-                                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-white/30 w-6 h-6" />
-                                    <input 
-                                        className="w-full glass-effect rounded-[2rem] p-6 pl-16 text-lg outline-none focus:border-emerald-500/50 transition-all shadow-2xl font-medium"
-                                        placeholder="Chercher un jeu mondial (ex: GTA, FIFA, Zelda)..."
-                                        value={searchQuery}
-                                        onChange={e => setSearchQuery(e.target.value)}
-                                    />
-                                </div>
-                                
-                                {isSearching ? (
-                                    <div className="flex justify-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-emerald-500"></div></div>
-                                ) : searchResults.length > 0 ? (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                        {searchResults.map((game) => (
-                                            <div key={game.id} onClick={() => setCatalogModalGame(game)} className="flex items-center gap-4 p-3 glass-card rounded-2xl cursor-pointer hover:bg-white/10 transition-all group">
-                                                <img src={game.background_image || 'https://via.placeholder.com/150'} className="w-20 h-20 rounded-xl object-cover" alt="" />
-                                                <div className="flex-1 min-w-0">
-                                                    <h4 className="font-bold text-base truncate">{game.name}</h4>
-                                                    <div className="flex items-center gap-2 mt-1">
-                                                        <span className="text-[10px] bg-white/10 px-2 py-1 rounded text-white/70">{game.released?.substring(0,4) || 'N/A'}</span>
-                                                        <span className="text-[10px] text-emerald-400 font-bold uppercase truncate">{game.genres?.[0]?.name || 'Jeu'}</span>
-                                                    </div>
-                                                </div>
-                                                <Info size={20} className="text-white/20 group-hover:text-emerald-400 mr-2" />
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : searchQuery ? (
-                                    <div className="text-center py-20 text-white/30">
-                                        <Trophy size={64} className="mx-auto mb-6 opacity-20" />
-                                        <p className="text-xl font-bold tracking-widest uppercase">Aucun jeu trouvé</p>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-6">
-                                        <h3 className="text-2xl font-black tracking-tighter flex items-center gap-3">
-                                            <Trophy className="text-emerald-500" size={24}/> Jeux Populaires (RAWG DB)
-                                        </h3>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                                            {trendingGames.map(game => (
-                                                <div key={game.id} onClick={() => setCatalogModalGame(game)} className="glass-card rounded-[2rem] p-3 cursor-pointer hover:border-emerald-500/50 transition-all group">
-                                                    <div className="relative aspect-video rounded-[1.5rem] overflow-hidden mb-4">
-                                                        <img src={game.background_image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt=""/>
-                                                    </div>
-                                                    <h4 className="font-bold text-sm truncate px-2">{game.name}</h4>
-                                                    <div className="flex justify-between items-center px-2 mt-2">
-                                                        <span className="text-[10px] text-white/40">{game.released?.substring(0,4)}</span>
-                                                        <span className="flex items-center gap-1 text-[10px] text-emerald-400 font-bold"><Star size={10} fill="currentColor"/> {game.rating}</span>
-                                                    </div>
-                                                </div>
-                                            ))}
+                                        <div className="p-5">
+                                            <h4 className="font-black text-lg uppercase tracking-wide truncate mb-1">{game.title}</h4>
+                                            <p className="text-[11px] text-[#00FF41] font-bold uppercase tracking-widest">{game.genre}</p>
                                         </div>
                                     </div>
-                                )}
-                            </div>
-                        )}
-                    </main>
-
-                    {/* BARRE MOBILE EN BAS */}
-                    <nav className="md:hidden fixed bottom-0 left-0 right-0 h-20 glass-panel border-t border-white/5 flex items-center justify-around z-40 pb-2">
-                        <button onClick={() => {setView('home'); setSearchQuery('');}} className={`flex flex-col items-center gap-1 ${view === 'home' ? 'text-emerald-400' : 'text-white/40'}`}><Home size={22}/> <span className="text-[10px] font-bold">Accueil</span></button>
-                        <button onClick={() => {setView('instant');}} className={`flex flex-col items-center gap-1 ${view === 'instant' ? 'text-cyan-400' : 'text-white/40'}`}><MonitorPlay size={22}/> <span className="text-[10px] font-bold">Jouer</span></button>
-                        <button onClick={() => {setView('search');}} className={`flex flex-col items-center gap-1 ${view === 'search' ? 'text-emerald-400' : 'text-white/40'}`}><Search size={22}/> <span className="text-[10px] font-bold">Catalogue</span></button>
-                    </nav>
-
-                    {/* --- FULLSCREEN IFRAME PLAYER (JEUX INSTANTANÉS) --- */}
-                    {activeIframeGame && (
-                        <div className="fixed inset-0 z-[9999] bg-black flex flex-col animate-in zoom-in-95 duration-300">
-                            <div className="h-14 bg-[#0a0a0c] border-b border-white/10 flex items-center justify-between px-6">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded bg-emerald-500/20 flex items-center justify-center"><Gamepad2 size={16} className="text-emerald-500" /></div>
-                                    <span className="font-bold text-sm tracking-widest uppercase">{activeIframeGame.title}</span>
-                                </div>
-                                <button onClick={() => setActiveIframeGame(null)} className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors">
-                                    <X size={16} />
-                                </button>
-                            </div>
-                            <div className="flex-1 w-full bg-black relative">
-                                <iframe 
-                                    src={activeIframeGame.url} 
-                                    className="game-iframe"
-                                    allow="autoplay; fullscreen; gamepad" 
-                                    allowFullScreen
-                                ></iframe>
+                                ))}
                             </div>
                         </div>
-                    )}
+                    </main>
 
-                    {/* --- MODAL CATALOGUE (INFOS RAWG) --- */}
-                    {catalogModalGame && (
-                        <div className="fixed inset-0 z-[8000] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 md:p-10 animate-in fade-in duration-300" onClick={() => setCatalogModalGame(null)}>
-                            <div className="glass-card w-full max-w-4xl max-h-[90vh] rounded-[2rem] overflow-hidden flex flex-col md:flex-row relative" onClick={e => e.stopPropagation()}>
-                                <button onClick={() => setCatalogModalGame(null)} className="absolute top-4 right-4 z-50 w-10 h-10 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center border border-white/10 hover:bg-red-500 transition-colors"><X size={20}/></button>
-                                
-                                <div className="w-full md:w-1/2 h-64 md:h-auto relative">
-                                    <img src={catalogModalGame.background_image || 'https://via.placeholder.com/800'} className="w-full h-full object-cover" alt="" />
-                                    <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#0a0a0c] to-transparent"></div>
-                                </div>
-
-                                <div className="w-full md:w-1/2 p-8 md:p-10 overflow-y-auto bg-[#0a0a0c]">
-                                    <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-md text-[10px] font-black uppercase tracking-widest border border-emerald-500/30">{catalogModalGame.genres?.[0]?.name || 'Jeu'}</span>
-                                    <h2 className="text-3xl md:text-4xl font-black tracking-tighter mt-4 mb-2">{catalogModalGame.name}</h2>
-                                    
-                                    <div className="flex gap-4 mb-8">
-                                        <div className="flex items-center gap-1 text-sm text-white/50"><Star size={16} className="text-yellow-500"/> {catalogModalGame.rating || 'N/A'} / 5</div>
-                                        <div className="flex items-center gap-1 text-sm text-white/50"><Trophy size={16}/> {catalogModalGame.released || 'Inconnue'}</div>
+                    {/* --- LECTEUR CLOUD GAMING (FULLSCREEN) --- */}
+                    {activeGame && (
+                        <div className="fixed inset-0 z-[9999] bg-black flex flex-col animate-in zoom-in-95 duration-300">
+                            {/* Barre du haut */}
+                            <div className="h-16 bg-[#0a0a0a] border-b border-white/10 flex items-center justify-between px-6 z-50">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded bg-[#00FF41]/10 flex items-center justify-center border border-[#00FF41]/30">
+                                        <Gamepad2 size={20} className="text-[#00FF41]" />
                                     </div>
+                                    <div>
+                                        <span className="font-black text-lg tracking-widest uppercase text-white block leading-none">{activeGame.title}</span>
+                                        <span className="text-[10px] text-[#00FF41] font-bold uppercase tracking-widest">LevelGame Server</span>
+                                    </div>
+                                </div>
+                                <button onClick={() => {setActiveGame(null); setIsServerLoading(false);}} className="px-4 py-2 bg-red-500/10 text-red-500 border border-red-500/30 rounded font-bold text-xs uppercase hover:bg-red-500 hover:text-white transition-colors flex items-center gap-2 outline-none">
+                                    <X size={16} /> Quitter le jeu
+                                </button>
+                            </div>
 
-                                    <div className="space-y-4">
-                                        <h3 className="text-xs font-bold uppercase tracking-widest text-white/40 border-b border-white/10 pb-2">Plateformes</h3>
-                                        <div className="flex flex-wrap gap-2">
-                                            {catalogModalGame.platforms?.map(p => (
-                                                <span key={p.platform.id} className="text-[10px] bg-white/5 px-2 py-1 rounded text-white/70 border border-white/10">{p.platform.name}</span>
-                                            ))}
+                            <div className="flex-1 w-full bg-black relative">
+                                {/* Écran de chargement Cloud (Masque les chargements du jeu) */}
+                                {isServerLoading && (
+                                    <div className="absolute inset-0 bg-[#050505] z-40 flex flex-col items-center justify-center">
+                                        <div className="relative mb-8">
+                                            <div className="w-24 h-24 rounded-full border-2 border-white/10 flex items-center justify-center">
+                                                <Zap className="w-10 h-10 text-[#00FF41]" />
+                                            </div>
+                                            <div className="absolute inset-0 rounded-full border-t-2 border-[#00FF41] animate-spin"></div>
+                                            <div className="absolute inset-0 rounded-full loader-pulse"></div>
                                         </div>
+                                        <h2 className="text-white font-black text-2xl tracking-widest uppercase mb-2">Connexion au Cloud</h2>
+                                        <p className="text-white/40 text-sm font-mono uppercase">Chargement de {activeGame.title}...</p>
                                     </div>
-                                    
-                                    <div className="mt-10 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-3">
-                                        <Info size={20} className="text-emerald-500 shrink-0 mt-0.5" />
-                                        <p className="text-xs text-emerald-100/70 leading-relaxed">
-                                            Cette fiche provient de la base de données mondiale RAWG. Les jeux de ce catalogue nécessitent une console ou un PC pour être joués. Pour jouer immédiatement, visitez l'onglet "Jeux Instantanés".
-                                        </p>
-                                    </div>
-                                </div>
+                                )}
+
+                                {/* Le Jeu en lui-même avec Sandbox stricte ! */}
+                                {/* sandbox="allow-scripts allow-same-origin" bloque les popups, l'ouverture d'onglets et les redirections !! */}
+                                <iframe 
+                                    src={activeGame.url} 
+                                    className="game-iframe"
+                                    allow="autoplay; fullscreen; gamepad; focus-without-user-activation *;" 
+                                    sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock"
+                                    allowFullScreen
+                                ></iframe>
                             </div>
                         </div>
                     )}
