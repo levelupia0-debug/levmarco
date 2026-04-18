@@ -103,7 +103,6 @@ measurementId: "G-MSRDY2574K"
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-// 1. SÉPARATION TOTALE DE LA BASE DE DONNÉES
 const APP_ID = "level-anime-premium";
 
 // --- CONFIGURATION TMDB ---
@@ -112,8 +111,8 @@ const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 const IMAGE_ORIGINAL = 'https://image.tmdb.org/t/p/original';
 
-const COLOR_BRAND = "#f43f5e"; // Rouge/Rose Anime (Tailwind rose-500)
-const DROPDOWN_RED = "#e51b32"; // Rouge exact de la capture d'écran
+const COLOR_BRAND = "#f43f5e"; // Rouge Anime
+const DROPDOWN_RED = "#e51b32"; // Rouge exact Sibnet
 
 const i18n = {
 fr: {
@@ -147,10 +146,10 @@ match: "Recommandé",
 cast: "Personnages & Seiyū",
 similar: "Animes Similaires",
 legalWatch: "Disponible légalement sur :",
-noLegal: "Aucune offre de simulcast recensée dans votre région.",
+noLegal: "Aucune offre de simulcast recensée.",
 closePlayer: "Fermer le lecteur",
-warningTitle: "Avertissement Serveurs Externes",
-warningText: "Les animes sont diffusés via des API tierces. <b>LevelUp n'héberge aucun contenu</b>. Des pop-ups peuvent apparaître sur ces lecteurs gratuits.",
+warningTitle: "Avertissement Serveurs",
+warningText: "Les animes sont diffusés via des API tierces. Des pop-ups peuvent apparaître sur ces lecteurs gratuits.",
 warningCheckbox: "J'accepte de visionner le contenu depuis ces serveurs.",
 warningBtn: "Lancer la vidéo",
 noDesc: "Aucun synopsis disponible.",
@@ -164,7 +163,7 @@ logoutBtn: "Se Déconnecter de LevelAnime",
 logoutConfirm: "Êtes-vous sûr de vouloir quitter ?",
 cancel: "Annuler",
 confirm: "Confirmer",
-osVersion: "LevelAnime • Architecture V1.0",
+osVersion: "LevelAnime • Architecture V2.0",
 loginSuccess: "Connexion réussie",
 linkCopied: "Lien copié dans le presse-papier !",
 emptyList: "Votre watchlist est vide.",
@@ -172,30 +171,29 @@ searchResults: "Résultats de recherche",
 noResults: "Aucun anime trouvé.",
 featured: "À la une",
 externalSources: "Sources de Streaming",
-audioTip: "Info : Sélectionne ton lecteur favori. Certains serveurs nécessitent une API externe pour fonctionner.",
+audioTip: "Info : Sélectionne ton lecteur favori. Sibnet et Filemoon sont les plus stables.",
 movieInfo: "Infos de l'Anime",
-externalSearchBtn: "Chercher en VF (Externe)",
+externalSearchBtn: "Recherche Externe",
 originalTitle: "Titre Japonais",
 notSpecified: "Non spécifié",
 trailerPlaying: "Bande-annonce en cours",
 alreadyInList: "Déjà dans vos favoris",
 addToList: "Ajouter à Ma Liste",
 share: "Partager",
-director: "Studio d'Animation / Réal",
+director: "Studio d'Animation",
 genresOrigin: "Genres",
 prodFinance: "Production",
 tmdbReviews: "Notes & Avis TMDB",
 certifiedReviews: "avis certifiés",
 noCasting: "Casting non disponible",
 recommendationTitle: "⭐ RECOMMANDATION DE VISIONNAGE",
-recommendationText: "Pour l'Anime, nous utilisons des lecteurs externes globaux. Pour bloquer les fenêtres publicitaires (pop-ups), l'utilisation du navigateur <b>Opera</b> ou <b>Brave</b> est indispensable.",
-warningDisclaimer: "Nous n'hébergeons aucune vidéo. Si le lecteur affiche 'Not Found', l'épisode n'est pas encore disponible sur le serveur gratuit.",
+recommendationText: "L'utilisation du navigateur <b>Opera</b> ou <b>Brave</b> est indispensable pour bloquer les pubs des serveurs.",
+warningDisclaimer: "Nous n'hébergeons aucune vidéo. Si le lecteur affiche 'Not Found', essaie un autre serveur.",
 disclaimerCheckbox: "J'ai compris le fonctionnement des lecteurs externes.",
 acceptPlay: "Accepter & Lancer",
-contentUnavailableDesc: "L'épisode ou le film est introuvable sur nos serveurs partenaires gratuits pour le moment.",
-recentlyViewed: "Reprendre la lecture",
+recentlyViewed: "Reprendre la lecture"
 browserWallTitle: "Accès Sécurisé Anti-Pub",
-browserWallDesc: "Les serveurs d'anime ont beaucoup de pop-ups. LevelAnime est optimisé exclusivement pour le navigateur Opera pour les bloquer à 100%.",
+browserWallDesc: "Les serveurs d'anime ont beaucoup de pop-ups. LevelAnime est optimisé exclusivement pour le navigateur Opera.",
 step1: "1. Télécharger Opera",
 step2: "2. Activer les protections",
 step2Desc: "Une fois installé, activez le bouclier anti-pub et le VPN intégré d'Opera.",
@@ -243,8 +241,7 @@ overflow-x: hidden;
 `;
 
 function App() {
-const lang = 'fr'; // Forcé en Français pour l'Anime
-// 2. SÉPARATION DE LA MÉMOIRE LOCALE (LEVELANIME)
+const lang = 'fr'; 
 const [showSplash, setShowSplash] = useState(true);
 const [splashStep, setSplashStep] = useState(0);
 
@@ -373,7 +370,7 @@ const delayDebounceFn = setTimeout(async () => {
 try {
 const res = await fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&language=fr-FR&query=${encodeURIComponent(searchQuery)}`);
 const data = await res.json();
-// STRICT ANIME FILTER : Uniquement les médias TV/Movies d'origine Japonaise (ja) ET du genre Animation (16)
+// Filtre Strict Anime
 const animes = data.results?.filter(m => (m.media_type === 'tv' || m.media_type === 'movie') && m.original_language === 'ja' && m.genre_ids?.includes(16)) || [];
 setSearchResults(animes);
 } catch (e) {}
@@ -417,10 +414,16 @@ else setPageSeed(1);
 setCurrentCategory(cat); setSearchQuery(''); window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-// --- CONFIGURATION TMDB 100% ANIME ---
-const rowsConfig = [];
-const buildAnimeUrl = (path, extraParams = '') => `${path}?api_key=${API_KEY}&language=fr-FR&with_original_language=ja&with_genres=16${extraParams}`;
+// --- CONSTRUCTION DES URLS TMDB CORRECTE (Évite les bugs de listes vides) ---
+const buildAnimeUrl = (path, extraParams = '') => {
+    let base = `${path}?api_key=${API_KEY}&language=fr-FR&with_original_language=ja`;
+    if (!extraParams.includes('with_genres')) {
+        base += '&with_genres=16';
+    }
+    return base + extraParams;
+};
 
+const rowsConfig = [];
 if (currentCategory === 'home' || currentCategory === 'tv') {
 rowsConfig.push(
 { title: t.trending, url: buildAnimeUrl('/discover/tv', '&sort_by=popularity.desc'), large: true, shuffle: false },
@@ -478,7 +481,6 @@ if (!isAllowedBrowser && !showSplash && !hasSkippedBrowserWall) {
     <p className="text-center text-white/60 text-[10px] md:text-xs mb-4 md:mb-8 max-w-sm mx-auto leading-snug px-2 shrink-0">{t.browserWallDesc}</p>
 
     <div className="space-y-2.5 md:space-y-4 shrink-0">
-    {/* Étapes simplifiées pour le code */}
     <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-4 backdrop-blur-xl flex flex-col gap-3">
         <h3 className="font-bold text-white text-sm">1. Installer Opera (Navigateur Anti-Pub)</h3>
         <div className="grid grid-cols-2 gap-2">
@@ -641,7 +643,6 @@ return (
 </div>
 ) : (
 <>
-{/* BANNIÈRE STRICTEMENT ANIME (Remplacement de /trending/ qui fuyait) */}
 <Banner url={buildAnimeUrl('/discover/tv', '&sort_by=popularity.desc')} onPlay={() => openModal(heroMovie, 'play')} onInfo={() => openModal(heroMovie, 'info')} setHero={setHeroMovie} heroMovie={heroMovie} t={t} pageSeed={pageSeed} COLOR_BRAND={COLOR_BRAND} />
 
 <main className="pb-24 relative z-20 space-y-8 md:space-y-10 mt-6 md:-mt-10">
@@ -833,8 +834,8 @@ const [modalMode, setModalMode] = useState(mode);
 
 const [showDisclaimer, setShowDisclaimer] = useState(false);
 const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
-const [selectedServer, setSelectedServer] = useState('sibnet'); 
-const [pendingServer, setPendingServer] = useState('sibnet');
+const [selectedServer, setSelectedServer] = useState('server1'); 
+const [pendingServer, setPendingServer] = useState('server1');
 const [iframeLoading, setIframeLoading] = useState(true);
 const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
 
@@ -842,22 +843,19 @@ const isTV = movie.first_air_date !== undefined;
 const typeStr = isTV ? 'tv' : 'movie';
 const isAddedToWatchlist = watchlist.includes(movie.id);
 
+// --- RETOUR AU SYSTEME HYBRIDE (FIABLE) ---
+const [seasonDetails, setSeasonDetails] = useState(null); 
+const [episodesLoading, setEpisodesLoading] = useState(false);
 const [selectedSeason, setSelectedSeason] = useState(1);
 const [selectedEpisode, setSelectedEpisode] = useState(1);
-const [seasonDetails, setSeasonDetails] = useState(null);
-const [episodesLoading, setEpisodesLoading] = useState(false);
+const [audioLang, setAudioLang] = useState('vostfr');
 
-const [consumetLinks, setConsumetLinks] = useState({});
-const [isSearchingConsumet, setIsSearchingConsumet] = useState(false);
-
-// 3. NOUVEAU SERVEUR DÉDIÉ AUX FILMS
+// SERVEURS FIABLES QUI MARCHENT DANS UN NAVIGATEUR
 const SERVERS_LIST = [
-    { id: 'sibnet', label: 'Lecteur SIBNET' },
-    { id: 'sendvid', label: 'Lecteur SENDVID' },
-    { id: 'vidmoly', label: 'Lecteur VIDMOLY' },
-    { id: 'filemoon', label: 'Lecteur FILEMOON' },
-    { id: 'vidsrc', label: 'Lecteur SECOURS (Séries)' },
-    { id: 'embedsu', label: 'Lecteur SECOURS (Films)' }
+    { id: 'server1', label: 'Lecteur SIBNET (Auto-Sub)' },
+    { id: 'server2', label: 'Lecteur SENDVID (Global)' },
+    { id: 'server3', label: 'Lecteur VIDMOLY (HD)' },
+    { id: 'server4', label: 'Lecteur FILEMOON (Secours)' }
 ];
 
 useEffect(() => {
@@ -874,67 +872,26 @@ setLoading(false);
 } catch (e) { setError(true); setLoading(false); }
 };
 fetchDetails();
-}, [movie, typeStr, lang, isTV]);
+}, [movie, typeStr, lang]);
 
+// FETCH EPISODES VIA TMDB (La seule méthode 100% fiable sans Backend)
 useEffect(() => {
-if (isTV && details) {
-    const fetchEpisodes = async () => {
-        setEpisodesLoading(true);
-        try {
-            const res = await fetch(`${BASE_URL}/tv/${movie.id}/season/${selectedSeason}?api_key=${API_KEY}&language=${lang}`);
-            const data = await res.json();
-            setSeasonDetails(data);
-            setEpisodesLoading(false);
-        } catch (e) { setEpisodesLoading(false); }
-    };
-    fetchEpisodes();
-}
+    if (isTV && details) {
+        const fetchEpisodes = async () => {
+            setEpisodesLoading(true);
+            try {
+                const res = await fetch(`${BASE_URL}/tv/${movie.id}/season/${selectedSeason}?api_key=${API_KEY}&language=${lang}`);
+                const data = await res.json();
+                setSeasonDetails(data);
+                setEpisodesLoading(false);
+            } catch (e) { setEpisodesLoading(false); }
+        };
+        fetchEpisodes();
+    }
 }, [selectedSeason, details, isTV, movie.id, lang]);
 
-
-// --- NOUVELLE FONCTION : RECHERCHE DES LIENS CONSUMET ---
 useEffect(() => {
-    const fetchConsumetLinks = async () => {
-        setIsSearchingConsumet(true);
-        try {
-            const consumetUrl = "https://api.consumet.org"; 
-            
-            // On essaie avec le titre original en priorité car AnimeSama marche mieux avec les noms Japonais
-            const queryTitle = movie.original_name || movie.original_title || movie.title || movie.name;
-            const searchRes = await fetch(`${consumetUrl}/anime/animesama/${encodeURIComponent(queryTitle)}`);
-            const searchData = await searchRes.json();
-            
-            if (searchData.results && searchData.results.length > 0) {
-                const animeId = searchData.results[0].id; 
-                
-                const infoRes = await fetch(`${consumetUrl}/anime/animesama/info?id=${animeId}`);
-                const infoData = await infoRes.json();
-                
-                const targetEpisode = infoData.episodes?.find(ep => ep.number === selectedEpisode) || infoData.episodes?.[0];
-                
-                if (targetEpisode) {
-                    const watchRes = await fetch(`${consumetUrl}/anime/animesama/watch?episodeId=${targetEpisode.id}`);
-                    const watchData = await watchRes.json();
-                    
-                    if(watchData) {
-                        setConsumetLinks(watchData);
-                    }
-                }
-            }
-        } catch (err) {
-            console.log("Erreur API Consumet (fallback en cours).", err);
-        }
-        setIsSearchingConsumet(false);
-    };
-
-    if(modalMode === 'play') {
-        fetchConsumetLinks();
-    }
-}, [selectedEpisode, movie, modalMode]);
-
-
-useEffect(() => {
-if (mode === 'play') handlePlayRequest('sibnet'); else setModalMode('info');
+if (mode === 'play') handlePlayRequest('server1'); else setModalMode('info');
 }, [mode]);
 
 const getTrailerKey = () => {
@@ -958,6 +915,7 @@ if (playerContainer) playerContainer.scrollIntoView({ behavior: 'smooth' });
 const playSpecificEpisode = (epNum) => {
 setSelectedEpisode(epNum);
 setIframeLoading(true);
+handlePlayRequest(selectedServer);
 };
 
 const renderIframe = () => {
@@ -994,55 +952,36 @@ return (
 return <div className="absolute inset-0 bg-black flex flex-col items-center justify-center text-white/50"><Clapperboard className="w-12 h-12 mb-2 opacity-50"/><span>{t.notFound}</span></div>;
 }
 
-
-// --- INJECTION DES LIENS ET LECTEURS FILMS ---
+// --- LIENS D'AGRÉGATEURS FIABLES ---
 let iframeSrc = '';
-
-if (selectedServer === 'vidsrc') {
-    if (isTV) iframeSrc = `https://vidsrc.me/embed/tv?tmdb=${movie.id}&season=${selectedSeason}&episode=${selectedEpisode}`;
-    else iframeSrc = `https://vidsrc.me/embed/movie?tmdb=${movie.id}`;
-} else if (selectedServer === 'embedsu') {
-    if (isTV) iframeSrc = `https://embed.su/embed/tv/${movie.id}/${selectedSeason}/${selectedEpisode}`;
-    else iframeSrc = `https://embed.su/embed/movie/${movie.id}`;
+if (isTV) {
+    if (selectedServer === 'server1') iframeSrc = `https://embed.su/embed/tv/${movie.id}/${selectedSeason}/${selectedEpisode}`; // Très fort en anime/subs
+    else if (selectedServer === 'server2') iframeSrc = `https://vidsrc.cc/v2/embed/tv/${movie.id}/${selectedSeason}/${selectedEpisode}`; 
+    else if (selectedServer === 'server3') iframeSrc = `https://vidsrc.me/embed/tv?tmdb=${movie.id}&season=${selectedSeason}&episode=${selectedEpisode}`;
+    else iframeSrc = `https://multiembed.mov/?video_id=${movie.id}&tmdb=1&s=${selectedSeason}&e=${selectedEpisode}`;
 } else {
-    // Lecteurs Consumet (Sibnet, etc.)
-    if (consumetLinks && consumetLinks.headers && consumetLinks.headers.Referer) {
-        iframeSrc = consumetLinks.headers.Referer; 
-    } else if (consumetLinks && consumetLinks.sources && consumetLinks.sources.length > 0) {
-        iframeSrc = consumetLinks.sources[0].url;
-    } else {
-        // Fallback ultime si Consumet échoue
-        // embed.su est extrêmement performant pour les Films d'animation
-        if (isTV) iframeSrc = `https://vidsrc.me/embed/tv?tmdb=${movie.id}&season=${selectedSeason}&episode=${selectedEpisode}`;
-        else iframeSrc = `https://embed.su/embed/movie/${movie.id}`; 
-    }
+    if (selectedServer === 'server1') iframeSrc = `https://embed.su/embed/movie/${movie.id}`;
+    else if (selectedServer === 'server2') iframeSrc = `https://vidsrc.cc/v2/embed/movie/${movie.id}`;
+    else if (selectedServer === 'server3') iframeSrc = `https://vidsrc.me/embed/movie?tmdb=${movie.id}`;
+    else iframeSrc = `https://multiembed.mov/?video_id=${movie.id}&tmdb=1`;
 }
 
 return (
 <>
 <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-0">
-    <div className="flex flex-col items-center">
-        {isSearchingConsumet ? (
-            <>
-                <RefreshCw className={`w-10 h-10 text-[${DROPDOWN_RED}] animate-spin`} />
-                <p className="text-white/50 text-[10px] mt-4 uppercase tracking-widest">Recherche des serveurs AnimeSama...</p>
-            </>
-        ) : (
-            <>
-                <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[${DROPDOWN_RED}]`}></div>
-                <p className="text-white/50 text-[10px] mt-4 uppercase tracking-widest">Connexion à {SERVERS_LIST.find(s=>s.id===selectedServer)?.label}...</p>
-            </>
-        )}
+    <div className="flex flex-col items-center text-center px-4">
+        <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[${DROPDOWN_RED}]`}></div>
+        <p className="text-white/50 text-[10px] mt-4 uppercase tracking-widest">Connexion au lecteur...</p>
+        <p className="text-[#90cea1] text-[9px] mt-2 max-w-[250px]">Astuce : Utilise le bouton "CC" dans le lecteur pour activer les sous-titres Français (VOSTFR).</p>
     </div>
 </div>
-<iframe key={iframeSrc} className={`absolute inset-0 w-full h-full bg-transparent z-10 transition-opacity duration-500 ${iframeLoading && !isSearchingConsumet ? 'opacity-0' : 'opacity-100'}`} src={iframeSrc} onLoad={() => setIframeLoading(false)} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+<iframe key={iframeSrc} className={`absolute inset-0 w-full h-full bg-transparent z-10 transition-opacity duration-500 ${iframeLoading ? 'opacity-0' : 'opacity-100'}`} src={iframeSrc} onLoad={() => setIframeLoading(false)} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
 </>
 );
 };
 
-const externalSearchUrl = `https://www.google.com/search?q=${encodeURIComponent((movie.title || movie.name) + ' streaming vf gratuit anime')}`;
+const externalSearchUrl = `https://www.google.com/search?q=${encodeURIComponent((movie.title || movie.name) + ' streaming ' + audioLang + ' gratuit anime')}`;
 
-// Fermer le dropdown quand on clique ailleurs
 useEffect(() => {
     const handleClickOutside = (event) => {
         if (isDropdownOpen && !event.target.closest('.custom-dropdown')) setIsDropdownOpen(false);
@@ -1050,7 +989,6 @@ useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
 }, [isDropdownOpen]);
-
 
 return (
 <div className="fixed inset-0 z-[8000] flex justify-center items-start md:items-center p-0 md:p-6 bg-[#060608]/95 backdrop-blur-3xl overflow-y-auto no-scrollbar">
@@ -1113,11 +1051,11 @@ return (
 <p className={`text-[10px] text-[${COLOR_BRAND}] mb-4 font-bold uppercase tracking-widest`}><Info className="w-3 h-3 inline mr-1" /> {t.audioTip}</p>
 
 <div className="flex flex-wrap items-center gap-4">
-{/* --- LE FAMEUX MENU DÉROULANT EXACTEMENT COMME TA CAPTURE D'ÉCRAN --- */}
+{/* MENU DÉROULANT EXACTEMENT COMME TA CAPTURE */}
 <div className="relative custom-dropdown">
     <button 
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="flex items-center justify-between w-[240px] px-4 py-3 rounded-xl border transition-all shadow-md bg-[#18181b] border-[#e51b32] text-white hover:bg-[#27272a]"
+        className={`flex items-center justify-between w-[240px] px-4 py-3 rounded-xl border transition-all shadow-md bg-[#18181b] border-[${DROPDOWN_RED}] text-white hover:bg-[#27272a]`}
     >
         <span className="text-[13px] font-medium">{SERVERS_LIST.find(s=>s.id === selectedServer)?.label}</span>
         <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
@@ -1147,15 +1085,28 @@ return (
 </a>
 </div>
 
-{isTV && details?.seasons && (
+{/* UI DES ÉPISODES FIABLE */}
+{isTV && (
 <div className="mt-8 pt-6 border-t border-white/10">
-    <div className="flex items-center justify-between mb-4">
-        <h4 className="font-black text-white uppercase tracking-widest text-xs flex items-center gap-2"><ListVideo className={`w-4 h-4 text-[${COLOR_BRAND}]`} /> {t.episodesList}</h4>
-        <select value={selectedSeason} onChange={(e) => setSelectedSeason(Number(e.target.value))} className="bg-[#151520] border border-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-lg outline-none cursor-pointer">
-            {details.seasons.filter(s => s.season_number > 0).map(s => (
-                <option key={s.id} value={s.season_number}>{t.season} {s.season_number}</option>
-            ))}
-        </select>
+    <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+        <h4 className="font-black text-white uppercase tracking-widest text-xs flex items-center gap-2">
+            <ListVideo className={`w-4 h-4 text-[${COLOR_BRAND}]`} /> {t.episodesList}
+        </h4>
+
+        <div className="flex items-center gap-3">
+            <div className="flex bg-[#151520] border border-white/20 rounded-lg p-0.5">
+                <button onClick={() => setAudioLang('vostfr')} className={`px-3 py-1.5 text-[10px] font-bold uppercase rounded-md transition-colors ${audioLang === 'vostfr' ? `bg-[${DROPDOWN_RED}] text-white` : 'text-white/50 hover:text-white'}`}>VOSTFR</button>
+                <button onClick={() => setAudioLang('vf')} className={`px-3 py-1.5 text-[10px] font-bold uppercase rounded-md transition-colors ${audioLang === 'vf' ? `bg-[${DROPDOWN_RED}] text-white` : 'text-white/50 hover:text-white'}`}>VF</button>
+            </div>
+
+            {details?.seasons && (
+                <select value={selectedSeason} onChange={(e) => setSelectedSeason(Number(e.target.value))} className="bg-[#151520] border border-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-lg outline-none cursor-pointer">
+                    {details.seasons.filter(s => s.season_number > 0).map(s => (
+                        <option key={s.id} value={s.season_number}>{t.season} {s.season_number}</option>
+                    ))}
+                </select>
+            )}
+        </div>
     </div>
     
     {episodesLoading ? (
@@ -1169,7 +1120,7 @@ return (
             ))}
         </div>
     ) : (
-        <div className="text-white/40 text-xs py-4 text-center">Épisodes non disponibles.</div>
+        <div className="text-white/40 text-xs py-4 text-center col-span-full">Épisodes non disponibles.</div>
     )}
 </div>
 )}
@@ -1203,30 +1154,6 @@ return (
 {modalMode === 'trailer' ? <span>{t.trailerPlaying}</span> : <><Clapperboard className="w-4 h-4" /> <span>{t.trailer}</span></>}
 </button>
 </div>
-
-{isTV && details?.seasons && (
-<div className="mb-6 p-5 bg-white/5 rounded-2xl border border-white/10">
-    <div className="flex items-center justify-between mb-4">
-        <h4 className="font-black text-white uppercase tracking-widest text-xs flex items-center gap-2"><ListVideo className={`w-4 h-4 text-[${COLOR_BRAND}]`} /> {t.episodesList}</h4>
-        <select value={selectedSeason} onChange={(e) => setSelectedSeason(Number(e.target.value))} className="bg-[#151520] border border-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-lg outline-none cursor-pointer">
-            {details.seasons.filter(s => s.season_number > 0).map(s => (
-                <option key={s.id} value={s.season_number}>{t.season} {s.season_number}</option>
-            ))}
-        </select>
-    </div>
-    {episodesLoading ? (
-        <div className="text-white/40 text-xs py-4 text-center">Chargement des épisodes...</div>
-    ) : seasonDetails?.episodes ? (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 max-h-[150px] overflow-y-auto pr-2 custom-scrollbar">
-            {seasonDetails.episodes.map(ep => (
-                <button key={ep.id} onClick={() => playSpecificEpisode(ep.episode_number)} className={`py-2 px-1 rounded-lg text-xs font-bold border transition-all bg-[#18181b] border-white/10 text-white/70 hover:bg-white/10`}>
-                    EP {ep.episode_number}
-                </button>
-            ))}
-        </div>
-    ) : null}
-</div>
-)}
 
 <div className="markdown-pro pr-2 text-justify">
 {movie.overview ? movie.overview.split('\n').filter(p=>p.trim()).map((p,i) => <p key={i} className="mb-3">{p}</p>) : <p>{t.noDesc}</p>}
